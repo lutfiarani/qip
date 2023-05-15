@@ -12,8 +12,8 @@ class C_aql_pivot extends CI_Controller {
         date_default_timezone_set('Asia/Jakarta');
        
 		$this->load->model('M_aql_pivot');
-		// $this->load->library('Excel');
-		// sesscheck();
+		$this->load->model('M_pivot');
+		
         
     }
 
@@ -360,7 +360,8 @@ class C_aql_pivot extends CI_Controller {
 		// $FLAG       = $this->input->post('FLAG');
 		$LEVEL_USER	= $this->session->userdata('LEVEL');
 		$COMMENT	= $this->input->post('COMMENT');
-		$ID_QC	= $this->input->post('ID_QC');
+		$ID_QC		= $this->input->post('ID_QC');
+		$PO_ID 		= $this->input->post('PO_ID');
 		
 		
 
@@ -373,7 +374,9 @@ class C_aql_pivot extends CI_Controller {
 					$input = $this->M_aql_pivot->input_id_qc($PO_NO, $PARTIAL, $REMARK, $LEVEL, $LEVEL_USER, $ID_QC2);
 				};
 			}
-			$data = $this->M_aql_pivot->confirm_inspector($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG, $COMMENT, $LEVEL_U);
+			$data 	= $this->M_aql_pivot->confirm_inspector($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG, $COMMENT, $LEVEL_U);
+			// $pivot 	= base_url().'index.php/c_pivot/aql_put/'.$PO_ID;
+			$pivot 	= $this->M_pivot->aql_pivot_put($PO_ID); 
 		} else if ($LEVEL_USER == 4){
 			$FLAG = 2;
 			$data = $this->M_aql_pivot->confirm_inspector_repre($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG , $LEVEL_U);
@@ -1510,6 +1513,8 @@ class C_aql_pivot extends CI_Controller {
 			$url 			= base_url().'index.php/c_pivot_validation/validation/'.$PO_NO.'/'.$PARTIAL.'/'.$REMARK.'/'.$LEVEL.'/'.$LEVEL_USER;
 		}else if ($STAGE == '3'){
 			$url 			= base_url().'index.php/C_aql_reject/add_reject/'.$PO_NO.'/'.$PARTIAL.'/'.$REMARK.'/'.$LEVEL.'/'.$LEVEL_USER;
+		}else if ($STAGE == '4'){
+			$url 	       = base_url().'index.php/C_aql_pivot/report_inspect/'.$PO_NO.'/'.$PARTIAL.'/'.$REMARK.'/'.$LEVEL.'/'.$LEVEL_USER;
 		}
 
 		echo json_encode($url);

@@ -111,6 +111,7 @@ class M_aql_pivot extends CI_Model {
 			ON A.PO_NO		= D.PO_NO
 			AND A.PARTIAL	= D.PARTIAL
 			AND A.LEVEL		= D.LEVEL
+            WHERE A.PO_NO='$po'
 		  ORDER BY PARTIAL,LEVEL, LEVEL_USER
             
 
@@ -329,9 +330,7 @@ class M_aql_pivot extends CI_Model {
                                     @REMARK = '$REMARK', @LEVEL='$LEVEL', @USERID='$USERID'
                                     , @LEVEL_USER = '$LEVEL_USER', @FLAG = '$FLAG', @COMMENT = '$COMMENT', @LEVEL_U = '$LEVEL_U'
                                     ");
-        // $query = ("EXEC [QIP].[dbo].[AQL_CONFIRM_INSPECT] @PO_NO='$PO_NO', @PARTIAL='$PARTIAL', 
-        // @REMARK = '$REMARK', @LEVEL='$LEVEL', @USERID='$USERID'
-        // , @LEVEL_USER = '$LEVEL_USER', @FLAG = '$FLAG', @COMMENT = '$COMMENT'");
+
         return $query;
         // echo $query;
     }

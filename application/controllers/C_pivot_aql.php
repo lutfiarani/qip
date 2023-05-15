@@ -55,8 +55,10 @@ class C_Pivot_aql extends CI_Controller {
 	}
 
    
-    public function get_po_pivot(){
-        $data = $this->M_pivot->get_po_pivot();
+	public function get_po_pivot(){
+        $po     = $_POST['PO_NO'];
+        $data   = $this->M_pivot->get_po_pivot($po);
+        
         echo json_encode($data);
     }
 

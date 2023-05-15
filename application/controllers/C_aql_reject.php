@@ -147,7 +147,7 @@ class C_aql_reject extends CI_Controller {
 
         if ($cek_second->num_rows() > 0 ){
            
-            $url 	= base_url().'index.php/C_aql_inspect/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
+            $url 	= base_url().'index.php/C_aql_pivot/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
             
 
         }else{
@@ -155,7 +155,7 @@ class C_aql_reject extends CI_Controller {
             $save_second 		= $this->M_aql_reject->save_second_data($po, $partial, $level, $remark, $level_user);
             $stage				= '4';
 		    $update_stage 		= $this->M_validation->edit_stage($po, $partial, $level, $level_user, $remark, $stage);
-			$url 	        	= base_url().'index.php/C_aql_inspect/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
+			$url 	        	= base_url().'index.php/C_aql_pivot/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
             
 
         }

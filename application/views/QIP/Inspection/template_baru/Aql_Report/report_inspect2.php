@@ -30,6 +30,7 @@
                         echo "<input type='text' name='REMARK' id='REMARK' value='".$report1['REMARK']."' hidden></input>";
                         echo "<input type='text' name='INSPECTOR' id='INSPECTOR' value='".$report1['INSPECTOR']."' hidden></input>";
                         echo "<input type='text' name='LEVEL_USER' id='LEVEL_USER' value='".$report1['LEVEL_USER']."' hidden></input>";
+                        echo "<input type='text' name='PO_ID' id='PO_ID' value='".$report1['PO_ID']."' hidden></input>";
                     ?>
                  <div class="row" id="report1">
                  </div>
@@ -178,6 +179,7 @@
           var LEVEL     = $('#LEVEL').val();
           var REMARK    = $('#REMARK').val();
           var LEVEL_USER= $('#LEVEL_USER').val();
+          var PO_ID     = $('#PO_ID').val();
 
         
           report1();
@@ -188,7 +190,7 @@
 
           function createReport(){
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/report_",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/report_",
                 type: "POST",
                 data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",
@@ -205,7 +207,7 @@
 
           function report1(){
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/report1",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/report1",
                 type: "POST",
                 data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",
@@ -345,7 +347,7 @@
 
           function report2_detailsize(){
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/report2",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/report2",
                 type: "POST",
                 data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",
@@ -490,7 +492,7 @@
 
           function report3_sample(){
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/report3",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/report3",
                 type: "POST",
                 data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",
@@ -554,7 +556,7 @@
 
           function report4_listdefect(){
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/report4",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/report4",
                 type: "POST",
                 data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",
@@ -715,7 +717,7 @@
 
           function report5_result(){
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/report3",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/report3",
                 type: "POST",
                 data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",
@@ -856,7 +858,7 @@
                    "</div>";
 
                    if(data.LEVEL_USERA == data.LEVEL_USER2){
-                        html3 += '<button type="button" class="btn btn-block bg-gradient-success btn-lg" name="confirmInspector" id="confirmInspector" value="1">Confirm Inspector</button>';
+                        html3 += '<button type="button" class="btn btn-block bg-gradient-success btn-lg" name="confirmInspector" id="confirmInspector" value="1">Confirm Inspector & Send to Pivot</button>';
                    }else{
                        html3 +='';
                    }
@@ -872,14 +874,14 @@
          }
 
          function confirm_inspector(){
-            var INSPECTOR = $('#INSPECTOR').val();
-            var FLAG =$('#confirmInspector').val();
-            var COMMENT =$('#comment').val();
-            var ID_QC =$('#id_qc').val();
+            var INSPECTOR   = $('#INSPECTOR').val();
+            var FLAG        = $('#confirmInspector').val();
+            var COMMENT     = $('#comment').val();
+            var ID_QC       = $('#id_qc').val();
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/confirm_inspector",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/confirm_inspector",
                 type: "POST",
-                data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, INSPECTOR:INSPECTOR, FLAG:FLAG, COMMENT:COMMENT, LEVEL_USER:LEVEL_USER, ID_QC:ID_QC},
+                data: {PO_NO:PO_NO, PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, INSPECTOR:INSPECTOR, FLAG:FLAG, COMMENT:COMMENT, LEVEL_USER:LEVEL_USER, ID_QC:ID_QC, PO_ID:PO_ID},
                 dataType: "JSON",
                 success: function(data)
                 {
@@ -905,7 +907,7 @@
             // var LEVEL       = $(this).attr("data-LEVEL");
             // var LEVEL_USER  = $(this).attr("data-LEVEL_USER");
             $.ajax({
-                url : "<?php echo base_url();?>index.php/C_aql_inspect/export_excel",
+                url : "<?php echo base_url();?>index.php/C_aql_pivot/export_excel",
                 type : "POST",
                 data : {PO_NO:PO_NO, PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
                 dataType: "JSON",

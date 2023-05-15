@@ -101,7 +101,7 @@ class M_validation extends CI_Model {
 
        
         $query = ("
-        INSERT INTO [dbo].[QIP_AQL_DATA_VALIDATION]
+        INSERT INTO [QIP].[dbo].[QIP_AQL_DATA_VALIDATION]
                     ([PO_NO]
                     ,[PARTIAL]
                     ,[REMARK]
@@ -130,11 +130,9 @@ class M_validation extends CI_Model {
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '15', '$a_15', '$Comment_15', getdate(), getdate())");
             
             
-
-            // $query = ("$po, $partial, $remark, $level, $level_user, $mcs");
-        echo $query;
-        // $query = $this->db->query($query);
-        // return $query;
+        // echo $query;
+        $query = $this->db->query($query);
+        return $query;
     }
 
     public function get_article($po){

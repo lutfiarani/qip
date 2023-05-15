@@ -72,6 +72,7 @@ class M_aql_reject extends CI_Model {
         ");
 
         return $query->result();
+        // echo $query;
     }
 
     public function input_reject($level_user){

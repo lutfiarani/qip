@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+require_once "vendor/vendor/autoload.php";
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7;
@@ -35,6 +37,20 @@ class M_pivot extends CI_Model {
                 'api-key' => '9b8ef360-dd66-41f8-a9d0-4f42c33840f4'
             ]
         ]);
+
+        $this->_client_test = new Client([
+            'base_uri' => 'https://adidasstage4.pivot88.com/rest/operation/v1/', //link api server, ganti sesuai kebutuhan
+            'auth' => ['hwaseung_api', 'Pivot88#'], //[username, password]
+            'headers'=>[
+                // 'api-key' => '9b8ef360-dd66-41f8-a9d0-4f42c33840f4'
+                'server' => 'https://adidasstage4.pivot88.com',
+                'username' => 'hwaseung_api',
+                'password' => 'Pivot88#',
+                'api-key' => '9b8ef360-dd66-41f8-a9d0-4f42c33840f4',
+                'Content-Type' => 'application/json',
+                'Cookie' => 'ci_session=5p5u4tt9b85p066menlovodhe54l3d1j'
+            ]
+        ]);
     }
 
     public function get_dataPO($po){
@@ -62,10 +78,10 @@ class M_pivot extends CI_Model {
         // echo $po;
     }
 
-    public function get_po_pivot(){
+    public function get_po_pivot($po){
         $client = new GuzzleHttp\Client();
         // try{
-            $response = $client->request('GET','https://adidas.pivot88.com/rest/operation/v1/inspections?details=true&po_number=0132236281',[
+            $response = $client->request('GET','https://adidas.pivot88.com/rest/operation/v1/inspections?details=true&po_number='.$po,[
                 'auth'=> ['ysha', 'hwiqip5!'],
                 'headers' =>[
                     // 'Cookie' =>  'PHPSESSID=3irnss6mrmd9mg3j19bp6aq01p',
@@ -326,14 +342,19 @@ class M_pivot extends CI_Model {
         // echo $query;
     }
 
-    public function aql_pivot_put($po_id){
-        $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/send_aql/'.$po_id);
-        $json2      = json_decode($json);
-        $response   = $this->_client->put('inspection_reports/unique_key:hwi_aql_'.$po_id,[
-                            'json'=>$json2
+    public function aql_pivot_put($id){
+        $client = new Client();
+        $json       = file_get_contents('http://localhost/qip/index.php/C_Pivot/data_pivot_coba/');
+          // $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/send_aql/'.$po_id); --ganti ini jika nanti sudah bisa
+        $body       = json_decode($json);
+
+        $response   = $this->_client_test->put('inspection_reports/unique_key:hwi_aql_'.$id,[
+                            'json'=>$body
                         ]);
         
         $result     = json_decode($response->getBody()->getContents(), true);
-        return $response;
+        return $result  ;
     }
+
+
 }

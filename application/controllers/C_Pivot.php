@@ -26,6 +26,7 @@ class C_Pivot extends CI_Controller {
        
 		$this->load->model('M_pivot');
         $this->load->model('M_pivot_client', 'pivot');
+        $this->load->model('M_coba', 'coba');
 		// $this->load->library('Excel');
         
     }
@@ -304,16 +305,14 @@ class C_Pivot extends CI_Controller {
         exit;
     }
 
-
-   
-
     public function coba_pivot($po){
         $this->M_pivot->get_dataPO($po);
     }
 
     public function get_po_pivot(){
-        $data = $this->M_pivot->get_po_pivot();
-        // $this->M_pivot->get_po_pivot();
+        $po     = $_POST['PO_NO'];
+        $data   = $this->M_pivot->get_po_pivot($po);
+        
         echo json_encode($data);
     }
 
@@ -327,6 +326,11 @@ class C_Pivot extends CI_Controller {
     public function aql_put($id){
         $data = $this->M_pivot->aql_pivot_put($id);
         echo json_encode($data);
+    }
+
+    public function data_pivot_coba(){
+        $data = $this->coba->data_pivot_coba();
+        echo $data;
     }
 
 

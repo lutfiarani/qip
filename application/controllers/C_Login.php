@@ -52,7 +52,7 @@ class C_Login extends CI_Controller {
                 redirect('C_Export/admin'); 
                 // header('location: C_Export/admin'); 
             }else if(($level == 2)||($level == 3)){
-                redirect('C_aql_inspect/input_aql'); 
+                redirect('C_aql_pivot/input_aql'); 
                 // header('location : C_aql_inspect/input_aql'); 
                 
             }else if($level == 6){

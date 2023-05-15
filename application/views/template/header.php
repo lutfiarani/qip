@@ -346,7 +346,7 @@
             <?php }?>
             <?php if(($tingkat == 2)||($tingkat ==3)||($tingkat == 1)){?>
               <li class="nav-item">
-                <a href="<?php echo base_url();?>index.php/C_aql_inspect/input_aql" class="nav-link">
+                <a href="<?php echo base_url();?>index.php/C_aql_pivot/input_aql" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>New Inspect</p>
                 </a>
