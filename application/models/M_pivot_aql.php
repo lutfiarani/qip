@@ -36,7 +36,8 @@ class M_pivot_aql extends CI_Model {
             ]
         ]);
 
-        $this->qip_baru = $this->load->database('qip_baru',TRUE);
+        // $this->qip_baru = $this->load->database('qip_baru',TRUE);
+        $this->mes_baru = $this->load->database('mes_baru',TRUE);
     }
 
     public function get_dataPO($po){
@@ -91,8 +92,8 @@ class M_pivot_aql extends CI_Model {
 
    public function chart_rework(){
         $po     = $this->input->post('PO_NO'); 
-        $query  = $this->qip_baru->query("select code as qcode, qty as defect, description as reason_desc, left(description,30) as defect_name from (
-            SELECT in_defect_id, sum(qty) as qty FROM qip.rework_defect where rework_id in (SELECT id FROM qip.rework where po='$po' and uploaded > 0) group by in_defect_id
+        $query  = $this->mes_baru->query("SELECT * FROM OPENQUERY(QIP_NEW_233, 'select code as qcode, qty as defect, description as reason_desc, left(description,30) as defect_name from (
+            SELECT in_defect_id, sum(qty) as qty FROM qip.rework_defect where rework_id in (SELECT id FROM qip.rework where po=''$po'' and uploaded > 0) group by in_defect_id
             ) as a
             join (
                 select * from qip.in_defect
@@ -100,23 +101,23 @@ class M_pivot_aql extends CI_Model {
             on a.in_defect_id = b.id
             order by qty desc
             limit 5
-            ");
+            ')");
         return $query->result_array();
    }
 
    public function chart_inline(){
         $po     = $this->input->post('PO_NO'); 
-        $query  = $this->qip_baru->query("
-            select code as qcode, qty as defect, description as reason_desc, left(description,30) as defect_name from (
-                SELECT in_defect_id, sum(qty) as qty FROM qip.inline_defect where inline_id in (SELECT id FROM qip.inline where po='$po' and uploaded > 0)
-                group by in_defect_id
-                ) as a
-                join (
-                    select * from qip.in_defect
-                ) as b
-                on a.in_defect_id = b.id
-                order by qty desc
-                limit 5
+        $query  = $this->mes_baru->query("
+            SELECT * FROM OPENQUERY(QIP_NEW_233, 'select code as qcode, qty as defect, description as reason_desc, left(description,30) as defect_name from (
+            SELECT in_defect_id, sum(qty) as qty FROM qip.inline_defect where inline_id in (SELECT id FROM qip.inline where po=''$po'' and uploaded > 0)
+            group by in_defect_id
+            ) as a
+            join (
+                select * from qip.in_defect
+            ) as b
+            on a.in_defect_id = b.id
+            order by qty desc
+            limit 5')
         ");
 
         return $query->result_array();
