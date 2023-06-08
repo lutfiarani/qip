@@ -13,6 +13,7 @@ class C_aql_pivot extends CI_Controller {
        
 		$this->load->model('M_aql_pivot');
 		$this->load->model('M_pivot');
+		$this->load->model('M_validation');
 		
         
     }
@@ -152,10 +153,11 @@ class C_aql_pivot extends CI_Controller {
 		$partial_edit 	= $_POST['partial'];
 		$size_edit	 	= $_POST['size'];
 		$ctn_no_edit 	= $_POST['ctn_no'];
-		$ctn_qty_edit 	= $_POST['ctn_qty'];
+		$booking_comment= $_POST['booking_comment'];
 		$qty_edit 		= $_POST['qty'];
 		$level_edit 	= $_POST['level'];
 		$data 			= array();
+		$level_user		= $this->session->userdata('LEVEL');
 
 		
 		$index = 0; 
@@ -163,13 +165,13 @@ class C_aql_pivot extends CI_Controller {
 		{
 			foreach($po_edit as $data_PO){ 
 				array_push($data, array(
-					'PO_NO'		=> $data_PO,
-					'PARTIAL'	=> $partial_edit[$index],  
-					'LEVEL'		=> $level_edit[$index],
-					'CTN_QTY'	=> $ctn_qty_edit,
-					'CTN_NO'	=> $ctn_no_edit,
-					'SIZE' 		=> $size_edit[$index],
-					'QTY'		=> $qty_edit[$index]
+					'PO_NO'				=> $data_PO,
+					'PARTIAL'			=> $partial_edit[$index],  
+					'LEVEL'				=> $level_edit[$index],
+					'BOOKING_COMMENT'	=> $booking_comment,
+					'CTN_NO'			=> $ctn_no_edit,
+					'SIZE' 				=> $size_edit[$index],
+					'QTY'				=> $qty_edit[$index]
 				));
 				
 				$index++;
@@ -181,38 +183,13 @@ class C_aql_pivot extends CI_Controller {
 		$level_edit1	= $level_edit[0];
 
 		
-		$sql 		= $this->M_aql_pivot->save_batch($data);
-		echo json_encode($sql);
-
-	}
-
-	function save_first_data(){
-		sesscheck();
-		$po_edit 		= $_POST['PO'];
-		$stage	 		= '2';
-		$partial_edit 	= $_POST['partial'];
-		$size_edit	 	= $_POST['size'];
-		$ctn_no_edit 	= $_POST['ctn_no'];
-		$ctn_qty_edit 	= $_POST['ctn_qty'];
-		$qty_edit 		= $_POST['qty'];
-		$level_edit 	= $_POST['level'];
-		$data 			= array();
-		$level_user		= $this->session->userdata('LEVEL');
-		
-		$index = 0; 
-		
-		$po_edit1		= $po_edit[0];
-		$partial_edit1	= $partial_edit[0];
-		$level_edit1	= $level_edit[0];
-		$INSPECTOR 		= $this->session->userdata('USERNAME');
-
-		$first_data 	= $this->M_aql_pivot->save_first_data($po_edit1, $partial_edit1, $level_edit1, $stage, $level_user, $INSPECTOR);
-		$data_first 	= $first_data->row_array();
-		$remark     	= $data_first['REMARK'];
-
-		$url 			= base_url().'index.php/c_pivot_validation/validation/'.$po_edit1.'/'.$partial_edit1.'/'.$remark.'/'.$level_edit1.'/'.$level_user;
+		$sql 				= $this->M_aql_pivot->save_batch($data);
+		$stage				= '2';
+		$insert_stage		= $this->M_validation->insert_stage($po_edit1, $partial_edit1, $level_edit1, $level_user, $stage);
+		$url 				= base_url().'index.php/c_pivot_validation/validation/'.$po_edit1.'/'.$partial_edit1.'/'.$level_edit1.'/'.$level_user;
 		
 		echo json_encode(array('status'=>'simpan berhasil', 'url'=>$url));
+
 	}
 
 	
@@ -351,43 +328,33 @@ class C_aql_pivot extends CI_Controller {
 
 	public function confirm_inspector(){
 		sesscheck();
-        $PO_NO      = $this->input->post('PO_NO');
-        $PARTIAL    = $this->input->post('PARTIAL');
-        $REMARK     = $this->input->post('REMARK');
-		$LEVEL      = $this->input->post('LEVEL');
-		$LEVEL_U    = $this->input->post('LEVEL_USER');
-        $USERID     = $this->input->post('INSPECTOR');
-		// $FLAG       = $this->input->post('FLAG');
-		$LEVEL_USER	= $this->session->userdata('LEVEL');
-		$COMMENT	= $this->input->post('COMMENT');
-		$ID_QC		= $this->input->post('ID_QC');
-		$PO_ID 		= $this->input->post('PO_ID');
-		
-		
+        $PO_NO      	= $this->input->post('PO_NO');
+        $PARTIAL    	= $this->input->post('PARTIAL');
+        $REMARK     	= $this->input->post('REMARK');
+		$LEVEL      	= $this->input->post('LEVEL');
+		$LEVEL_U    	= $this->input->post('LEVEL_USER');
+        $USERID     	= $this->input->post('INSPECTOR');
+		$LEVEL_USER		= $this->session->userdata('LEVEL');
+		$COMMENT		= $this->input->post('COMMENT');
+		$ID_QC			= $this->input->post('ID_QC');
+		$PO_ID 			= $this->input->post('PO_ID');
+		$FLAG 			= 1;
 
-		if (($LEVEL_USER == 3) || ($LEVEL_USER == 2) || ($LEVEL_USER == 6) ){
-			$FLAG = 1;
-			if(is_null($ID_QC)){
-				$input = $this->M_aql_pivot->input_id_qc($PO_NO, $PARTIAL, $REMARK, $LEVEL, $LEVEL_USER, $ID_QC);
-			}else{
-				foreach($ID_QC as $ID_QC2){ 
-					$input = $this->M_aql_pivot->input_id_qc($PO_NO, $PARTIAL, $REMARK, $LEVEL, $LEVEL_USER, $ID_QC2);
-				};
-			}
-			$data 	= $this->M_aql_pivot->confirm_inspector($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG, $COMMENT, $LEVEL_U);
-			// $pivot 	= base_url().'index.php/c_pivot/aql_put/'.$PO_ID;
-			$pivot 	= $this->M_pivot->aql_pivot_put($PO_ID); 
-		} else if ($LEVEL_USER == 4){
-			$FLAG = 2;
-			$data = $this->M_aql_pivot->confirm_inspector_repre($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG , $LEVEL_U);
-		}else if ($LEVEL_USER == 5){
-			$FLAG = 3;
-			$data = $this->M_aql_pivot->confirm_inspector_repre($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG , $LEVEL_U);
+		if(is_null($ID_QC)){
+			$input = $this->M_aql_pivot->input_id_qc($PO_NO, $PARTIAL, $REMARK, $LEVEL, $LEVEL_USER, $ID_QC);
+		}else{
+			foreach($ID_QC as $ID_QC2){ 
+				$input = $this->M_aql_pivot->input_id_qc($PO_NO, $PARTIAL, $REMARK, $LEVEL, $LEVEL_USER, $ID_QC2);
+			};
 		}
-
+		$data 			= $this->M_aql_pivot->confirm_inspector($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG, $COMMENT, $LEVEL_U);
+		$stage			= '5';
+		$update_stage 	= $this->M_validation->edit_stage($PO_NO, $PARTIAL, $LEVEL, $LEVEL_USER, $REMARK, $stage);
+		$pivot 			= $this->M_pivot->aql_pivot_put($PO_ID); 
+		$url 	        = base_url().'index.php/C_aql_pivot/input_aql/';
 		
         
-        echo json_encode($data);
+        echo json_encode($url);
     }
     
 
@@ -1509,14 +1476,15 @@ class C_aql_pivot extends CI_Controller {
 		$REMARK      = $_POST['REMARK'];
 		$LEVEL_USER = $_POST['LEVEL_USER'];
 
-		if ($STAGE == '2'){
-			$url 			= base_url().'index.php/c_pivot_validation/validation/'.$PO_NO.'/'.$PARTIAL.'/'.$REMARK.'/'.$LEVEL.'/'.$LEVEL_USER;
-		}else if ($STAGE == '3'){
-			$url 			= base_url().'index.php/C_aql_reject/add_reject/'.$PO_NO.'/'.$PARTIAL.'/'.$REMARK.'/'.$LEVEL.'/'.$LEVEL_USER;
-		}else if ($STAGE == '4'){
-			$url 	       = base_url().'index.php/C_aql_pivot/report_inspect/'.$PO_NO.'/'.$PARTIAL.'/'.$REMARK.'/'.$LEVEL.'/'.$LEVEL_USER;
-		}
-
+		$url 			= base_url().'index.php/c_pivot_validation/validation/'.$PO_NO.'/'.$PARTIAL.'/'.$LEVEL.'/'.$LEVEL_USER;
 		echo json_encode($url);
+	}
+
+	public function deletePO(){
+		$PO_NO       = $_POST['PO_NO'];
+		$PARTIAL     = $_POST['PARTIAL'];
+		$data		 = $this->M_aql_pivot->deletePO($PO_NO, $PARTIAL);
+		
+		echo json_encode($data);
 	}
 }

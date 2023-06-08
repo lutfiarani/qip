@@ -52,10 +52,10 @@
                   <select class="select2" multiple="multiple" data-placeholder="Pilih ID Inspector" style="width: 100%;" name="id_qc[]" id="id_qc">
                    <?php 
                         for($i=0;$i<count($id_qc);$i++){
-                            if($id_qc[$i]['NIK']== $row['NIK']){
-                            echo "<option value='".$id_qc[$i]['NIK']."' selected>".$id_qc[$i]['ID']."</option>";
+                            if($id_qc[$i]['password']== $row['password']){
+                                echo "<option value='".$id_qc[$i]['password']."-".$id_qc[$i]['nik']."-".$id_qc[$i]['nama']."' selected>".$id_qc[$i]['password']." - ".$id_qc[$i]['nama']."</option>";
                             }else{
-                            echo "<option value='".$id_qc[$i]['NIK']."' >".$id_qc[$i]['ID']."</option>";
+                                echo "<option value='".$id_qc[$i]['password']."-".$id_qc[$i]['nik']."-".$id_qc[$i]['nama']."'>".$id_qc[$i]['password']." - ".$id_qc[$i]['nama']."</option>";
                             }
                         }
                     ?>
@@ -145,7 +145,7 @@
     <!-- DataTables -->
     <script src="<?php echo base_url();?>template/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="<?php echo base_url();?>template/plugins/new_js/dataTables.bootstrap.min.js"></script>
-    <script src="<?php echo base_url();?>template/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- <script src="<?php echo base_url();?>template/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script> -->
     <script src="<?php echo base_url();?>template/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
     <!-- AdminLTE App -->
     <script src="<?php echo base_url();?>template/dist/js/adminlte.min.js"></script>
@@ -361,8 +361,8 @@
 
                     html += "<table class='table table-bordered' border='1' cellpadding='0' cellspacing='0' style='width:25%;float:left'>"+
                             "<thead>"+
+                                "<th>Booking Comment</th>"+
                                 "<th>Carton#</th>"+
-                                "<th>Qty/Carton</th>"+
                                 "<th>Size</th>"+
                                 "<th>Qty Insp</th>"+
                             "</thead>"+
@@ -371,8 +371,8 @@
                     for(a=0; a<5; a++){
                        if ( typeof(data[a]) != "undefined" && data[a] !== null){
                            html +=  "<tr>"+
+                                    "<td>"+data[a].BOOKING_COMMENT+"</td>"+
                                     "<td>"+data[a].CARTON_NO+"</td>"+
-                                    "<td>"+data[a].CARTON_QTY+"</td>"+
                                     "<td>"+data[a].SIZE+"</td>"+
                                     "<td>"+data[a].QTY_INSPECT+"</td>"+
                                     "</tr>";
@@ -392,8 +392,8 @@
 
                             html += "<table class='table table-bordered' border='1' cellpadding='0' cellspacing='0' style='width:25%;float:left'>"+
                             "<thead>"+
+                                "<th>Booking Comment</th>"+
                                 "<th>Carton#</th>"+
-                                "<th>Qty/Carton</th>"+
                                 "<th>Size</th>"+
                                 "<th>Qty Insp</th>"+
                             "</thead>"+
@@ -402,8 +402,8 @@
                     for(b=5; b<10; b++){
                         if ( typeof(data[b]) != "undefined" && data[b] !== null){
                            html +=  "<tr>"+
+                                    "<td>"+data[a].BOOKING_COMMENT+"</td>"+         
                                     "<td>"+data[b].CARTON_NO+"</td>"+
-                                    "<td>"+data[b].CARTON_QTY+"</td>"+
                                     "<td>"+data[b].SIZE+"</td>"+
                                     "<td>"+data[b].QTY_INSPECT+"</td>"+
                                     "</tr>";
@@ -423,8 +423,8 @@
 
                             html += "<table class='table table-bordered' border='1' cellpadding='0' cellspacing='0' style='width:25%;float:left'>"+
                             "<thead>"+
+                                "<th>Booking Comment</th>"+
                                 "<th>Carton#</th>"+
-                                "<th>Qty/Carton</th>"+
                                 "<th>Size</th>"+
                                 "<th>Qty Insp</th>"+
                             "</thead>"+
@@ -433,8 +433,8 @@
                     for(c=10; c<15; c++){
                         if ( typeof(data[c]) != "undefined" && data[c] !== null){
                            html +=  "<tr>"+
+                                    "<td>"+data[a].BOOKING_COMMENT+"</td>"+
                                     "<td>"+data[c].CARTON_NO+"</td>"+
-                                    "<td>"+data[c].CARTON_QTY+"</td>"+
                                     "<td>"+data[c].SIZE+"</td>"+
                                     "<td>"+data[c].QTY_INSPECT+"</td>"+
                                     "</tr>";
@@ -455,8 +455,8 @@
 
                     html += "<table class='table table-bordered' border='1' cellpadding='0' cellspacing='0' style='width:25%;float:left'>"+
                     "<thead>"+
+                        "<th>Booking Comment</th>"+    
                         "<th>Carton#</th>"+
-                        "<th>Qty/Carton</th>"+
                         "<th>Size</th>"+
                         "<th>Qty Insp</th>"+
                     "</thead>"+
@@ -465,8 +465,8 @@
                     for(d=15; d<20; d++){
                         if ( typeof(data[d]) != "undefined" && data[d] !== null){
                            html +=  "<tr>"+
+                                    "<td>"+data[a].BOOKING_COMMENT+"</td>"+         
                                     "<td>"+data[d].CARTON_NO+"</td>"+
-                                    "<td>"+data[d].CARTON_QTY+"</td>"+
                                     "<td>"+data[d].SIZE+"</td>"+
                                     "<td>"+data[d].QTY_INSPECT+"</td>"+
                                     "</tr>";
@@ -796,66 +796,66 @@
 
 
 
-                    html3 += "<div class='col-md-12'>"+
-                             "<table class='table table' border='0' cellpadding='0' cellspacing='0'>"+
-                             "<thead>"+
-                             "<tr>"+
-                             "<th><b>adidas-Group Prod. Manager*</b></th>";
-                    if ( !data.REPRESENTATIVE_NAME ){
-                        html3 += "<th></th>";
-                    }else{
-                        html3 +=  "<th>"+data.REPRESENTATIVE_NAME+"</th>";
-                    } 
-                    html3 +="<th><b>Signature/date</b></th>";
-                    if ( !data.REPRESENTATIVE_SIGN ){
-                        html3 += "<th></th>";
-                    }else{
-                        html3 += "<th><img src='<?php echo base_url(); ?>"+data.REPRESENTATIVE_SIGN+"' width='50' height='40'></th>";
-                    }
+                //     html3 += "<div class='col-md-12'>"+
+                //              "<table class='table table' border='0' cellpadding='0' cellspacing='0'>"+
+                //              "<thead>"+
+                //              "<tr>"+
+                //              "<th><b>adidas-Group Prod. Manager*</b></th>";
+                //     if ( !data.REPRESENTATIVE_NAME ){
+                //         html3 += "<th></th>";
+                //     }else{
+                //         html3 +=  "<th>"+data.REPRESENTATIVE_NAME+"</th>";
+                //     } 
+                //     html3 +="<th><b>Signature/date</b></th>";
+                //     if ( !data.REPRESENTATIVE_SIGN ){
+                //         html3 += "<th></th>";
+                //     }else{
+                //         html3 += "<th><img src='<?php echo base_url(); ?>"+data.REPRESENTATIVE_SIGN+"' width='50' height='40'></th>";
+                //     }
                     
 
-                    html3 += "</tr>"+
-                             "<tr>"+
-                             "<th><b>Inspector**)</b></th>";
-                    if ( !data.INSPECTOR_NAME ){
-                        html3 += "<th></th>";
-                    }else{
-                        html3 +=  "<th>"+data.INSPECTOR_NAME+"</th>";
-                    } 
-                    html3 +="<th><b>Signature/date</b></th>";
-                    if ( !data.INSPECTOR_SIGN ){
-                        html3 += "<th></th>";
-                    }else{
-                        html3 += "<th><img src='<?php echo base_url(); ?>"+data.INSPECTOR_SIGN+"' width='50' height='40'></th>";
-                    } 
+                //     html3 += "</tr>"+
+                //              "<tr>"+
+                //              "<th><b>Inspector**)</b></th>";
+                //     if ( !data.INSPECTOR_NAME ){
+                //         html3 += "<th></th>";
+                //     }else{
+                //         html3 +=  "<th>"+data.INSPECTOR_NAME+"</th>";
+                //     } 
+                //     html3 +="<th><b>Signature/date</b></th>";
+                //     if ( !data.INSPECTOR_SIGN ){
+                //         html3 += "<th></th>";
+                //     }else{
+                //         html3 += "<th><img src='<?php echo base_url(); ?>"+data.INSPECTOR_SIGN+"' width='50' height='40'></th>";
+                //     } 
                                 
-                    html3 += "</tr>"+
-                             "<tr>"+
-                                "<th><b>Factory Rep / Fty Prod Head</b></th>";
-                    if ( !data.PRODUCTION_MANAGER_NAME ){
-                        html3 += "<th></th>";
-                    }else{
-                        html3 +=  "<th>"+data.PRODUCTION_MANAGER_NAME+"</th>";
-                    } 
-                    html3 +="<th><b>Signature/date</b></th>";
-                    if ( !data.PRODUCTION_MANAGER_SIGN ){
-                        html3 += "<th></th>";
-                    }else{
-                        html3 += "<th><img src='<?php echo base_url(); ?>"+data.PRODUCTION_MANAGER_SIGN+"' width='50' height='40'></th>";
-                    } 
+                //     html3 += "</tr>"+
+                //              "<tr>"+
+                //                 "<th><b>Factory Rep / Fty Prod Head</b></th>";
+                //     if ( !data.PRODUCTION_MANAGER_NAME ){
+                //         html3 += "<th></th>";
+                //     }else{
+                //         html3 +=  "<th>"+data.PRODUCTION_MANAGER_NAME+"</th>";
+                //     } 
+                //     html3 +="<th><b>Signature/date</b></th>";
+                //     if ( !data.PRODUCTION_MANAGER_SIGN ){
+                //         html3 += "<th></th>";
+                //     }else{
+                //         html3 += "<th><img src='<?php echo base_url(); ?>"+data.PRODUCTION_MANAGER_SIGN+"' width='50' height='40'></th>";
+                //     } 
 
-                    html3 += "</tr>"+
-                            "<tr>"+
-                                "<th></th>"+
-                                "<th></th>"+
-                                "<th></th>"+
-                                "<th></th>"+
-                               "</tr>"+
-                        "</thead>"+
-                        "<tbody>"+
-                        "</tbody>"+
-                    "</table>"+
-                   "</div>";
+                //     html3 += "</tr>"+
+                //             "<tr>"+
+                //                 "<th></th>"+
+                //                 "<th></th>"+
+                //                 "<th></th>"+
+                //                 "<th></th>"+
+                //                "</tr>"+
+                //         "</thead>"+
+                //         "<tbody>"+
+                //         "</tbody>"+
+                //     "</table>"+
+                //    "</div>";
 
                    if(data.LEVEL_USERA == data.LEVEL_USER2){
                         html3 += '<button type="button" class="btn btn-block bg-gradient-success btn-lg" name="confirmInspector" id="confirmInspector" value="1">Confirm Inspector & Send to Pivot</button>';
@@ -885,7 +885,8 @@
                 dataType: "JSON",
                 success: function(data)
                 {
-                    console.log(data)
+                    // console.log(data)
+                    location.href = data;
 
                 },
             });
@@ -896,7 +897,7 @@
          $(document).on('click','#confirmInspector',function(){
         
               confirm_inspector();
-              window.location.href = window.location.href;
+            //   window.location.href = window.location.href;
              
          });
 

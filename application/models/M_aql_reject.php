@@ -162,6 +162,7 @@ class M_aql_reject extends CI_Model {
             ");
 
         return $query->row();
+        // echo $query;
     }
    
 }

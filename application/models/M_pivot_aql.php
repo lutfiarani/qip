@@ -85,7 +85,21 @@ class M_pivot_aql extends CI_Model {
    }
 
    public function chart_defect(){
-        return 1;
+        // return 1;
+        $po     = $this->input->post('PO_NO'); 
+        $query  = $this->db->query("
+                    SELECT TOP 5 REJECT_CODE_NAME+' '+DESCRIPTION AS DEFECT_NAME, QTY_DEFECT AS DEFECT FROM 
+                    (
+                        SELECT CODE, REJECT_CODE, ISNULL(SUM(QTY),0) AS QTY_DEFECT FROM [QIP].[dbo].QIP_AQL_DATA_SECONDE WITH (NOLOCK) 
+                        WHERE PO_NO='$po' GROUP BY CODE, REJECT_CODE
+                    ) AS A
+                    JOIN [QIP].[dbo].QIP_AQL_REJECT_CODE  AS B WITH (NOLOCK)
+                    ON A.CODE = B.CODE
+                    AND A.REJECT_CODE = B.REJECT_CODE
+                    ORDER BY QTY_DEFECT DESC
+        ");
+
+        return $query->result_array();
    }
 
 

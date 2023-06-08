@@ -509,7 +509,7 @@ class C_dev_stage extends CI_Controller {
         $title1 = str_replace('%20', ' ', $title);
         $this->email->set_newline("\r\n");
         $this->email->from('quality.system@hsinni.com');
-        $penerima = 'reny.lab@hsinni.com,ysha@hsinni.com,diyah.lab@hsinni.com,lab@hsinni.com';
+        $penerima = 'reny.lab@hsinni.com,ysha@hsinni.com,a01.lab@hsinni.com,lab@hsinni.com';
         $this->email->to($penerima);
         // $this->email->cc('quality.system@hsinni.com');
         $this->email->subject('[EMAIL-SYSTEM-ALERT] CMA TEST'.$title1.' FAILURE');

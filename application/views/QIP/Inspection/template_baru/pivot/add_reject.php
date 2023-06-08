@@ -170,9 +170,10 @@ button:hover {
                    </table>
               
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="table_reject_all">
                         <thead>                  
                             <tr>
+                                <th>X</th>
                                 <th>CODE</th>
                                 <th style="width: 20px">CODE_DESC</th>
                                 <th>REJECT CODE</th>
@@ -286,21 +287,29 @@ button:hover {
    
     <script>
     
-    function save_image(){
-        var formData = new FormData(document.querySelector("#upload_reject"));
-        
-        $.ajax({
-            url : "<?php echo base_url();?>/C_aql_reject/save_image",
-            type : "POST",
-            data : formData,
-            contentType : false,
-            processData : false,
-            dataType : "JSON",
-            success : function(data){
-                // alert(data)
-            }
-        })
-    }
+    // function save_image(){
+    //   var formData = new FormData(document.querySelector("#upload_reject"));
+    //   $.ajax({
+    //       url : "<?php echo base_url();?>/C_aql_reject/save_image",
+    //       type : "POST",
+    //       data : formData,
+    //       contentType : false,
+    //       processData : false,
+    //       dataType : "JSON",
+    //       success : function(data){
+    //           // alert(data)
+    //           document.getElementById("upload_reject").reset();
+    //           location.reload();
+    //         // $('#upload_gambar').value = "";
+            
+
+    //       }
+    //   })
+      
+    // }
+
+
+   
       $(document).ready(function(){
           var PO_NO     = $('#PO_NO').text();
           var PARTIAL   = $('#PARTIAL').text();
@@ -309,7 +318,8 @@ button:hover {
           var REMARK    = $('#REMARK').text();
           var LEVEL_USER= $('#LEVEL_USER').text();
 
-          view_defect_load();
+          // view_defect_load();
+          view_defect();
          
 
           function view_defect(){
@@ -325,9 +335,9 @@ button:hover {
                       var mi=0
                       var ma=0 
                       var cr=0
-                      var end = data.length-1;
-                      for(i=0; i<data.length; i++){
+                     for(i=0; i<data.length; i++){
                           html += '<tr>'+
+                                  '<td><label class="btn btn-danger btn-flat btn-sm delete_defect" data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'"><i class="fa fa-trash"></i></label></td>'+
                                   '<td>'+data[i].CODE+'</td>'+
                                   '<td>'+data[i].CODE_NAME+'</td>'+
                                   '<td>'+data[i].CODE+'.'+data[i].REJECT_CODE+'</td>'+
@@ -339,7 +349,7 @@ button:hover {
                                   
                                   '<td>'+
                                   '<div class="row">'+
-                                  '&nbsp&nbsp&nbsp&nbsp<label class="btn btn-danger btn-flat btn-sm delete_defect" data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'"><i class="fa fa-trash"> Delete</i></label>'+
+                                  
                                   '<form class="form-horizontal" id="upload_reject" method="post">'+
                                     '<input type="hidden" name="CODE" value="'+data[i].CODE+'">'+
                                     '<input type="hidden" name="REJECT_CODE" value="'+data[i].REJECT_CODE+'">'+
@@ -348,15 +358,18 @@ button:hover {
                                     '<input type="hidden" name="LEVEL_USER" value="'+data[i].LEVEL_USER+'">'+
                                     '<input type="hidden" name="REMARK" value="'+data[i].REMARK+'">'+
                                     '<input type="hidden" name="LEVEL" value="'+data[i].LEVEL+'">'+
-                                    '&nbsp<label class="btn btn-primary btn-flat btn-sm upload_image" >'+
-                                            '<input type="file" id="upload_gambar'+i+'" name="files" id_seq="'+i+'" hidden onchange="javascript:save_image()" ata-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'" accept="image/png, image/gif, image/jpeg" />'+
+                                    '&nbsp&nbsp&nbsp&nbsp&nbsp<label class="btn btn-primary btn-flat btn-xs upload_image" >'+
+                                            '<input type="file" id="upload_gambar" name="files" id_seq="'+i+'"  data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'" accept="image/png, image/gif, image/jpeg" />'+
                                             '<input type="hidden" name="picture_code" id="picture_code" value="10'+i+'">'+
-                                            '<i class="fa fa-camera"> Take Picture</i>'+
+                                            // '<i class="fa fa-camera"> Take Picture</i>'+
                                         '</label>'+
+                                        '<label class="btn btn-primary btn-flat btn-xs" ><input type="submit" class="btn btn-success btn-flat btn-xs" value="Upload" id="upload_img"></label>'+
+                                        
                              
                                         '</form>';
-                            if(data[i].REJECT_IMG !== null){
-                                html += '&nbsp<label class="btn btn-warning btn-sm btn-flat show_image" data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'"><i class="fa fa-image"> View Image</i></label>'
+                            if((data[i].REJECT_IMG != null) && (data[i].REJECT_IMG != "")){
+                                html += '&nbsp<label class="btn btn-warning btn-xs btn-flat show_image" data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'"><i class="fa fa-image"> Preview </i></label>'
+                                html += '&nbsp<label class="btn btn-danger btn-xs btn-flat delete_image" data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'"  data-column="REJECT_IMG"><i class="fa fa-trash"> Delete Image</i></label>'
                             }
                                   html +='</div></td>'+
                                   
@@ -365,6 +378,8 @@ button:hover {
                                   mi += data[i].MI
                                   ma += data[i].MA
                                   cr += data[i].CR
+
+                                  
                       }
                       html += '<tr style="background-color: #93A8A9 ; font-size: 18px">'+
                                   '<td colspan="5" style="text-align:right"><b>TOTAL</td>'+
@@ -376,6 +391,24 @@ button:hover {
                      
                       
                       $('#showReject').html(html);
+                      // $(document).on('change', '#upload_gambar', function(){
+                      //               var formData = new FormData(document.querySelector("#upload_reject"));
+        
+                      //                 $.ajax({
+                      //                     url : "<?php echo base_url();?>/C_aql_reject/save_image",
+                      //                     type : "POST",
+                      //                     data : formData,
+                      //                     contentType : false,
+                      //                     processData : false,
+                      //                     dataType : "JSON",
+                      //                     success : function(data){
+                      //                         // alert(data)
+                      //                       location.reload();
+                      //                     }
+                      //                 })
+                                     
+                      //             })
+                     
                 },
             });
            
@@ -534,6 +567,21 @@ button:hover {
         });
     })
 
+    $(document).on('click','.delete_image',function(){
+        var PO_NO       = $(this).attr("data-PO_NO");
+        var PARTIAL     = $(this).attr("data-PARTIAL");
+        var REMARK      = $(this).attr("data-REMARK");
+        var LEVEL       = $(this).attr("data-LEVEL");
+        var LEVEL_USER  = $(this).attr("data-LEVEL_USER");
+        var CODE        = $(this).attr("data-CODE");
+        var REJECT_CODE = $(this).attr("data-REJECT_CODE");
+        var column      = $(this).attr("data-column");
+        var value       = '';
+
+        update_comment(column, value, CODE, REJECT_CODE, PO_NO, PARTIAL, LEVEL_USER, REMARK, LEVEL);
+
+    })
+
     $(document).on('blur', '.update_data', function(){
             var column      = $(this).attr("data-column");
             var CODE        = $(this).attr("data-CODE");
@@ -561,6 +609,47 @@ button:hover {
             }
         })
     }
+
+
+    $(document).on('submit','#upload_reject',function(){
+    // $('#upload_img_welcome').on('submit', function(event){
+          // var img_id   = $('#img_id').val();
+          event.preventDefault();
+          $.ajax({
+              url: "<?php echo site_url('C_aql_reject/save_image')?>",
+              method:"POST",
+              data:new FormData(this),
+              contentType:false,
+              cache:false,
+              processData:false,
+              success:function(data){
+                  window.onload = view_defect();
+                  
+              }
+          
+        })
+
+      //     var formData = new FormData(document.querySelector("#upload_reject"));
+      // $.ajax({
+      //     url : "<?php echo base_url();?>/C_aql_reject/save_image",
+      //     type : "POST",
+      //     data : formData,
+      //     contentType : false,
+      //     processData : false,
+      //     dataType : "JSON",
+      //     success : function(data){
+      //         // alert(data)
+      //         document.getElementById("upload_reject").reset();
+      //         location.reload();
+      //       // $('#upload_gambar').value = "";
+            
+
+      //     }
+      // })
+
+  
+
+});
 
     
 

@@ -15,7 +15,7 @@ class C_aql_reject extends CI_Controller {
         $this->load->model('M_aql_reject');
 		$this->load->model('M_validation');
 		// $this->load->library('Excel');
-		// sesscheck();
+		// //sesscheck();
         
     }
 
@@ -25,7 +25,7 @@ class C_aql_reject extends CI_Controller {
 
 //-------------------PAGE REJECT AQL----------------------------------
 	public function add_reject($po, $partial, $remark, $level, $level_user){
-		sesscheck();
+		//sesscheck();
 		$datasub['formtitle']="AQL REJECT INPUT";
 		$datasub['username'] = $this->session->userdata('USERNAME');
 		$datasub['tingkat'] = $this->session->userdata('LEVEL');
@@ -39,27 +39,27 @@ class C_aql_reject extends CI_Controller {
 	}
 
 	public function aql_report_basic_info(){
-		sesscheck();
+		//sesscheck();
 		$dataPO = $this->M_aql_pivot->aql_report_basic_info();
        	echo json_encode($dataPO);
 		
 	}
 
 	public function aql_report_basic_info_(){
-		sesscheck();
+		//sesscheck();
 		$dataPO = $this->M_aql_pivot->aql_report_basic_info();
        	echo json_encode($dataPO);
 		
 	}
 
 	public function detail_reject_code(){
-		sesscheck();
+		//sesscheck();
 		$data = $this->M_aql_reject->detail_reject_code();
 		echo json_encode($data);
 	}
 
 	public function input_reject(){
-		sesscheck();
+		//sesscheck();
 		$level_user	= $this->session->userdata('LEVEL');
 
 		$data = $this->M_aql_reject->input_reject($level_user);
@@ -67,21 +67,22 @@ class C_aql_reject extends CI_Controller {
 	}
 
 	public function view_defect(){
-		sesscheck();
+		//sesscheck();
 		$data = $this->M_aql_reject->view_defect();
 
 		echo json_encode($data);
 	}
 
 	function delete_defect(){
-		sesscheck();
+		//sesscheck();
 		$data = $this->M_aql_reject->delete_defect();
 
 		echo json_encode($data);
 	}
 
 
-    public function save_image(){
+       public function save_image(){
+        //sesscheck();
 		$CODE           = $_POST['CODE'];
         $REJECT_CODE    = $_POST['REJECT_CODE'];
         $PO_NO          = $_POST['PO_NO'];
@@ -118,6 +119,8 @@ class C_aql_reject extends CI_Controller {
 		echo json_encode('berhasil');
 	}
 
+	
+
     public function update_comment(){
         $CODE           = $_POST['CODE'];
         $REJECT_CODE    = $_POST['REJECT_CODE'];
@@ -135,7 +138,7 @@ class C_aql_reject extends CI_Controller {
 
 
     public function report_(){
-		sesscheck();
+		//sesscheck();
 		$po 		= $this->input->post('PO_NO'); 
 		$partial	= $this->input->post('PARTIAL'); 
 		$remark 	= $this->input->post('REMARK'); 

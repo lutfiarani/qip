@@ -1,4 +1,8 @@
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+<!-- <link rel="stylesheet" href="<?php echo base_url();?>template/new_js/toastr/build/toastr.css"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+<link rel="stylesheet" href="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.min.css">
+<link rel="stylesheet" href="<?php echo base_url();?>template/new_js/datatable/jquery.dataTables.css">
 <style>
 td textarea 
 {
@@ -84,8 +88,7 @@ td textarea
                     <div class="col-sm-10 input-group input-group-sm">
                       <input type="text" class="form-control" id="tqc_inspected" name="tqc_inspected" placeholder="Enter..." readOnly>
                     </div>
-                    <label for="inputPassword3" class="col-sm-2 col-form-label"> 
-                        <!-- <button type='button' class='btn btn-block btn-warning btn-sm' id='pendingSubmit'>Pending Submit</button><br> -->
+                    <!-- <label for="inputPassword3" class="col-sm-2 col-form-label"> 
                         <button type='button' class='btn btn-block btn-danger btn-sm clear_textarea' id='clear_textarea'>Delete&nbsp&nbsp&nbsp</button>
                     </label>
                     <div class="col-sm-10 input-group input-group-sm">
@@ -94,7 +97,7 @@ Inspector :
 Booking Comment : 
 Inspect Qty : 
                       </textarea>
-                    </div>
+                    </div> -->
                     
                    
                   <!-- </div> -->
@@ -148,12 +151,12 @@ Inspect Qty :
                 <h3 class="card-title">Pivot88 Tracking</h3>
               </div>
               <!-- /.card-header -->
-              <div class="card-body" id="">
-                <table class="table table-bordered">
+              <div class="card-body" >
+                <table class="table table-bordered" id="pivot88table">
                   <thead>
                     <tr>
+                      <th>No</th>
                       <th>Inspector</th>
-                      <th>Scheduled Inspection Date</th>
                       <th>Inspection Result</th>
                       <th>Approval Status</th>
                       <th>Report Type</th>
@@ -162,9 +165,6 @@ Inspect Qty :
                       <th>Qty Inspected</th>
                       <th>PO Line Qty</th>
                       <th>Group</th>
-                      <th>SKU Name</th>
-                      <th>Defect Rate</th>
-                      <th>Article</th>
                       <th>Link</th>
                     </tr>
                   </thead>
@@ -354,37 +354,37 @@ Inspect Qty :
             </form>
         <!--END MODAL EDIT-->
         <div class="modal fade" id="Modal_View_Detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Partial Detail</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                      <table class="table table-bordered" >
-                          <thead>
-                            <th>PO NO</th>
-                            <th>PARTIAL</th>
-                            <th>SEQ INSPECT</th>
-                            <th>LEVEL</th>
-                            <th>INSPECTOR</th>
-                            <th>INSPECT DATE</th>
-                            <th>STATUS INSPECT</th>
-                            <th>ACTION</th>
-                          </thead>
-                          <tbody id="view_detail_partial">
-                          </tbody>
-                       </table>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    
-                  </div>
-                </div>
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Partial Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <table class="table table-bordered" >
+                      <thead>
+                        <th>PO NO</th>
+                        <th>PARTIAL</th>
+                        <th>SEQ INSPECT</th>
+                        <th>LEVEL</th>
+                        <th>INSPECTOR</th>
+                        <th>INSPECT DATE</th>
+                        <th>STATUS INSPECT</th>
+                        <th>ACTION</th>
+                      </thead>
+                      <tbody id="view_detail_partial">
+                      </tbody>
+                    </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                
               </div>
             </div>
+          </div>
+        </div>
         
  
 
@@ -403,25 +403,28 @@ Inspect Qty :
 <script type="text/javascript" src="<?php echo base_url();?>template/plugins/new_js/jquery.mask.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>template/plugins/bootstable/bootstable.js" ></script>
 <script type="text/javascript" src="<?php echo base_url();?>template/dist/js/adminlte.min.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<!-- <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/highcharts/export-data.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/highcharts/accessibility.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.all.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/new_js/datatable/jquery.dataTables.js"></script>
+
 
 <script>
+
   function removeWhereCondition()
   {
       $(this).closest("tr").remove();
   }
 
-$.fn.datepicker.defaults.format = "yyyymmdd";
-$('#datepicker').datepicker({
-    startDate: '-90d',
-    todayHighlight: true,autoclose: true,
-});
+  $.fn.datepicker.defaults.format = "yyyymmdd";
+  $('#datepicker').datepicker({
+      startDate: '-90d',
+      todayHighlight: true,autoclose: true,
+  });
 
-$('#sandbox-container input').datepicker({ 
- });
+  $('#sandbox-container input').datepicker({ 
+  });
 
 
   var total_amount = function(){
@@ -447,14 +450,13 @@ $('#sandbox-container input').datepicker({
     $(row).remove();
     total_amount();
   }
-
-
    
   $(document).ready(function(){
     
     var PO_NO  = $('#PO_NO1').val();
     var FLAG   = '1';
   
+   
     function reload_random(){
         randomTable.ajax.reload(null, false);
     }
@@ -519,39 +521,52 @@ $('#sandbox-container input').datepicker({
           {
                 var html = '';
                 var tombol = '';
-                var i;
+                var i, j, k;
+                var jumlah = data.length
                 html +='heheheh'
-                for(i=0; i<data.length; i++){
+                for(i=0; i<26; i++){
                     html += '<tr>'+
-                            '<td>'+ data[i].inspector.name+'</td>'+
-                            '<td>'+ data[i].date_inspection+'</td>'
-                    if(data[i].assignments_items[i].inspection_result_text ==='Pass'){
-                        html += '<td bgcolor="#00FF00">'+ data[i].assignments_items[i].inspection_result_text+'</td>'
+                            '<td>'+ (i+1)+'</td>'+
+                            '<td>'+ data[i].inspector.name+'</td>' //ada
+                            // '<td>'+ data[i].date_inspection+'</td>'
+                    if(data[i].assignments_items[0].inspection_result_text ==='Pass'){ //ada
+                        html += '<td bgcolor="#00FF00">'+ data[i].assignments_items[0].inspection_result_text+'</td>'
+                    }else if(data[i].assignments_items[0].inspection_result_text ==='Fail'){
+                        html += '<td bgcolor="#FF0000">'+ data[i].assignments_items[0].inspection_result_text+'</td>'
                     }else{
-                        html += '<td bgcolor="#FF0000">'+ data[i].assignments_items[i].inspection_result_text+'</td>'
+                        html += '<td bgcolor="#FFFFFF">'+ data[i].assignments_items[0].inspection_result_text+'</td>'
                     }
-                    
-                    if(data[i].assignments_items[i].inspection_status_text === 'Accepted'){
-                        html += '<td bgcolor="#00FF00">'+ data[i].assignments_items[i].inspection_status_text+'</td>'
+                    if(data[i].assignments_items[0].inspection_status_text === 'Accepted'){ //ada
+                        html += '<td bgcolor="#00FF00">'+ data[i].assignments_items[0].inspection_status_text+'</td>'
+                    }else if(data[i].assignments_items[0].inspection_status_text === 'Reworked'){
+                        html += '<td bgcolor="#FFA500">'+ data[i].assignments_items[0].inspection_status_text+'</td>'
                     }else{
-                        html += '<td bgcolor="#FFA500">'+ data[i].assignments_items[i].inspection_status_text+'</td>'
+                        html += '<td bgcolor="#FFFFFF">'+ data[i].assignments_items[0].inspection_status_text+'</td>'
                     }
                             
                     html +='<td>'+ data[i].report_type.name+'</td>'+
-                           '<td>'+ data[i].assignments_items[i].po_line.po.po_number+'</td>'+
-                           '<td>'+ data[i].assignments_items[i].inspection_completed_date+'</td>'+
-                           '<td>'+ data[i].assignments_items[i].po_line.qty+'</td>'+
-                           '<td>'+ data[i].assignments_items[i].qty_inspected+'</td>'+
+                           '<td>'+ data[i].assignments_items[0].po_line.po.po_number+'</td>'+
+                           '<td>'+ data[i].assignments_items[0].inspection_completed_date+'</td>'+
+                           '<td>'+ data[i].assignments_items[0].po_line.qty+'</td>'+
+                           '<td>'+ data[i].assignments_items[0].qty_inspected+'</td>'+
                            '<td>'+ data[i].id+'</td>'+
-                           '<td>'+ data[i].assignments_items[i].po_line.sku.item_name+'</td>'+
-                           '<td>Defect Rate</td>'+
-                           '<td>'+ data[i].assignments_items[i].po_line.sku.sku_attribute2+'</td>'+
-                           '<td>View</td>'+
+                          //  '<td>'+ data[i].assignments_items[0].po_line.sku.item_name+'</td>'+
+                          //  '<td>Defect Rate</td>'+
+                          //  '<td>'+ data[i].assignments_items[0].po_line.sku.sku_attribute2+'</td>'+
+                           '<td><a href="'+data[i].report_url+'" target="_blank">View</a></td>'+
                            '</tr>'
                    
                     $('#pivot88tracking').html(html);
                 }
-
+                $('#pivot88table').DataTable({
+                  "paging": false,
+                  "lengthChange": false,
+                  "searching": false,
+                  "ordering": true,
+                  "info": true,
+                  "autoWidth": false,
+                  "responsive": true,
+                });
                 
             }
 
@@ -570,9 +585,16 @@ $('#sandbox-container input').datepicker({
           success : function(data){
               var html = '';
               var i;
+              
+              
               html +='<tr><td colspan="8" bgcolor="aquamarine"> Inspection Inspector</td> </tr>';
               for(i=0; i<data.length; i++){
-                if ((data[i].LEVEL == 'II') && (data[i].LEVEL_USER == '2')){
+                // if(data[i].STAGE===5){
+                //   html += ''
+                // }
+                // else
+                // {
+                  if ((data[i].LEVEL == 'II') && (data[i].LEVEL_USER == '2')){
                   html += '<tr>'+
                             '<td>'+data[i].PO_NO+'</td>'+
                             '<td name="partial_">'+data[i].PARTIAL+'</td>'+
@@ -596,95 +618,28 @@ $('#sandbox-container input').datepicker({
                   if(data[i].LEVEL_USER == data[i].LEVEL_NOW){
                       
                       html +='<td style="text-align:right;">'
-                      if((data[i].STAGE !== null) && (data[i].STAGE !== '4')){
-                          html += '<a href="javascript:void(0);" class="btn btn-danger btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
-                      }
+                      if(!(data[i].STAGE)){
                           
-                          html += '<a href="javascript:void(0);" class="btn btn-info btn-sm part_edit" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">Edit</a>'+' '+
-                          '<a href="javascript:void(0);" class="btn btn-warning btn-sm item_random" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'">Random</a>'+
-                      '</td>';
-                    }else{
-                  html += '<td></td>'
-                }
-                  html +='</tr>';
-                  
-                }
-              }
-              html +='<tr><td colspan="8" bgcolor="palegreen"> Inspection Third Party</td> </tr>';
-              for(i=0; i<data.length; i++){
-                if ((data[i].LEVEL == 'II') && (data[i].LEVEL_USER == '3')){
-                  html += '<tr>'+
-                            '<td>'+data[i].PO_NO+'</td>'+
-                            '<td name="partial_">'+data[i].PARTIAL+'</td>'+
-                            '<td name="qty_partial_">'+data[i].QTY+'</td>'+
-                            '<td name="inspect_date">'+data[i].INSPECT_DATE+'</td>'+
-                            '<td name="inspect_date">'+data[i].INSPECTOR+'</td>';
-                  
-                  if(!data[i].BANYAK){
-                    html += '<td></td>';
+                          html += ' <a href="javascript:void(0);" class="btn btn-info btn-sm part_edit" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">Edit</a>'+' '+
+                                  ' <a href="javascript:void(0);" class="btn btn-warning btn-sm item_random" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'">Random</a>'+'   '        
+                          html += ' <a href="javascript:void(0);" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</a>'+'  '
+                      }else if(data[i].STAGE == '5'){
+                         html += '';
+                      }
+                      else if((data[i].STAGE <= '4')){
+                        html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
+                        html += '<a href="javascript:void(0);" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</a>'+'  '
+                       }   
+                          
+                      html += '</td>';
                   }else{
-                    html += '<td><a href="javascript:void(0);" class="view_detail" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">'+data[i].BANYAK+'</a></td>';
-                  }
-                  if(data[i].INSPECT_RESULT=='N'){
-                    html += '<td style="color:red"><b>REJECT</td>';
-                  }else if(data[i].INSPECT_RESULT=='Y'){
-                    html += '<td style="color:green"><b>RELEASE</td>';
-                  }else if(!data[i].INSPECT_RESULT){
-                    html += '<td style="color:green"><b></td>';
-                  }
-                      
-                  if(data[i].LEVEL_USER == data[i].LEVEL_NOW){
-                      
-                      html +='<td style="text-align:right;">'+
-                          '<a href="javascript:void(0);" class="btn btn-info btn-sm part_edit" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">Edit</a>'+' '+
-                          '<a href="javascript:void(0);" class="btn btn-warning btn-sm item_random" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'">Random</a>'+
-                      '</td>';
-                    }else{
                   html += '<td></td>'
                 }
                   html +='</tr>';
                   
                 }
-              }
-              html +='<tr><td colspan="8" bgcolor="turquoise">Inspection Validator</td> </tr>';
-              for(i=0; i<data.length; i++){
+                // }
                
-                if (data[i].LEVEL == 'S4'){
-                  html += '<tr>'+
-                            '<td>'+data[i].PO_NO+'</td>'+
-                            '<td name="partial_">'+data[i].PARTIAL+'</td>'+
-                            '<td name="qty_partial_">'+data[i].QTY+'</td>'+
-                            '<td name="inspect_date">'+data[i].INSPECT_DATE+'</td>'+
-                            '<td name="inspect_date">'+data[i].INSPECTOR+'</td>';
-                  
-                  if(!data[i].BANYAK){
-                    html += '<td></td>';
-                  }else{
-                    html += '<td><a href="javascript:void(0);" class="view_detail"  data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">'+data[i].BANYAK+'</a></td>';
-                  }
-                  if(data[i].INSPECT_RESULT=='N'){
-                    html += '<td style="color:red"><b>REJECT</td>';
-                  }else if(data[i].INSPECT_RESULT=='Y'){
-                    html += '<td style="color:green"><b>RELEASE</td>';
-                  }else if(!data[i].INSPECT_RESULT){
-                    html += '<td style="color:green"><b></td>';
-                  }
-                      
-                  if(data[i].LEVEL_USER == data[i].LEVEL_NOW){
-                      
-                      html +='<td style="text-align:right;">'+
-                          '<a href="javascript:void(0);" class="btn btn-info btn-sm part_edit" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">Edit</a>'+' '+
-                          '<a href="javascript:void(0);" class="btn btn-warning btn-sm item_random" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'">Random</a>'+
-                      '</td>';
-                    }else{
-                  html += '<td></td>'
-                }
-                  html +='</tr>';
-                  
-                }
-
-                
-
               }
               $('#showData').html(html);
           }
@@ -701,6 +656,7 @@ $('#sandbox-container input').datepicker({
         $('#result').html(html); 
         console.log(html) 
     }
+
 
     function display_detailPO(PO_NO){
       $.ajax({
@@ -770,11 +726,11 @@ $('#sandbox-container input').datepicker({
                 html +='<thead>'
                 html +='<tr>'
                
+                html +='<th scope="col" style="width: 100px">Booking Comment</th>'
                 html +='<th scope="col" style="width: 100px">Carton Number</th>'
-                html +='<th scope="col" style="width: 100px">Carton Qty</th>'
                 html +='<th scope="col" style="width: 100px">Size</th>'
                 html +='<th scope="col" style="width: 100px">Qty</th>'
-                html +='<th scope="col" style="width: 100px">Action</th>'
+                // html +='<th scope="col" style="width: 100px">Action</th>'
                 html +='</tr>'
                 html +='</thead>'
                 html +='<tbody>'
@@ -783,12 +739,13 @@ $('#sandbox-container input').datepicker({
                                 '<td hidden><input type="hidden" name="STAGE" value="2"><input type="hidden" name="PO[]" id="PO[]"  value="'+data[0].PO_NO+'" readOnly>'+data[0].PO_NO+'</td>'+
                                 '<td hidden><input type="hidden" name="partial[]" id="partial[]" value="'+data[0].PARTIAL+'" readOnly>'+data[0].PARTIAL+'</td>'+
                                 '<td hidden><input type="hidden" name="level[]" id="level[]" value="'+data[0].LEVEL+'" readOnly>'+data[0].LEVEL+'</td>'+
+                                '<td style="height:400px" rowspan="'+data.length+'"><textarea name="booking_comment" id="booking_comment" value="'+data[0].BOOKING_COMMENT+'">'+data[0].BOOKING_COMMENT+'</textarea></td>'+
                                 '<td style="height:400px" rowspan="'+data.length+'"><textarea name="ctn_no" id="ctn_no" value="'+data[0].CTN_NO+'">'+data[0].CTN_NO+'</textarea></td>'+
-                                '<td style="height:400px" rowspan="'+data.length+'"><textarea name="ctn_qty" id="ctn_qty" value="'+data[0].CTN_QTY+'">'+data[0].CTN_QTY+'</textarea></td>'+
+                                
                                 '<td><input type="text"  name="size[]" id="size[]" value="'+data[0].SIZE+'"></td>'+
                                 '<td><input type="text" class="amount" name="qty[]" id="qty[]" value="'+data[0].QTY+'" ></td>';
 
-                html +=         "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
+                // html +=         "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
                 html +=     '</tr>';
                 for(i=1; i<data.length; i++){
                     html += '<tr id="row'+i+'">'+
@@ -798,7 +755,7 @@ $('#sandbox-container input').datepicker({
                                 '<td><input type="text"  name="size[]" id="size[]" value="'+data[i].SIZE+'"></td>'+
                                 '<td><input type="text" class="amount" name="qty[]" id="qty[]" value="'+data[i].QTY+'" ></td>';
 
-                    html +=     "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
+                    // html +=     "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
                     html +=     '</tr>';
                       
                 }
@@ -815,7 +772,7 @@ $('#sandbox-container input').datepicker({
                 
                 $('#randomTable').html(html);
                 $('#tombolSave').html(tombol);
-                
+                total_amount();
 
                 $('.amount').keyup(function(){
                     total_amount();
@@ -843,11 +800,23 @@ $('#sandbox-container input').datepicker({
           dataType: "JSON",
           success: function(data)
           {
-              // // cekdata()
-              // // alert(data);
-              // location.href = data.url;
-              simpandata()
-              // console.log(data)
+              
+              location.href = data.url;
+              // simpandata()
+              
+          },
+      });
+    }
+
+    function deletePO(PO_NO, PARTIAL){
+      $.ajax({
+          type      : "POST",
+          url       : "<?php echo site_url('C_aql_pivot/deletePO')?>",
+          dataType  : "JSON",
+          data      : {PO_NO:PO_NO , PARTIAL:PARTIAL},
+          success   : function(data)
+          {
+            
           },
       });
     }
@@ -864,10 +833,8 @@ $('#sandbox-container input').datepicker({
           dataType: "JSON",
           success: function(data)
           {
-              // // cekdata()
-              // // alert(data);
               location.href = data.url;
-              // console.log(data)
+              
           },
       });
     }
@@ -880,7 +847,6 @@ $('#sandbox-container input').datepicker({
         chart_rework(PO_NO_)
         chart_endline(PO_NO_)
         chart_aql(PO_NO_)
-
     });
 
     // $('.goToPage').on('click',function(){
@@ -890,7 +856,7 @@ $('#sandbox-container input').datepicker({
         var LEVEL       =  $(this).attr("data-LEVEL");
         var STAGE       =  $(this).attr("data-STAGE");
         var REMARK      =  $(this).attr("data-REMARK");
-        var LEVEL_USER =  $(this).attr("data-LEVEL_USER");
+        var LEVEL_USER  =  $(this).attr("data-LEVEL_USER");
         
         $.ajax({
             type      : "POST",
@@ -907,14 +873,14 @@ $('#sandbox-container input').datepicker({
     })
 
 
-    $('#clear_textarea').on('click', function(){
-        var html=''
-        html += 'Inspector : \n'+
-                'Booking Comment : \n'+
-                'Inspect Qty : '
+    // $('#clear_textarea').on('click', function(){
+    //     var html=''
+    //     html += 'Inspector : \n'+
+    //             'Booking Comment : \n'+
+    //             'Inspect Qty : '
 
-        $('#textarea_clear').val(html);
-    })
+    //     $('#textarea_clear').val(html);
+    // })
 
     $(document).on('click','#submitPartial',function(){
         var PO_NO       = $('#PO_NO').val();
@@ -930,8 +896,7 @@ $('#sandbox-container input').datepicker({
             dataType  : "json",
             success   :function(data)
             {
-              // display_detailPO(PO_NO);				
-              show_product(PO_NO)
+                show_product(PO_NO)
             }
         });
     });
@@ -989,8 +954,6 @@ $('#sandbox-container input').datepicker({
         var PARTIAL     = $(this).attr("data-PARTIAL");
         var level       = $(this).attr("data-LEVEL");
         var level_user  = $(this).attr("data-LEVEL_USER");
-   
-     
         $.ajax({
             type      : "POST",
             url       : "<?php echo site_url('C_aql_pivot/view_detail_per_partial')?>",
@@ -1014,11 +977,7 @@ $('#sandbox-container input').datepicker({
                                 
                     html += '<td><button type="button" class="btn btn-warning btn-xs view"  data-PO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-REMARK="'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'">View Report</button> ';
                     html += '<button type="button" class="btn btn-info btn-xs view_ic"  data-PO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-REMARK="'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'">View IC</button></td>';
-                    
-                      //  data-PO_NO='"+data[i].PO_NO+""' 
-                       //data-Partial='"+data[i].PARTIAL+'" data-SIZE="'+data[i].SIZE+'" qty_asli = "'+QTY+'" level="'+LEVEL+'">
-                                              
-                       html +=     '</tr>';
+                    html += '</tr>';
                       
                 }
                 $('#view_detail_partial').html(html); 
@@ -1027,27 +986,43 @@ $('#sandbox-container input').datepicker({
         });
     });
 
+    $(document).on('click','.deletePO', function(){
+        var PO_NO   = $(this).attr("data-PO_NO");
+        var PARTIAL = $(this).attr("data-PARTIAL");
+        Swal.fire({
+            title: 'Are you sure to delete this data?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deletePO(PO_NO, PARTIAL)
+                show_product(PO_NO)
+            }
+        })
+  });
+
  $(document).on('click','.view', function(){
-    var PO_NO       = $(this).attr("data-PO");
-    var PARTIAL     = $(this).attr("data-PARTIAL");
-    var REMARK      = $(this).attr("data-REMARK");
-    var LEVEL       = $(this).attr("data-LEVEL");
-    var LEVEL_USER  = $(this).attr("data-LEVEL_USER");
-    var href //= "http://10.10.40.42:81/qip2/index.php/C_aql_pivot/report_inspect/0126558243/1/5/II"
-    
-    $.ajax({
-        url : "<?php echo site_url('C_aql_pivot/report_')?>",
-        method:"POST",
-        data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
-        dataType: "JSON",
-        success:function(data){
-            console.log(data.url)
-            // href = data.url
-            // location.href = data.url;
-            window.open(data.url);
-          }
-    });
-    
+      var PO_NO       = $(this).attr("data-PO");
+      var PARTIAL     = $(this).attr("data-PARTIAL");
+      var REMARK      = $(this).attr("data-REMARK");
+      var LEVEL       = $(this).attr("data-LEVEL");
+      var LEVEL_USER  = $(this).attr("data-LEVEL_USER");
+      var href //= "http://10.10.40.42:81/qip2/index.php/C_aql_pivot/report_inspect/0126558243/1/5/II"
+      
+      $.ajax({
+          url : "<?php echo site_url('C_aql_pivot/report_')?>",
+          method:"POST",
+          data: {PO_NO:PO_NO , PARTIAL:PARTIAL, LEVEL:LEVEL, REMARK:REMARK, LEVEL_USER:LEVEL_USER},
+          dataType: "JSON",
+          success:function(data){
+              console.log(data.url)
+              window.open(data.url);
+            }
+      });
   });
 
   $(document).on('click','.view_ic', function(){
@@ -1070,8 +1045,7 @@ $('#sandbox-container input').datepicker({
                 window.open(data);
              }
         });
-        
-      });
+    });
 
     $('#random').on('click','.editRandom',function(){
         var PO        = $(this).attr('data-PO_NO');
@@ -1099,11 +1073,11 @@ $('#sandbox-container input').datepicker({
 
 
     function deleteRandom() { 
-            $("#size").remove(); 
+        $("#size").remove(); 
     } 
 
     $('deleteRowRandom').on('click',function(){
-      deleteRandom();
+        deleteRandom();
     })
 
     $(document).on('click','.item_random',function(){
@@ -1118,7 +1092,7 @@ $('#sandbox-container input').datepicker({
     });
 
     $(document).on('click','#randomRandom',function(){
-      simpandata_random()
+        simpandata_random()
     })
 
    

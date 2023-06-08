@@ -44,52 +44,94 @@ class C_Pivot_validation extends CI_Controller {
 		// $this->load->view('template/footer');
 	}
 
-	public function validation($po, $partial, $remark, $level, $user){
+	public function validation($po, $partial, $level, $user){
 		sesscheck();
-		$level = $this->session->userdata('LEVEL');
-		$datasub['username'] = $this->session->userdata('USERNAME');
-		$datasub['tingkat'] = $this->session->userdata('LEVEL');
-		if (($level == 2) ||($level == 1)){
-			$datasub['formtitle'] = "AQL INPUT INSPECTOR";
-		}else if ($level == 3){
-			$datasub['formtitle'] = "AQL INPUT THIRD PARTY";
-		}else if ($level == 6){
-			$datasub['formtitle'] = "AQL INPUT VALIDATOR";
-		}
+		$level 					= $this->session->userdata('LEVEL');
+		$datasub['username'] 	= $this->session->userdata('USERNAME');
+		$datasub['tingkat'] 	= $this->session->userdata('LEVEL');
+		$datasub['formtitle'] 	= "AQL INSPECTION VALIDATION";
+			
         // data tampil
 		$subdata['PO_NO'] 		= $po;
 		$subdata['PARTIAL'] 	= $partial;
 		$subdata['LEVEL'] 		= 'II';
-		$subdata['REMARK'] 		= $remark;
+		// $subdata['REMARK'] 		= $remark;
 		$subdata['LEVEL_USER'] 	= $user;
-		$subdata['ARTICLE']		= $this->M_validation->get_article($po);
-
-		$subdata['a01'] 		= $this->M_validation->apps_a01($po);
-        $subdata['cpsia'] 		= $this->M_validation->apps_cpsia($po);
-        $subdata['fgt'] 		= $this->M_validation->fgt($po);
-        $subdata['cma'] 		= $this->M_validation->cma($po);
-
-		$subdata['product'] 	= $this->M_validation->disp_product($po);
-
-        // /data tampil
-		$subdata['sub']= 1;
-		$subdata['inspector'] = $this->M_aql_pivot->inspector_list($level);
 		$this->load->view('template/header', $datasub);
-		$this->load->view('QIP/Inspection/template_baru/pivot/validation', $subdata);
+		$subdata['ARTICLE']		= $this->M_validation->get_article($po);
+		$subdata['sub']			= 1;
+		$subdata['inspector'] 	= $this->M_aql_pivot->inspector_list($level);
+		$cek_val				= $this->M_validation->cek_val($po, $partial,  $level='II', $user)->num_rows();
+		
+		if($cek_val == '0'){
+			$subdata['a01'] 		= $this->M_validation->apps_a01($po);
+			$subdata['cpsia'] 		= $this->M_validation->apps_cpsia($po);
+			$subdata['fgt'] 		= $this->M_validation->fgt($po);
+			$subdata['cma'] 		= $this->M_validation->cma($po);
+			$subdata['product'] 	= $this->M_validation->disp_product($po);
+			$subdata['flag']		= 1;
+			$this->load->view('QIP/Inspection/template_baru/pivot/validation', $subdata);
+		}else{
+			$subdata['mcs'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='1');
+			$subdata['shas'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='2');
+			$subdata['a01'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='3');
+			$subdata['cpsia'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='4');
+			$subdata['customer'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='5');
+			$subdata['fg'] 			= $this->M_validation->val_result($po, $partial, $level, $user, $code='6');
+			$subdata['warehouse'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='7');
+			$subdata['fgt'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='8');
+			$subdata['cma'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='9');
+			$subdata['uv_c'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='10');
+			$subdata['anti_mold'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='11');
+			$subdata['visual'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='12');
+			$subdata['factory'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='13');
+			$subdata['slip_on'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='14');
+			$subdata['moisture'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='15');
+			$subdata['flag']		= 2;
+			
+			$this->load->view('QIP/Inspection/template_baru/pivot/validation_available', $subdata);
+			
+		}
+		$this->load->view('QIP/Inspection/template_baru/pivot/validation_script');
 		$this->load->view('template/footer');
+		
     }
 
 	public function save_validation(){
-		$po                 = $_POST['PO_NO'];
-        $partial            = $_POST['PARTIAL'];
-        $remark             = $_POST['REMARK'];
-        $level              = $_POST['LEVEL'];
-        $level_user         = $_POST['LEVEL_USER'];
+		// $po                 = $_POST['PO_NO'];
+        // $partial            = $_POST['PARTIAL'];
+        // $level              = $_POST['LEVEL'];
+        // $level_user         = $_POST['LEVEL_USER'];
 
-		$data 				= $this->M_validation->save_validation();
-		$stage				= '3';
-		$update_stage 		= $this->M_validation->edit_stage($po, $partial, $level, $level_user, $remark, $stage);
+		// $data 				= $this->M_validation->save_validation();
+		// $stage				= '3';
+		// $update_stage 		= $this->M_validation->edit_stage($po, $partial, $level, $level_user, $stage);
+		$this->save_first_data();
+		
+	}
 
+	function save_first_data(){
+		sesscheck();
+		$po             = $_POST['PO_NO'];
+        $partial        = $_POST['PARTIAL'];
+        $level          = $_POST['LEVEL'];
+        $level_user     = $_POST['LEVEL_USER'];
+		$stage	 		= '3';
+		$INSPECTOR 		= $this->session->userdata('USERNAME');
+		
+		$cek_first		= $this->M_validation->cek_first_data($po, $partial, $level, $level_user);
+		if($cek_first->num_rows() == 0){
+			$first_data 	= $this->M_aql_pivot->save_first_data($po, $partial, $level, $stage, $level_user, $INSPECTOR);
+		}
+		$cek_first		= $this->M_validation->cek_first_data($po, $partial, $level, $level_user);
+		$data_first 	= $cek_first->row_array();
+		$remark     	= $data_first['REMARK'];
+		$data 			= $this->M_validation->save_validation($remark);
+		$update_stage 	= $this->M_validation->edit_stage($po, $partial, $level, $level_user, $remark, $stage);
+		
+		// $url 			= base_url().'index.php/c_pivot_validation/validation/'.$po_edit1.'/'.$partial_edit1.'/'.$remark.'/'.$level_edit1.'/'.$level_user;
+		
+		// echo json_encode(array('status'=>'simpan berhasil', 'url'=>$url));
 		$url 				= base_url().'index.php/C_aql_reject/add_reject/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
 		echo json_encode(array('status'=>'simpan berhasil', 'url'=>$url));
 	}
@@ -98,7 +140,6 @@ class C_Pivot_validation extends CI_Controller {
 		$data 			= [];
 		$PO_NO1 		= $_POST['PO_NO1'];
 		$PARTIAL1 		= $_POST['PARTIAL1'];
-		$REMARK1 		= $_POST['REMARK1'];
 		$LEVEL1 		= $_POST['LEVEL1'];
 		$LEVEL_USER1 	= $_POST['LEVEL_USER1'];
 		$ARTICLE1 		= $_POST['ARTICLE1'];
@@ -111,7 +152,7 @@ class C_Pivot_validation extends CI_Controller {
 		for($i = 0; $i<$count; $i++){
 			if(!empty($_FILES['files']['name'][$i])){
 
-				$_FILES['file']['name'] 	= $_FILES['files']['name'][$i];
+				$_FILES['file']['name'] 	= preg_replace('/\s+/', '_', $_FILES['files']['name'][$i]);//$_FILES['files']['name'][$i];
 				$_FILES['file']['type'] 	= $_FILES['files']['type'][$i];
 				$_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
 				$_FILES['file']['error'] 	= $_FILES['files']['error'][$i];
@@ -120,7 +161,7 @@ class C_Pivot_validation extends CI_Controller {
 				$config['upload_path'] 		= 'template/images/aql_image/'; 
 				$config['allowed_types'] 	= 'jpg|jpeg|png|gif';
 				$config['max_size'] 		= '5000'; // max_size in kb
-				$config['file_name'] 		= $_FILES['files']['name'][$i];
+				$config['file_name'] 		= preg_replace('/\s+/', '_', $_FILES['files']['name'][$i]);
 
 				$lokasi = $config['upload_path'] . basename($config['file_name']);
 		
@@ -129,30 +170,33 @@ class C_Pivot_validation extends CI_Controller {
 					unlink($lokasi);
 				}			
 				
+				$temp = explode(".", $_FILES["file"]["name"][$i]);
+				$newfilename = round(microtime(true)) . '.' .basename($config['file_name']);
+				move_uploaded_file($_FILES["file"]["tmp_name"], $config['upload_path'] . basename($config['file_name']));
 				if($this->upload->do_upload('file')){
 					$uploadData = $this->upload->data();
 					$filename = $uploadData['file_name'];
 					$data['totalFiles'][] = $filename;
 				}
+				// print_r(basename($config['file_name']));
 			}
 		}
 		$index = 0; 
 		if(is_array($PO_NO1) || is_object($PO_NO1))
 		{
 			foreach($PO_NO1 as $dataPO){ 
-				$nama_foto = preg_replace('/\s+/', '_', $photo_name);
-				
+				$nama_foto = preg_replace('/\s+/', '_', $_FILES['files']['name']);
 				//savedata
 				if($_FILES['files']['name'][$index]!=''){
 					array_push($datas, array(
 						'PO_NO' 		=> $dataPO,
 						'PARTIAL' 		=> $PARTIAL1[$index],
-						'REMARK' 		=> $REMARK1[$index],
 						'LEVEL' 		=> $LEVEL1[$index],
 						'LEVEL_USER' 	=> $LEVEL_USER1[$index],
 						'ARTICLE' 		=> $ARTICLE1[$index],
 						'PHOTO_CODE' 	=> $picture_code[$index],
 						'PHOTO_NAME' 	=> $nama_foto[$index],
+						// 'PHOTO_CODE'	=> $_FILES['files']['name'][$index],
 						'SEQ' 			=> $picture_code[$index]
 					));
 					$index++;
@@ -176,9 +220,49 @@ class C_Pivot_validation extends CI_Controller {
 		echo json_encode($data);
 	}
 
+	public function disp_measurements(){
+		$po                 = $_POST['PO_NO'];
+        $partial            = $_POST['PARTIAL'];
+        $level              = $_POST['LEVEL'];
+        $level_user         = $_POST['LEVEL_USER'];
+		$data				= $this->M_validation->disp_measurements($po, $partial, $level, $level_user);
+		echo json_encode($data);
+	}
+
 	public function image_product(){
 		$data = $this->M_validation->image_product();
 		
+		echo json_encode($data);
+	}
+
+	public function view_random(){
+		$PO_NO 		= $_POST['PO_NO'];
+		$PARTIAL 	= $_POST['PARTIAL']; 
+
+		$data 		= $this->M_validation->view_random($PO_NO, $PARTIAL);
+		echo json_encode($data);
+	}
+
+	public function update_random(){
+		$PO_NO 		= $_POST['PO_NO'];
+		$PARTIAL 	= $_POST['PARTIAL']; 
+		$SIZE 		= $_POST['SIZE'];
+		$VALUE 		= $_POST['VALUE'];
+
+		$data 		= $this->M_validation->update_random($PO_NO, $PARTIAL, $SIZE, $VALUE);
+		echo json_encode($data);
+	}
+
+	public function delete_display(){
+		$path 		= 'template/images/aql_image/'; 
+		$name 		= preg_replace('/\s+/', '_', $_POST['NAME']);
+		$lokasi 	= $path . $name;
+		
+		if (file_exists($lokasi)) {
+			unlink($lokasi);
+		}			
+
+		$data 		= $this->M_validation->delete_display();
 		echo json_encode($data);
 	}
 }

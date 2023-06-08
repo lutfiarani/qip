@@ -42,6 +42,7 @@ class C_Pivot_aql extends CI_Controller {
 		$this->load->view('template/footer');
 	}
 
+	
 	function get_data_po($po){
 		// sesscheck();
         $dataPO = $this->M_pivot_aql->get_data_po($po);

@@ -22,7 +22,7 @@ Highcharts.chart('container_aql', {
         enabled: false
     },
     tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: <b>{point.y} prs</b>'
     },
     accessibility: {
         point: {
@@ -40,30 +40,26 @@ Highcharts.chart('container_aql', {
         }
     },
     series: [{
-        name: 'Brands',
+        name: 'Qty',
         colorByPoint: true,
-        data: [{
-            name: 'Chrome',
-            y: 74.77,
-            sliced: true,
-            selected: true
-        },  {
-            name: 'Edge',
-            y: 12.82
-        },  {
-            name: 'Firefox',
-            y: 4.63
-        }, {
-            name: 'Safari',
-            y: 2.44
-        }, {
-            name: 'Internet Explorer',
-            y: 2.02
-        }, {
-            name: 'Other',
-            y: 3.28
-        }]
+      
+        <?php 
+            echo "data: [";
+            for ($i=0; $i<count($data); $i++){
+                
+            if ($i < count($data) - 1 ){
+                $name = "{name:'".$data[$i]['DEFECT_NAME']."',y:".$data[$i]['DEFECT']."},";
+            }
+            else{
+                $name = "{name:'".$data[$i]['DEFECT_NAME']."',y:".$data[$i]['DEFECT']."}";
+            }
+            echo $name;
+            // echo "{ y: ".$hasilData->QTY_SEKARANG.", color:'".$warna."'},";
+        }
+        echo "]";
+        ?>
     }]
 });
 
 </script>
+

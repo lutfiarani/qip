@@ -456,7 +456,15 @@ class M_aql_pivot extends CI_Model {
     }
 
     public function view_id_qc(){
-        $query = $this->db->query("SELECT ID, NIK FROM [QIP].[dbo].AQL_QIP_USER WITH (NOLOCK)");
+        // $query = $this->db->query("SELECT ID, NIK FROM [QIP].[dbo].AQL_QIP_USER WITH (NOLOCK)");
+        $qip = $this->load->database('qc', TRUE);
+        $query = $qip->query("select a.nik, k.nama, a.`password`, k.cell, k.posisi, k.gedung from qip_training.id as a
+        join  qip_training.karyawan as k
+        on a.nik = k.nik
+        where password is not null
+        and posisi = 'Assembly'
+        order by password
+        ");
 
         return $query->result_array();
     }
@@ -891,4 +899,12 @@ class M_aql_pivot extends CI_Model {
 		");
 	}
 
+
+    public function deletePO($PO, $PARTIAL){
+        $query = $this->db->query("EXEC [QIP].[DBO].[AQL_DELETE_PO] @PO_NO = '$PO', @PARTIAL = '$PARTIAL'");
+        return $query;
+        
+    }
+
+  
 }

@@ -1,0 +1,6 @@
+ttps://adidasstage4.pivot88.com/rest/operation/v1/inspection_reports/unique_key:hwi_aql_7
+
+
+report link : http://localhost/qip/index.php/C_aql_pivot/report_inspect/A131057385/1/2/II/2
+
+validation page : http://10.10.100.23/qip/index.php/c_pivot_validation/validation/A131057385/1/1/II/2

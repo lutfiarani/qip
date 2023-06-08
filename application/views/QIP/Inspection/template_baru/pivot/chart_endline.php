@@ -40,7 +40,7 @@ Highcharts.chart('container_endline', {
         }
     },
     series: [{
-        name: 'Brands',
+        name: 'Qty',
         colorByPoint: true,
       
         <?php 

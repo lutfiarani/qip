@@ -132,7 +132,7 @@ class C_Export extends CI_Controller {
 		$subdata['detail2'] = $this->M_Export->detail_size($po);
 		$subdata['detail3'] = $this->M_Export->detail_carton($po);
 		$subdata['detail4'] = $this->M_Export->last_carton($po);
-		$subdata['detail5'] = $this->M_Export->grey_carton($po);
+		$subdata['detail5'] = '';//$this->M_Export->grey_carton($po);
 
 		$this->load->view('template/header_awal');
 		$this->load->view('QIP/Export_Schedule/Detail_Export',$subdata);
@@ -147,7 +147,7 @@ class C_Export extends CI_Controller {
 		$subdata['detail2'] 	= $this->M_Export->detail_size($po);
 		$subdata['detail3'] 	= $this->M_Export->detail_carton($po);
 		$subdata['detail4'] 	= $this->M_Export->last_carton($po);
-		$subdata['detail5'] 	= $this->M_Export->grey_carton($po);
+		$subdata['detail5'] 	= '';//$this->M_Export->grey_carton($po);
 		$subdata['compliance'] 	= $this->M_Export->compliance($po);
 		$subdata['bonding'] 	= $this->M_Export->bonding($po);
 		$subdata['dev_stage'] 	= $this->M_Export->dev_stage($po);
@@ -663,7 +663,7 @@ class C_Export extends CI_Controller {
 		$subdata['detail2'] = $this->M_Export->detail_size($po);
 		$subdata['detail3'] = $this->M_Export->detail_carton($po);
 		$subdata['detail4'] = $this->M_Export->last_carton($po);
-		$subdata['detail5'] = $this->M_Export->grey_carton($po);
+		$subdata['detail5'] = '';//$this->M_Export->grey_carton($po);
 		
 		$this->load->view('template/header_awal');
 		$this->load->view('QIP/Export_Schedule/search_po2', $subdata);
