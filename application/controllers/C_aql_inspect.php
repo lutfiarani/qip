@@ -1476,9 +1476,9 @@ class C_aql_inspect extends CI_Controller {
 	}
 
 	public function list_import_pivot(){
-		sesscheck();
+		// sesscheck();
 		$draw 			= intval($this->input->get("draw"));
-		$start 			= intval($this->input->get("start"));
+		$start 			= intval($this->input->get("start")); 
         $length	 		= intval($this->input->get("length"));
         
        	$import_pivot  = $this->M_aql_inspect->list_import_pivot();
@@ -1486,8 +1486,7 @@ class C_aql_inspect extends CI_Controller {
 		$no            = $start;
 	
 		foreach ($import_pivot->result() as $A){
-           
-			$no++;
+            $no++;
 			$data[] = array(
 				$no,
 				$A->PO_NO,
@@ -1500,7 +1499,6 @@ class C_aql_inspect extends CI_Controller {
 				$A->GREY_CARTON,
 				$A->UPLOAD_DATE,
 				'<button type="button" class="btn btn-danger btn-xs delete"  data-ID="'.$A->ID_TRANSAKSI.'">Delete</button>'
-               
 			);
 		}
 

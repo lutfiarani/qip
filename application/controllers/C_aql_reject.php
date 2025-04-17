@@ -14,6 +14,7 @@ class C_aql_reject extends CI_Controller {
 		$this->load->model('M_aql_pivot');
         $this->load->model('M_aql_reject');
 		$this->load->model('M_validation');
+		$this->load->model('M_pivot_aql');
 		// $this->load->library('Excel');
 		// //sesscheck();
         
@@ -26,12 +27,23 @@ class C_aql_reject extends CI_Controller {
 //-------------------PAGE REJECT AQL----------------------------------
 	public function add_reject($po, $partial, $remark, $level, $level_user){
 		//sesscheck();
+		sesscheck();
 		$datasub['formtitle']="AQL REJECT INPUT";
 		$datasub['username'] = $this->session->userdata('USERNAME');
 		$datasub['tingkat'] = $this->session->userdata('LEVEL');
 		$subdata['sub']= 1;
 		$subdata['inspector'] = $this->M_aql_pivot->inspector_list($level_user);
 		$subdata['basic'] = $this->M_aql_pivot->aql_report_basic_info($po, $partial, $remark, $level, $level_user);
+		$po_trans = $this->M_aql_pivot->cek_po_trans($po);
+		$subdata['decoded_data']   = $this->M_pivot_aql->get_po_trans($po_trans->po);
+		$subdata['po'] = $po;
+		// if($subdata['basic']->COUNTRY == 'South Africa'){
+		// 	$subdata['decoded_data']   = $this->M_pivot_aql->get_po_trans($po);
+		// }else{
+		// 	$subdata['decoded_data']   = '';
+		// }
+		
+		// $this->load->view('display_data', $data);
 		$this->load->view('template/header', $datasub);
 		$this->load->view('QIP/Inspection/template_baru/pivot/add_reject', $subdata);
 		//Inspection\template_baru\Aql_Report
@@ -81,41 +93,47 @@ class C_aql_reject extends CI_Controller {
 	}
 
 
-       public function save_image(){
+    public function save_image(){
         //sesscheck();
 		$CODE           = $_POST['CODE'];
-        $REJECT_CODE    = $_POST['REJECT_CODE'];
-        $PO_NO          = $_POST['PO_NO'];
-        $PARTIAL        = $_POST['PARTIAL'];
-        $LEVEL_USER     = $_POST['LEVEL_USER'];
-        $REMARK         = $_POST['REMARK'];
-        $LEVEL          = $_POST['LEVEL'];
+		$REJECT_CODE    = $_POST['REJECT_CODE'];
+		$PO_NO          = $_POST['PO_NO'];
+		$PARTIAL        = $_POST['PARTIAL'];
+		$LEVEL_USER     = $_POST['LEVEL_USER'];
+		$REMARK         = $_POST['REMARK'];
+		$LEVEL          = $_POST['LEVEL'];
 
-        $_FILES['file']['name'] = $_FILES['files']['name'];
-        $_FILES['file']['type'] = $_FILES['files']['type'];
-        $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'];
-        $_FILES['file']['error'] = $_FILES['files']['error'];
-        $_FILES['file']['size'] = $_FILES['files']['size'];
+		$nama 						= uniqid(mt_rand(), true);//$_FILES['files']['name'][$i];
+		$extension					= pathinfo($_FILES['files']['name'], PATHINFO_EXTENSION);
+		$_FILES['file']['name'] 	= preg_replace('/\s+/', '_', $nama);//$_FILES['files']['name'][$i];
+		// $_FILES['file']['name'] 	= $_FILES['files']['name'];
+		$_FILES['file']['type'] 	= $_FILES['files']['type'];
+		$_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'];
+		$_FILES['file']['error'] 	= $_FILES['files']['error'];
+		$_FILES['file']['size'] 	= $_FILES['files']['size'];
 
-        $config['upload_path'] = 'template/images/aql_image/reject'; 
-        $config['allowed_types'] = 'jpg|jpeg|png|gif';
-        $config['max_size'] = '5000'; // max_size in kb
-        $config['file_name'] = $_FILES['files']['name'];
+		$config['upload_path'] 		= 'template/images/aql_image/reject/'; 
+		$config['allowed_types'] 	= 'jpg|jpeg|png|gif';
+		$config['max_size'] 		= '1000000'; // max_size in kb
+		$config['file_name'] 		=  $nama . '.' . $extension;//$_FILES['files']['name'];
 
-        $lokasi = $config['upload_path'] . basename($config['file_name']);
+		$lokasi = $config['upload_path'] . basename($config['file_name']);
 
-        $this->load->library('upload',$config); 
-        if (file_exists($lokasi)) {
-            unlink($lokasi);
-        }			
-        
-        if($this->upload->do_upload('file')){
-            $uploadData = $this->upload->data();
-            $filename = $uploadData['file_name'];
-        }
-		$column = "REJECT_IMG";
-		$update_reject = $this->M_aql_reject->update_reject($PO_NO, $PARTIAL, $LEVEL, $LEVEL_USER, $REMARK, $REJECT_CODE, $CODE, $column, $filename);
-	
+		$this->load->library('upload',$config); 
+		if (file_exists($lokasi)) {
+			unlink($lokasi);
+		}			
+		move_uploaded_file($_FILES["file"]["tmp_name"], $config['upload_path'] . basename($config['file_name']));
+		if($this->upload->do_upload('file')){
+			$uploadData = $this->upload->data();
+			$filename = $uploadData['file_name'];
+		}
+
+		if(($extension != null)||($extension != '')){
+			$column = "REJECT_IMG";
+			$update_reject = $this->M_aql_reject->update_reject($PO_NO, $PARTIAL, $LEVEL, $LEVEL_USER, $REMARK, $REJECT_CODE, $CODE, $column, basename($config['file_name']));
+		}
+			
 		echo json_encode('berhasil');
 	}
 
@@ -145,23 +163,24 @@ class C_aql_reject extends CI_Controller {
 		$level 		= $this->input->post('LEVEL'); 
 		// $level_user	= $this->session->userdata('LEVEL');
 		$level_user = $this->input->post('LEVEL_USER'); 
+		$inspector 	= $this->session->userdata('USERNAME');
 
-        $cek_second = $this->M_aql_pivot->cek_second_data($po, $partial, $level, $remark, $level_user);
+        // $cek_second = $this->M_aql_pivot->cek_second_data($po, $partial, $level, $remark, $level_user);
 
-        if ($cek_second->num_rows() > 0 ){
+        // if ($cek_second->num_rows() > 0 ){
            
-            $url 	= base_url().'index.php/C_aql_pivot/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
+        //     $url 	= base_url().'index.php/C_aql_pivot/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
             
 
-        }else{
+        // }else{
 
-            $save_second 		= $this->M_aql_reject->save_second_data($po, $partial, $level, $remark, $level_user);
+            $save_second 		= $this->M_aql_reject->save_second_data($po, $partial, $level, $remark, $level_user, $inspector); 
             $stage				= '4';
 		    $update_stage 		= $this->M_validation->edit_stage($po, $partial, $level, $level_user, $remark, $stage);
 			$url 	        	= base_url().'index.php/C_aql_pivot/report_inspect/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
             
 
-        }
+        // }
         echo json_encode(array('status'=>'simpan berhasil', 'url'=>$url));
         // echo json_encode($url); 
 	}

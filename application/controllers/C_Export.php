@@ -25,45 +25,44 @@ class C_Export extends CI_Controller {
         date_default_timezone_set('Asia/Jakarta');
        
 		$this->load->model('M_Export');
+		$this->load->model('M_pivot');
 		// $this->load->library('Excel');
         
     }
 	public function index(){
 		$this->export();
-	}
+	} 
 
 	public function export()
 	{
         $data['pagetitle']="EXPORT SCHEDULE";
-		// $tgl = '2020-08-18';
+		// // $tgl = '2020-08-18';
 		$tgl = date('Y-m-d');
-		$tgl_lama = '2020-09-03';
-		//$subdata['container'] = count($ana);
-		if (($this->input->post('EXPORT_DATE', true)== $tgl)||($this->input->post('EXPORT_DATE', true)=== NULL)){
+		// $tgl_lama = '2020-09-03';
+		// //$subdata['container'] = count($ana);
+		// if (($this->input->post('EXPORT_DATE', true)== $tgl)||($this->input->post('EXPORT_DATE', true)=== NULL)){
 			
-			$subdata['ana']= $this->M_Export->total_container_today($tgl);
-			$subdata['query'] = $this->M_Export->tampil_exportss();
+		// 	$subdata['ana']= $this->M_Export->total_container_today($tgl);
+		// 	$subdata['query'] = $this->M_Export->tampil_exportss();
 
-		} elseif($this->input->post('EXPORT_DATE', true) <= $tgl_lama){
+		// } elseif($this->input->post('EXPORT_DATE', true) <= $tgl_lama){
 
-			$tgl = $this->input->post('EXPORT_DATE', true);
-			$subdata['ana']= $this->M_Export->total_container_lama($tgl);
-			$subdata['query'] = $this->M_Export->export_schedule_lama($tgl);
+		// 	$tgl = $this->input->post('EXPORT_DATE', true);
+		// 	$subdata['ana']= $this->M_Export->total_container_lama($tgl);
+		// 	$subdata['query'] = $this->M_Export->export_schedule_lama($tgl);
 
-		}
-		else{
+		// }
+		// else{
 
-			$tgl = $this->input->post('EXPORT_DATE', true);
-			$subdata['ana']= $this->M_Export->total_container($tgl);
-			$subdata['query'] = $this->M_Export->export_schedule($tgl);
-		}
+		// 	$tgl = $this->input->post('EXPORT_DATE', true);
+		// 	$subdata['ana']= $this->M_Export->total_container($tgl);
+		// 	$subdata['query'] = $this->M_Export->export_schedule($tgl);
+		// }
 		
 		$subdata['formtitle'] = "EXPORT SCHEDULE TANGGAL ".$tgl;
 		
-		$subdata['action']= site_url('C_Export/index');
-		$data['formtitle']="TODAY CONTAINER LOADING SCHEDULE <br>".$tgl;
-		// $data['content'] = $this->load->view('QIP/Export_Schedule/Export_schedule_coba',$subdata,true);
-		// $this->load->view('template2',$data);
+		// $subdata['action']= site_url('C_Export/index');
+		// $data['formtitle']="TODAY CONTAINER LOADING SCHEDULE <br>".$tgl;
 		$this->load->view('template/header_awal', $data);
 		$this->load->view('QIP/Export_Schedule/Export_schedule_coba',$subdata);
 		$this->load->view('template/footer');
@@ -86,19 +85,38 @@ class C_Export extends CI_Controller {
 		echo $this->M_Export->country($id);
     }
 
+	function export_(){
+		$tanggal    = $this->input->post('export_date');
+        $country    = $this->input->post('country');
+        $factory    = $this->input->post('factory');
+		$hari_ini	= date('Y-m-d');
+
+		// if($tanggal == $hari_ini){
+		// 	$export 	= $this->M_Export->tampil_exportss($factory, $country);
+		// }else{
+		// 	$export		= $this->M_Export->export_schedule($tanggal, $factory, $country);
+		// }
+
+		$export 	= $this->M_Export->tampil_exportss($tanggal ,$factory, $country);
+		
+		$container 	= $this->M_Export->total_container($tanggal);
+		
+		echo json_encode(array('container'=>$container, 'export'=> $export));
+	}
 	
 
 
 	public function admin()
 	{
+		$country ='';
 		$level = $this->session->userdata('LEVEL');
-		if($level == 1){
+		if(($level == 1)||($level == 2)){
 			$factory = $this->session->userdata('FACTORY');
 			$datasub['formtitle']="EXPORT SCHEDULE";
 			$tgl = date('Y-m-d');
 			if ( $this->input->post('EXPORT_DATE', true) == $tgl||($this->input->post('EXPORT_DATE', true)=== NULL)){
 				// $tgl = date('Y-m-d');
-				$subdata['query'] = $this->M_Export->tampil_exportss();
+				$subdata['query'] = $this->M_Export->tampil_exportss($tgl, $factory, $country);
 			} else{
 				$tgl = $this->input->post('EXPORT_DATE', true);
 				$subdata['query'] = $this->M_Export->export_schedule($tgl);
@@ -151,7 +169,8 @@ class C_Export extends CI_Controller {
 		$subdata['compliance'] 	= $this->M_Export->compliance($po);
 		$subdata['bonding'] 	= $this->M_Export->bonding($po);
 		$subdata['dev_stage'] 	= $this->M_Export->dev_stage($po);
-		$subdata['inspection'] 	= $this->M_Export->inspection($po);
+		// $subdata['inspection'] 	= $this->M_Export->inspection($po);
+		$subdata['inspection'] 	= array_values($this->M_pivot->get_po_pivot($po));
 		$subdata['production'] 	= $this->M_Export->production($po);
 		$subdata['costco'] 		= $this->M_Export->costco($po);
 		$subdata['export'] 		= $this->M_Export->export($po);
@@ -330,16 +349,25 @@ class C_Export extends CI_Controller {
 	}
 
 	public function list_po_import_validation(){
+		$factory 	= $this->input->post('factory');
+		$country 	= $this->input->post('country');
+		$tanggal    = date('Y-m-d');
+
 		$draw = intval($this->input->get("draw"));
 		$start = intval($this->input->get("start"));
 		$length = intval($this->input->get("length"));
 
-		$list = $this->M_Export->today_export();
+		$list = $this->M_Export->today_export($tanggal, $factory, $country);
 		// $list = $this->M_Export->export_schedule('2020-09-08');
 		$data = array();
 		$no = $start;
 		foreach($list->result() as $a){
 			$no++;
+			if(($a->COUNTRY == 'China')||($a->COUNTRY=='Japan')){
+				$button = '<button type="button" class="btn btn-info btn-xs po_status" id_export="'.$a->ID_EXPORT.'" po="'.$a->PO_NO.'" status="RELEASE">Validation Pass</button>';
+			}else{
+				$button = '';
+			}
 			$data[] = array(
 				
 				$a->CONTAINER,
@@ -354,26 +382,8 @@ class C_Export extends CI_Controller {
 				$a->LOAD_TYPE,					
 				$a->REMARK,
 				$a->STATUS_PO2,
-				'<button type="button" class="btn btn-success btn-xs po_status" id_export="'.$a->ID_EXPORT.'" po="'.$a->PO_NO.'" status="RELEASE">Release</button>
-					<button type="button" class="btn btn-danger btn-xs po_status" id_export="'.$a->ID_EXPORT.'" po="'.$a->PO_NO.'" status="REJECT">Reject</button>',
-				'<button type="button" class="btn btn-secondary btn-xs po_status" id_export="'.$a->ID_EXPORT.'"  po="'.$a->PO_NO.'" status="REPACKING">Repack</button>
-					<button type="button" class="btn btn-warning btn-xs po_status" id_export="'.$a->ID_EXPORT.'" po="'.$a->PO_NO.'" status="CANCEL">Cancel</button>'
-				// '<button type="button" class="btn btn-danger btn-xs po_delete"  id="'.$a->ID_EXPORT.'">Delete</button>
-				// 	<button type="button" class="btn btn-primary btn-xs po_edit" 
-				// 		container="'.$a->CONTAINER.'" 
-				// 		factory="'.$a->FACTORY.'" 
-				// 		cell="'.$a->CELL.'" 
-				// 		po_no="'.$a->PO_NO.'" 
-				// 		cust_no="'.$a->CUST_NO.'" 
-				// 		model_name="'.$a->MODEL_NAME.'" 
-				// 		country="'.$a->COUNTRY.'" 
-				// 		article="'.$a->ARTICLE.'" 
-				// 		qty="'.$a->QTY.'" 
-				// 		sdd="'.$a->SDD.'" 
-				// 		load_type="'.$a->LOAD_TYPE.'" 
-				// 		remark="'.$a->REMARK.'" 
-				// 		id="'.$a->ID_EXPORT.'">Edit</button>',
-							
+				'<button type="button" class="btn btn-warning btn-xs po_status" id_export="'.$a->ID_EXPORT.'" po="'.$a->PO_NO.'" status="CANCEL">Cancel</button>',
+				$button
 			);
 		}
 		$output = array(

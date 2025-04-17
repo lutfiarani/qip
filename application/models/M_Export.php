@@ -66,33 +66,23 @@ class M_Export extends CI_Model {
 
 	}
 
-	public function export_schedule($tgl){
-		// $query = $this->db->query(" 
-		// exec [QIP].[dbo].[EXPORT_SCHEDULE] @TANGGAL='$tgl'
-		// ");
-		// EXEC EXPORT_SCHEDULE_UPLOAD @TANGGAL='2020-08-25', @COUNTRY='', @FACTORY=''
-		$factory =  $this->input->post('factory');
-		$country = $this->input->post('country');
+	public function export_schedule($tgl, $factory, $country){
 		if (($factory === NULL) && ($country === NULL)){
-			$query = $this->db->query("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY=NULL, @COUNTRY=NULL");	
-			// $query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY=NULL, @COUNTRY=NULL");	
+			$query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD_NEW] @TANGGAL='$tgl', @FACTORY=NULL, @COUNTRY=NULL");	
 		}else if (($factory === NULL) && ($country)){
-			$query = $this->db->query("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY=NULL, @COUNTRY='$country'");	
-			// $query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY=NULL, @COUNTRY='$country'");	
+			$query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD_NEW] @TANGGAL='$tgl', @FACTORY=NULL, @COUNTRY='$country'");	
 		}elseif (($factory) && ($country === NULL)){
-			$query = $this->db->query("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY='$factory', @COUNTRY=NULL");	
-			// $query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY='$factory', @COUNTRY=NULL");	
+			$query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD_NEW] @TANGGAL='$tgl', @FACTORY='$factory', @COUNTRY=NULL");	
 		}else{ //(($factory) && ($country)){
-			$query = $this->db->query("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY='$factory', @COUNTRY='$country'");	
-			// $query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tgl', @FACTORY='$factory', @COUNTRY='$country'");	
+			$query = ("exec [QIP].[dbo].[EXPORT_SCHEDULE_UPLOAD_NEW] @TANGGAL='$tgl', @FACTORY='$factory', @COUNTRY='$country'");	
 		}
  
-		return $query->result_array();
-		// print_r($query->result_array());
+		return $this->db->query($query)->result();
 		// echo $query;
+		
 	}
 
-
+ 
 
 	public function export_schedule_lama($tgl){
 	
@@ -116,46 +106,36 @@ class M_Export extends CI_Model {
 		// echo $query;
 	}
 
-	public function tampil_exportss(){
-		$factory =  $this->input->post('factory');
-		$country = $this->input->post('country');
-		
+	public function tampil_exportss($tanggal, $factory, $country){
 		if (($factory === NULL) && ($country === NULL)){
-			$query = $this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='', @COUNTRY=''");	
-			// $query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='', @COUNTRY=''");	
+			$query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='', @COUNTRY=''");	
 		}else if (($factory === NULL) && ($country)){
-			$query = $this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='', @COUNTRY='$country'");	
-			// $query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='', @COUNTRY='$country'");	
+			$query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='', @COUNTRY='$country'");	
 		}elseif (($factory) && ($country === NULL)){
-			$query =$this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='$factory', @COUNTRY=''");	
-			// $query =("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='$factory', @COUNTRY=''");	
+			$query =("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='$factory', @COUNTRY=''");	
 		}else{ //(($factory) && ($country)){
-			$query = $this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='$factory', @COUNTRY='$country'");	
-			// $query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='$factory', @COUNTRY='$country'");	
+			$query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='$factory', @COUNTRY='$country'");	
 		}
 		
-		return $query->result_array();
-		// print_r($query->result_array());
+		return $this->db->query($query)->result();
 		// echo $query;
+		// print_r($query->result_array());
 	}
 
-	public function today_export(){
-		$factory =  $this->input->post('factory');
-		$country = $this->input->post('country');
+	public function today_export($tanggal, $factory, $country){
+		// $factory =  $this->input->post('factory');
+		// $country = $this->input->post('country');
 		
 		if (($factory === NULL) && ($country === NULL)){
-			$query = $this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='', @COUNTRY=''");	
-		
+			$query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='', @COUNTRY=''");	
 		}else if (($factory === NULL) && ($country)){
-			$query = $this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='', @COUNTRY='$country'");	
-		
+			$query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='', @COUNTRY='$country'");	
 		}elseif (($factory) && ($country === NULL)){
-			$query =$this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='$factory', @COUNTRY=''");	
-		
+			$query =("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='$factory', @COUNTRY=''");	
 		}else{ //(($factory) && ($country)){
-			$query = $this->db->query("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @FACTORY='$factory', @COUNTRY='$country'");	
+			$query = ("exec [QIP].[dbo].[DAILY_EXPORT_SCHEDULE_UPLOAD] @TANGGAL='$tanggal', @FACTORY='$factory', @COUNTRY='$country'");	
 		}
-		return $query;
+		return $this->db->query($query);
 		
 	}
 
@@ -185,7 +165,7 @@ class M_Export extends CI_Model {
 							FROM (
 								SELECT vbeln AS PO_NO,  MAX(ZNSEQ_C) as MaxList
 								FROM [MEShs].[dbo].[ZPP_IF_LOADPLAN] WITH (NOLOCK)
-								WHERE ZLPVER IN (SELECT MAX(ZLPVER) FROM [MEShs].[dbo].[ZPP_IF_LOADPLAN])
+								WHERE ZLPVER IN (SELECT MAX(ZLPVER) FROM [MEShs].[dbo].[ZPP_IF_LOADPLAN] WITH (NOLOCK))
 								GROUP BY vbeln
 								
 							) b
@@ -255,7 +235,7 @@ class M_Export extends CI_Model {
 		$query = $this->db->query("SELECT DISTINCT(CONTAINER) AS JUMLAH FROM [QIP].[DBO].[T_EXPORT_UPLOAD] WITH (NOLOCK) WHERE EXPORT_DATE='$date'");
 		
 		//return $query->row();
-		return $query->result_array();
+		return $query->result();
 		//print_r($ana);
 		}
 
@@ -295,48 +275,9 @@ class M_Export extends CI_Model {
 
 	public function detail_po($po){
 		$query = $this->db->query("
-		SELECT TOP 1 ZCCELL, A.PO_NO, A.MODEL_NAME, B.CUST_NO, B.COUNTRY AS DESTINATION, ART_NO, QTY_TOTAL, TOTAL_CARTON, PD, A.SDD, 
-		case when D.LOAD_TYPE is null then ''
-		   else D.LOAD_TYPE
-		   END AS TYPE, 
-		   case when CONTAINER is null then ''
-		   else CONTAINER
-		   END AS CONTAINER, 
-		   case when EXPORT_DATE is null then ''
-		   else EXPORT_DATE
-		   END AS EXPORT_DATE, 
-		   case when INSPECT_DATE is null then ''
-		   else INSPECT_DATE
-		   END AS INSPECT_DATE 
-		   , BALANCE  FROM 
-			  (
-				 SELECT ZCCELL, VBELN AS PO_NO, PRDHA_T AS MODEL_NAME, KWMENG AS QTY_TOTAL, ZLPDATE AS PD, ZPPSDD AS SDD 
-				 FROM [MEShs].[dbo].[ZPP_IF_LOADPLAN] WITH(NOLOCK)  WHERE VBELN='$po'
-				 
-			  ) AS A JOIN
-			  (
-				 SELECT O.FACTORY, N.PO_NO, N.COUNTRY, N.MODEL_NAME, N.DESTINATION, N.ART_NO, N.CUST_NO, N.TOTAL_QTY, N.TOTAL_CARTON, N.BALANCE FROM
-					(SELECT PO_NO, COUNTRY, MODEL_NAME, DESTINATION, ART_NO,CUST_NO,TOTAL_QTY,TOTAL_CARTON, SUM(CASE WHEN STATUS='WR' THEN 1 ELSE 0 END) AS BALANCE 
-					   FROM THWHHIS WITH (NOLOCK)
-					   WHERE PO_NO='$po'
-					   GROUP BY PO_NO, COUNTRY, MODEL_NAME, DESTINATION,  ART_NO,CUST_NO,TOTAL_QTY,TOTAL_CARTON) AS N
-					   JOIN
-					   (SELECT  DISTINCT LEFT(FACTOR_CODE,1) AS FACTORY, PO_NO FROM THWHHIS WITH(NOLOCK) WHERE PO_NO='$po'
-					   AND FACTOR_CODE IS NOT NULL) AS O
-					   ON N.PO_NO=O.PO_NO
-			  ) AS B ON A.PO_NO=B.PO_NO
-			  LEFT JOIN 
-			  (   
-				 SELECT DISTINCT PO_NO, INSPECT_DATE FROM QIP_AQL_DATA_FIRST WITH (NOLOCK)
-				 WHERE PO_NO ='$po'
-			  ) AS C ON A.PO_NO  = C.PO_NO
-			  LEFT JOIN (SELECT PO_NO, EXPORT_DATE,CONTAINER, LOAD_TYPE FROM [QIP].[DBO].[T_EXPORT_UPLOAD] WITH(NOLOCK)  
-			  WHERE PO_NO='$po' AND CONVERT(CHAR(8), UPLOAD_TIME, 112) =CONVERT(CHAR(8), GETDATE(), 112)) AS D
-			  ON A.PO_NO=D.PO_NO
-		
-				
-		
-		");
+					EXEC QIP.[dbo].[PO_DETAIL_INFO]	@PO_NO = '$po'
+			
+				");
 		return $query->result_array();
 
 	}
@@ -345,7 +286,7 @@ class M_Export extends CI_Model {
 	public function detail_size($po){
 		$query = $this->db->query("SELECT SIZE, SUM(LOT_QTY) AS TOTAL_QTY, SUM(LOT_QTY)-SUM(ASM_END_QTY) AS ASSY_BALANCE 
 				FROM THPRODHIS WITH (NOLOCK)
-				WHERE PO_NO='$po'
+				WHERE PO_NO IN (SELECT PO_NO FROM THPRODHISPO WITH (NOLOCK) WHERE AVBELN='$po')
 				GROUP BY SIZE order by SIZE ASC");
 		return $query->result_array();
 
@@ -362,12 +303,9 @@ class M_Export extends CI_Model {
 	}
 
 	public function last_carton($po){
-		$query = $this->db->query("SELECT TOP 5  B.CARTON_NO, A.LMNT_DTTM FROM
-		(SELECT QR_CODE, PO_NO, LMNT_DTTM FROM THWHLOG WITH (NOLOCK)
-		WHERE PO_NO='$po'
-		AND STATUS='WI') AS A JOIN THWHHIS AS B WITH (NOLOCK)
-		ON A.QR_CODE=B.QR_CODE
-		ORDER BY A.LMNT_DTTM DESC");
+		$query = $this->db->query("
+				EXEC QIP.dbo.LAST_CARTON_INFO @PO_NO = '$po'
+		");
 		return $query->result_array();
 	}
 
@@ -506,7 +444,7 @@ class M_Export extends CI_Model {
 		$factory = $this->input->post('factory');
 		$po_date = $this->input->post('po_date');
 
-		$query = $this->db->query("SELECT DISTINCT(ZHSDD) AS SDD FROM ZPP_IF_LOADPLAN
+		$query = $this->db->query("SELECT DISTINCT(ZHSDD) AS SDD FROM ZPP_IF_LOADPLAN WITH (NOLOCK)
 		WHERE convert(char(4), ZHSDD)+left(right(zhsdd,5),2)='$po_date'
 		AND ZCDONG ='$factory'
 		ORDER BY ZHSDD");
@@ -642,7 +580,7 @@ class M_Export extends CI_Model {
 
 	public function bonding($po){
 		$query = $this->db->query("SELECT TOP 1 BUILDING+CELL AS 'CELL', TESTDATE, RESULT FROM QIP_BONDING_TEST WITH (NOLOCK)
-									 WHERE ARTICLE IN (SELECT ART_NO FROM THPRODHISPO WITH (NOLOCK) WHERE PO_NO='$po')
+									 WHERE ARTICLE IN (SELECT ART_NO FROM THPRODHISPO WITH (NOLOCK) WHERE AVBELN='$po')
 									 ORDER BY IN_DTTM DESC");
 
 		return $query->row();
@@ -665,69 +603,7 @@ class M_Export extends CI_Model {
 
 	public function production($po){
 		$query = $this->db->query("
-		SELECT A.PO_NO, QTY_TOTAL, CUTTING_OUT, SEWING_OUT, ASSEMBLY_OUT, QTY_FG
-					, CONVERT(CHAR(8), CUT_START,112) AS CUT_START
-					, CONVERT(CHAR(8), CUT_START,112) AS CUT_START
-					, CONVERT(CHAR(8), CUT_END,112) AS CUT_END
-					, CONVERT(CHAR(8), SEW_START,112) AS SEW_START
-					, CONVERT(CHAR(8), SEW_END,112) AS SEW_END
-					, CONVERT(CHAR(8), ASY_START,112) AS ASY_START
-					, CONVERT(CHAR(8), ASY_END,112) AS ASY_END
-					, CONVERT(CHAR(8), FG_START,112) AS FG_START
-					, CASE WHEN YEAR(FG_END) < '2000' THEN '' 
-							ELSE CONVERT(CHAR(8), FG_END,112)
-							END AS FG_END
-					, CONVERT(CHAR(8), WH_START,112) AS WH_START
-					, CONVERT(CHAR(8), WH_END,112) AS WH_END
-					
-			FROM 
-				(
-					SELECT PO_NO,SUM(LOT_QTY) AS QTY_TOTAL, MIN(CUT_END_DATE) AS CUT_START, MAX(CUT_END_DATE) AS CUT_END,
-								MIN(SEW_END_DATE) AS SEW_START, MAX(SEW_END_DATE) AS SEW_END, MIN(ASM_END_DATE) AS ASY_START, MAX(ASM_END_DATE) AS ASY_END
-						FROM THPRODHIS WITH (NOLOCK)
-						WHERE PO_NO='$po'
-						GROUP BY PO_NO
-				) AS A LEFT JOIN
-				(
-					SELECT PO_NO
-					, ISNULL( SUM( CASE WHEN PROD_STATUS = 'CE' THEN CONVERT(NUMERIC,GD_CNT) ELSE 0 END ) ,0 ) AS CUTTING_OUT
-					, ISNULL( SUM( CASE WHEN PROD_STATUS = 'SE' THEN CONVERT(NUMERIC,GD_CNT) ELSE 0 END ) ,0 ) AS SEWING_OUT
-					, ISNULL( SUM( CASE WHEN PROD_STATUS = 'AE' THEN CONVERT(NUMERIC,GD_CNT) ELSE 0 END ) ,0 ) AS ASSEMBLY_OUT
-					FROM THPRODLOG WITH (NOLOCK)
-					WHERE		PO_NO  ='$po'
-						GROUP BY PO_NO
-				) AS B
-				ON A.PO_NO = B.PO_NO
-				LEFT JOIN
-				(
-					select W.PO_NO, TOTAL_CARTON-WH_FG AS QTY_FG, FG_START, FG_END
-					FROM
-					(
-						select PO_NO, TOTAL_CARTON, COUNT(WH_IN_QTY) AS WH_FG from THWHHIS WITH (NOLOCK)
-						WHERE PO_NO='$po' and WH_IN_QTY>0
-						GROUP BY PO_NO, TOTAL_CARTON
-					) AS W LEFT JOIN 
-					(
-						SELECT PO_NO
-								, ISNULL( MAX( CASE WHEN STATUS = 'WI' THEN LMNT_DTTM ELSE 0 END ) ,0 ) AS 'FG_START'
-								, ISNULL( MAX( CASE WHEN STATUS = 'WO' THEN LMNT_DTTM ELSE 0 END ) ,0 ) AS 'FG_END'
-								FROM THWHLOG WITH (NOLOCK)
-												WHERE PO_NO='$po'
-												GROUP BY PO_NO
-					) AS L
-					ON W.PO_NO = L.PO_NO
-				) AS C
-				ON A.PO_NO = C.PO_NO
-				LEFT JOIN
-				(
-					select VBELN, MIN(LMNT_DTTM) AS WH_START, MAX(LMNT_DTTM) AS WH_END 
-					from ZMM_IF_GOODS_TRANSFER_NEW WITH (NOLOCK)
-					where MDONO > ''
-					and VBELN='$po'
-					AND QRBARCODE IS NOT NULL
-					GROUP BY VBELN
-				) AS D
-				ON A.PO_NO = D.VBELN
+			EXEC QIP.dbo.PO_PRODUCTION_INFO @PO_NO ='$po'
 		");
 		return $query->row();
 	}

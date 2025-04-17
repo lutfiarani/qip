@@ -183,7 +183,7 @@
           </li>
           <li class="nav-item has-treeview">
             <a href="<?php echo base_url();?>index.php/C_Export/search_po" class="nav-link">
-              <i class="nav-icon fas fa-book"></i>
+              <i class="nav-icon fas fa-search"></i>
               <p>
               Search PO
                
@@ -191,6 +191,78 @@
             </a>
            
           </li>
+          <li class="nav-item has-treeview">
+            <a href="<?php echo base_url();?>index.php/C_ProductionByModel/AssyIn" class="nav-link">
+              <i class="nav-icon fas fa-flag"></i>
+              <p>
+             PO China
+               
+              </p>
+            </a>
+           
+          </li>
+           <li class="nav-item has-treeview">
+            <a href="<?php echo base_url();?>index.php/C_SDD_report/" class="nav-link">
+              <i class="nav-icon fas fa-list"></i>
+              <p>
+              Factory Status
+               
+              </p>
+            </a>
+           
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="<?php echo base_url();?>index.php/C_AqlReport/" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+             AQL Summary Report
+               
+              </p>
+            </a>
+           
+          </li>
+
+          <li class="nav-item has-treeview">
+            <a href="<?php echo base_url();?>index.php/C_AqlReport/Category" class="nav-link">
+              <i class="nav-icon fas fa-folder"></i>
+              <p>
+             AQL Internal Report
+               
+              </p>
+            </a>
+           
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="http://10.10.100.199/QIPPivot" class="nav-link" target="_blank">
+              <i class="nav-icon fas fa-clock"></i>
+              <p> Pivot ETD Import
+               
+              </p>
+            </a>
+           
+          </li>
+
+         <!-- <li class="nav-item has-treeview">
+            <a href="<?php echo base_url();?>index.php/C_SDD_report/model" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+              Model List
+               
+              </p>
+            </a>
+           
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="<?php echo base_url();?>index.php/C_ProductionByModel/" class="nav-link">
+            <i class="nav-icon fas fa-bars"></i>
+              <p>
+              Production Result by Model
+               
+              </p>
+            </a>
+           
+          </li> -->
+
 
         </ul>
       </nav>

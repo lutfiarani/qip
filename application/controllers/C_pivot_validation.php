@@ -54,7 +54,7 @@ class C_Pivot_validation extends CI_Controller {
         // data tampil
 		$subdata['PO_NO'] 		= $po;
 		$subdata['PARTIAL'] 	= $partial;
-		$subdata['LEVEL'] 		= 'II';
+		$subdata['LEVEL'] 		= 'II'; 
 		// $subdata['REMARK'] 		= $remark;
 		$subdata['LEVEL_USER'] 	= $user;
 		$this->load->view('template/header', $datasub);
@@ -62,10 +62,39 @@ class C_Pivot_validation extends CI_Controller {
 		$subdata['sub']			= 1;
 		$subdata['inspector'] 	= $this->M_aql_pivot->inspector_list($level);
 		$cek_val				= $this->M_validation->cek_val($po, $partial,  $level='II', $user)->num_rows();
+		$cek_kriteria_cpsia		= $this->M_validation->cek_kriteria_cpsia($po);
+		$cek_cpsia				= $this->M_validation->apps_cpsia($po);
+
+		if($cek_kriteria_cpsia->num_rows() > 0){
+			if($cek_kriteria_cpsia->row()->KRITERIA=='NO'){
+				$cpsia 			= 'na';
+				$comment_cpsia	= '';
+			}else if(($cek_kriteria_cpsia->row()->KRITERIA=='YES')&&($cek_cpsia->num_rows() > 0)){//($cek_cpsia->statusnya=='yes')){
+				if($cek_cpsia->row()->statusnya=='yes'){
+					$cpsia 			= 'yes';
+					$comment_cpsia	= $cek_cpsia->row()->coc;
+				}else if($cek_cpsia->row()->statusnya=='no'){
+					$cpsia 			= 'no';
+					$comment_cpsia	= $cek_cpsia->row()->coc;
+				}
+				
+			}else if(($cek_kriteria_cpsia->row()->KRITERIA=='YES')&&($cek_cpsia->num_rows() == 0)){
+				$cpsia 			= 'no';
+				$comment_cpsia	= '';
+			}else{
+				$cpsia 			= 'na';
+				$comment_cpsia 	= '';
+			}
+		}else{
+			$cpsia 			= 'yes';
+			$comment_cpsia 	= '';
+		}
+		
 		
 		if($cek_val == '0'){
 			$subdata['a01'] 		= $this->M_validation->apps_a01($po);
-			$subdata['cpsia'] 		= $this->M_validation->apps_cpsia($po);
+			$subdata['cpsia'] 		= $cpsia;//$this->M_validation->apps_cpsia($po);
+			$subdata['cpsia_cmnt'] 	= $comment_cpsia;
 			$subdata['fgt'] 		= $this->M_validation->fgt($po);
 			$subdata['cma'] 		= $this->M_validation->cma($po);
 			$subdata['product'] 	= $this->M_validation->disp_product($po);
@@ -80,13 +109,15 @@ class C_Pivot_validation extends CI_Controller {
 			$subdata['fg'] 			= $this->M_validation->val_result($po, $partial, $level, $user, $code='6');
 			$subdata['warehouse'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='7');
 			$subdata['fgt'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='8');
-			$subdata['cma'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='9');
+			// $subdata['cma'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='9');
 			$subdata['uv_c'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='10');
 			$subdata['anti_mold'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='11');
 			$subdata['visual'] 		= $this->M_validation->val_result($po, $partial, $level, $user, $code='12');
 			$subdata['factory'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='13');
 			$subdata['slip_on'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='14');
-			$subdata['moisture'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='15');
+			// $subdata['moisture'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='15');
+			$subdata['moisture_box'] 	= $this->M_validation->val_result($po, $partial, $level, $user, $code='16');
+			$subdata['moisture_product']= $this->M_validation->val_result($po, $partial, $level, $user, $code='17');
 			$subdata['flag']		= 2;
 			
 			$this->load->view('QIP/Inspection/template_baru/pivot/validation_available', $subdata);
@@ -112,21 +143,20 @@ class C_Pivot_validation extends CI_Controller {
 
 	function save_first_data(){
 		sesscheck();
-		$po             = $_POST['PO_NO'];
+		$po             = $_POST['PO_NO']; 
         $partial        = $_POST['PARTIAL'];
         $level          = $_POST['LEVEL'];
         $level_user     = $_POST['LEVEL_USER'];
 		$stage	 		= '3';
-		$INSPECTOR 		= $this->session->userdata('USERNAME');
+		$inspector 		= $this->session->userdata('USERNAME');
 		
 		$cek_first		= $this->M_validation->cek_first_data($po, $partial, $level, $level_user);
 		if($cek_first->num_rows() == 0){
-			$first_data 	= $this->M_aql_pivot->save_first_data($po, $partial, $level, $stage, $level_user, $INSPECTOR);
+			$first_data 	= $this->M_aql_pivot->save_first_data($po, $partial, $level, $stage, $level_user, $inspector);
 		}
-		$cek_first		= $this->M_validation->cek_first_data($po, $partial, $level, $level_user);
-		$data_first 	= $cek_first->row_array();
-		$remark     	= $data_first['REMARK'];
-		$data 			= $this->M_validation->save_validation($remark);
+		
+		$remark     	= 1;
+		$data 			= $this->M_validation->save_validation($remark, $inspector);
 		$update_stage 	= $this->M_validation->edit_stage($po, $partial, $level, $level_user, $remark, $stage);
 		
 		// $url 			= base_url().'index.php/c_pivot_validation/validation/'.$po_edit1.'/'.$partial_edit1.'/'.$remark.'/'.$level_edit1.'/'.$level_user;
@@ -151,8 +181,9 @@ class C_Pivot_validation extends CI_Controller {
 		$count = count($_FILES['files']['name']);
 		for($i = 0; $i<$count; $i++){
 			if(!empty($_FILES['files']['name'][$i])){
-
-				$_FILES['file']['name'] 	= preg_replace('/\s+/', '_', $_FILES['files']['name'][$i]);//$_FILES['files']['name'][$i];
+				$nama 						= uniqid(mt_rand(), true);//$_FILES['files']['name'][$i];
+				$extension					= pathinfo($_FILES['files']['name'][$i], PATHINFO_EXTENSION);
+				$_FILES['file']['name'] 	= preg_replace('/\s+/', '_', $nama);//$_FILES['files']['name'][$i];
 				$_FILES['file']['type'] 	= $_FILES['files']['type'][$i];
 				$_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
 				$_FILES['file']['error'] 	= $_FILES['files']['error'][$i];
@@ -160,51 +191,57 @@ class C_Pivot_validation extends CI_Controller {
 
 				$config['upload_path'] 		= 'template/images/aql_image/'; 
 				$config['allowed_types'] 	= 'jpg|jpeg|png|gif';
-				$config['max_size'] 		= '5000'; // max_size in kb
-				$config['file_name'] 		= preg_replace('/\s+/', '_', $_FILES['files']['name'][$i]);
+				$config['max_size'] 		= '5000000'; // max_size in kb
+				$config['file_name'] 		= $nama . '.' . $extension;//preg_replace('/\s+/', '_', $nama);
 
-				$lokasi = $config['upload_path'] . basename($config['file_name']);
+				$lokasi 					= $config['upload_path'] . basename($config['file_name']);
 		
 				$this->load->library('upload',$config); 
 				if (file_exists($lokasi)) {
 					unlink($lokasi);
 				}			
 				
-				$temp = explode(".", $_FILES["file"]["name"][$i]);
-				$newfilename = round(microtime(true)) . '.' .basename($config['file_name']);
+				$temp 			= explode(".", $_FILES["file"]["name"][$i]);
+				$newfilename 	= round(microtime(true)) . '.' .basename($config['file_name']);
+
 				move_uploaded_file($_FILES["file"]["tmp_name"], $config['upload_path'] . basename($config['file_name']));
+
 				if($this->upload->do_upload('file')){
 					$uploadData = $this->upload->data();
-					$filename = $uploadData['file_name'];
+					if($_FILES['file']['size'] > 2000){
+						$config['image_library']='gd2';
+						$config['source_image']= $lokasi;
+						$config['create_thumb']= FALSE;
+						$config['maintain_ratio']= FALSE;
+						$config['quality']= '50%';
+						$config['width']= 600;
+						$config['height']= 400;
+						$config['new_image']= $lokasi;
+						$this->load->library('image_lib', $config);
+						$this->image_lib->resize();
+					}
+					$filename 	= $uploadData['file_name'];
 					$data['totalFiles'][] = $filename;
 				}
-				// print_r(basename($config['file_name']));
 			}
-		}
-		$index = 0; 
-		if(is_array($PO_NO1) || is_object($PO_NO1))
-		{
-			foreach($PO_NO1 as $dataPO){ 
-				$nama_foto = preg_replace('/\s+/', '_', $_FILES['files']['name']);
-				//savedata
-				if($_FILES['files']['name'][$index]!=''){
-					array_push($datas, array(
-						'PO_NO' 		=> $dataPO,
-						'PARTIAL' 		=> $PARTIAL1[$index],
-						'LEVEL' 		=> $LEVEL1[$index],
-						'LEVEL_USER' 	=> $LEVEL_USER1[$index],
-						'ARTICLE' 		=> $ARTICLE1[$index],
-						'PHOTO_CODE' 	=> $picture_code[$index],
-						'PHOTO_NAME' 	=> $nama_foto[$index],
-						// 'PHOTO_CODE'	=> $_FILES['files']['name'][$index],
-						'SEQ' 			=> $picture_code[$index]
-					));
-					$index++;
-				}
+
+			if($_FILES['files']['name'][$i]!=''){
+				array_push($datas, array(
+					'PO_NO' 		=> $PO_NO1[$i],
+					'PARTIAL' 		=> $PARTIAL1[$i],
+					'LEVEL' 		=> $LEVEL1[$i],
+					'LEVEL_USER' 	=> $LEVEL_USER1[$i],
+					'ARTICLE' 		=> $ARTICLE1[$i],
+					'PHOTO_CODE' 	=> $picture_code[$i],
+					'PHOTO_NAME' 	=> basename($config['file_name']),
+					'SEQ' 			=> $picture_code[$i]
+				));
+				// $index++;
 			}
+			
 		}
-		$sql 		= $this->M_validation->save_image($datas);
 		
+		$sql 		= $this->M_validation->save_image($datas);
 		echo json_encode('berhasil');
 	}
 
@@ -235,11 +272,24 @@ class C_Pivot_validation extends CI_Controller {
 		echo json_encode($data);
 	}
 
+	public function updateBookingCtn(){
+		$update = $this->M_validation->updateBookingCtn();
+        echo json_encode("berhasil");
+	}
+
 	public function view_random(){
 		$PO_NO 		= $_POST['PO_NO'];
 		$PARTIAL 	= $_POST['PARTIAL']; 
 
 		$data 		= $this->M_validation->view_random($PO_NO, $PARTIAL);
+		echo json_encode($data);
+	}
+	
+	public function view_booking_ctn(){
+		$PO_NO 		= $_POST['PO_NO'];
+		$PARTIAL 	= $_POST['PARTIAL']; 
+
+		$data 		= $this->M_validation->view_booking_ctn($PO_NO, $PARTIAL);
 		echo json_encode($data);
 	}
 

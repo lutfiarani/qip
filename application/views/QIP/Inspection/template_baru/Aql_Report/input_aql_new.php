@@ -83,6 +83,10 @@ td textarea
                     <div class="col-sm-10 input-group input-group-sm">
                       <input type="text" class="form-control" id="tqc_inspected" name="cell" placeholder="Enter...">
                     </div>
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">ETD Date</label>
+                    <div class="col-sm-10 input-group input-group-sm">
+                      <input type="text" class="form-control" id="etd_date" name="etd_date" placeholder="Enter...">
+                    </div>
                     <label for="inputPassword3" class="col-sm-2 col-form-label"> 
                         <button type='button' class='btn btn-block btn-warning btn-sm' id='submitPartial'>Pending Submit</button><br>
                         <button type='button' class='btn btn-block btn-danger btn-sm' id='submitPartial'>Delete&nbsp&nbsp&nbsp</button>
@@ -590,6 +594,7 @@ $('#sandbox-container input').datepicker({
                   $('#carton_bal').val(data.CARTON_BALANCE);
                   $('#remark').val(data.REMARK);
                   $('#cell').val(data.CELL);
+                  $('#etd_date').val(data.ETD_DATE);
                   show_product();
                   lab_result(PO_NO);
               }else{
@@ -606,6 +611,7 @@ $('#sandbox-container input').datepicker({
                   $('#carton_bal').val(''); 
                   $('#remark').val(''); 
                   $('#cell').val(''); 
+                  $('#etd_date').val('');
               }
           },
           error : function(data) {
@@ -651,7 +657,7 @@ $('#sandbox-container input').datepicker({
                                 '<td hidden><input type="hidden" name="level[]" id="level[]" value="'+data[0].LEVEL+'" readOnly>'+data[0].LEVEL+'</td>'+
                                 '<td style="height:400px" rowspan="'+data.length+'"><textarea name="ctn_no[]" id="ctn_no[]" value="'+data[0].CTN_NO+'">'+data[0].CTN_NO+'</textarea></td>'+
                                 '<td style="height:400px" rowspan="'+data.length+'"><textarea name="ctn_qty[]" id="ctn_qty[]" value="'+data[0].CTN_QTY+'">'+data[0].CTN_QTY+'</textarea></td>'+
-                                '<td><input type="text"  name="size[]" id="size[]" value="'+data[0].SIZE+'"></td>'+
+                                '<td>'+data[0].SIZE+'</td>'+
                                 '<td><input type="text" class="amount" name="qty[]" id="qty[]" value="'+data[0].QTY+'" ></td>';
 
                 html +=         "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
@@ -661,7 +667,7 @@ $('#sandbox-container input').datepicker({
                                 '<td hidden><input type="hidden" name="PO[]" id="PO[]"  value="'+data[i].PO_NO+'" readOnly>'+data[i].PO_NO+'</td>'+
                                 '<td hidden><input type="hidden" name="partial[]" id="partial[]" value="'+data[i].PARTIAL+'" readOnly>'+data[i].PARTIAL+'</td>'+
                                 '<td hidden><input type="hidden" name="level[]" id="level[]" value="'+data[i].LEVEL+'" readOnly>'+data[i].LEVEL+'</td>'+
-                                '<td><input type="text"  name="size[]" id="size[]" value="'+data[i].SIZE+'"></td>'+
+                                '<td>'+data[i].SIZE+'</td>'+
                                 '<td><input type="text" class="amount" name="qty[]" id="qty[]" value="'+data[i].QTY+'" ></td>';
 
                     html +=     "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";

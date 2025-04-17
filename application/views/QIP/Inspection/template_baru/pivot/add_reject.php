@@ -18,7 +18,7 @@ button:hover {
 	background: #3E3E3E;
 }
 </style>
-
+<link rel="stylesheet" href="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.min.css">
 <!-- Main content -->
 
 
@@ -40,8 +40,18 @@ button:hover {
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-             
-                 <div class="card-body">
+              <form method="POST" id="form_pivot" name="form_pivot" enctype="multipart/form-data" hidden>
+                  <input type="hidden" name="po_nya" id="po_nya" value="<?php echo $po;?>">
+                  <?php
+                      foreach($decoded_data['po_line'] as $line){
+                        echo '<br><input type="hidden" id="PO[]" name="PO[]" value="'.$po.'">';
+                        echo '<br><input type="hidden" id="SKU[]" name="SKU[]" value="'.$line['sku']['sku_number'].'">';
+                        echo '<br><input type="hidden" id="SIZE[]" name="SIZE[]" value="'.$line['size'].'">';
+                        echo '<br><input type="hidden" id="PROJECT_CODE[]" name="PROJECT_CODE[]" value="'.$line['sku']['project']['project_code'].'">';
+                      }
+                  ?>
+              </form>
+                 <div class="card-body table-responsive">
                  <font size="3">
                     <table class="table table-bordered" id="aql_basic">
                       <thead>                  
@@ -61,13 +71,10 @@ button:hover {
                       <tbody id="showData">
                       <tr>
                         <?php 
-                          If($basic->REMARK === 1){
+                         
                             echo "<td>INSPECT</td>";
                             echo "<td id='REMARK' name='REMARK' value='$basic->REMARK' hidden>$basic->REMARK</td>";
-                          }else{
-                            echo "<td>REINSPECT</td>";
-                            echo "<td id='REMARK' name='REMARK' value='$basic->REMARK' hidden>$basic->REMARK</td>";
-                          }
+                         
                           echo "
                             <td id='PO_NO' name='PO_NO'>$basic->PO_NO</td>
                             <td id='PARTIAL' name='PARTIAL'>$basic->PARTIAL</td>
@@ -99,7 +106,7 @@ button:hover {
               <div class="card-header">
                 <h3 class="card-title">Defect</h3>
               </div>
-                <table class="table table text-center">
+                <table class="table table text-center table-responsive">
                     <tbody>
                      <tr>
                         <td>
@@ -126,9 +133,9 @@ button:hover {
                         <td>
                         <button type="button" class="btn btn-block bg-gradient-info code"  name="code" id="code" value="350">350 - LACES/VELCROS/...</button>
                         </td>
-                        <td>
+                        <!-- <td>
                         <button type="button" class="btn btn-block bg-gradient-info code"  name="code" id="code" value="360">360 - OTHER DEFECT</button>
-                        </td>
+                        </td> -->
                         <td>
                         <button type="button" class="btn btn-block bg-gradient-info code"  name="code" id="code" value="400">400 - BOTTOM AND STOCKFITTING</button>
                         </td>
@@ -141,11 +148,12 @@ button:hover {
                         <td>
                         <button type="button" class="btn btn-block bg-gradient-info code"  name="code" id="code" value="700">700 - BOOST</button>
                         </td>
-                    </tr>
-                    <tr>
                         <td>
                         <button type="button" class="btn btn-block bg-gradient-info code"  name="code" id="code" value="800">800 - VULCANIZED</button>
                         </td>
+                    </tr>
+                    <tr>
+                        
                         <td>
                         <button type="button" class="btn btn-block bg-gradient-info code"  name="code" id="code" value="900">900 - CARBN 4D</button>
                         </td>
@@ -169,7 +177,7 @@ button:hover {
                    
                    </table>
               
-                <div class="card-body">
+                <div class="card-body table-responsive">
                     <table class="table table-bordered" id="table_reject_all">
                         <thead>                  
                             <tr>
@@ -193,7 +201,7 @@ button:hover {
                 </div>
                 
                 <div class="col">
-                  <button type="button" class="btn btn-success btn-block btn-flat" name="finishInspect" id="finishInspect">Finish - Create Report </button>
+                  <button type="button" class="btn btn-success btn-block btn-flat buttontry" name="finishInspect" id="finishInspect"><span class="buttontry__text">Finish - Create Report </span></button>
                 </div>
                 
                </div>
@@ -283,32 +291,40 @@ button:hover {
     <!-- AdminLTE App -->
     <script src="<?php echo base_url();?>template/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
-    <script src="<?php echo base_url();?>template/dist/js/demo.js"></script>
+    <!-- <script src="<?php echo base_url();?>template/dist/js/demo.js"></script> -->
+    <script src="<?php echo base_url();?>template/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.all.min.js"></script>
+
    
     <script>
     
-    // function save_image(){
-    //   var formData = new FormData(document.querySelector("#upload_reject"));
-    //   $.ajax({
-    //       url : "<?php echo base_url();?>/C_aql_reject/save_image",
-    //       type : "POST",
-    //       data : formData,
-    //       contentType : false,
-    //       processData : false,
-    //       dataType : "JSON",
-    //       success : function(data){
-    //           // alert(data)
-    //           document.getElementById("upload_reject").reset();
-    //           location.reload();
-    //         // $('#upload_gambar').value = "";
-            
+   
 
-    //       }
-    //   })
-      
-    // }
+    const theButton = document.querySelector(".buttontry");
 
+    theButton.addEventListener("click", () => {
+        theButton.classList.add("buttontry--loading");
+    });
 
+    function cobalah(id){
+          var fileLimit       = 2000; // limit the file size goes here
+          var files           = id.files; //this is an array
+          var fileSize        = files[0].size; 
+          var fileSizeInKB    = (fileSize/1024); // this would be converted byte into kilobyte
+
+          if(fileSizeInKB < fileLimit){
+          } else {
+               Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'Your Image is more than 2MB, please choose another one',
+              }).then(function () {
+                  location.reload();
+              });
+          }
+      }
+
+   
    
       $(document).ready(function(){
           var PO_NO     = $('#PO_NO').text();
@@ -320,7 +336,25 @@ button:hover {
 
           // view_defect_load();
           view_defect();
-         
+          
+        
+          var form_data = new FormData(document.getElementById("form_pivot"));
+          var html = ''
+
+          $.ajax({
+              url : "<?php echo site_url('C_pivot_aql/save_po_trans/');?>",
+              method: "POST",
+              data: form_data,
+              contentType: false,
+              processData: false,
+              dataType: "JSON",
+              success: function(data)
+              {
+                  console.log(data)
+                  
+              }
+          });
+        
 
           function view_defect(){
             $.ajax({
@@ -359,7 +393,7 @@ button:hover {
                                     '<input type="hidden" name="REMARK" value="'+data[i].REMARK+'">'+
                                     '<input type="hidden" name="LEVEL" value="'+data[i].LEVEL+'">'+
                                     '&nbsp&nbsp&nbsp&nbsp&nbsp<label class="btn btn-primary btn-flat btn-xs upload_image" >'+
-                                            '<input type="file" id="upload_gambar" name="files" id_seq="'+i+'"  data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'" accept="image/png, image/gif, image/jpeg" />'+
+                                            '<input type="file" onchange="cobalah(this)" id="upload_gambar'+i+'" name="files" id_seq="'+i+'"  data-CODE="'+data[i].CODE+'" data-REJECT_CODE="'+data[i].REJECT_CODE+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK = "'+data[i].REMARK+'" data-LEVEL="'+data[i].LEVEL+'" accept="image/png, image/gif, image/jpeg" />'+
                                             '<input type="hidden" name="picture_code" id="picture_code" value="10'+i+'">'+
                                             // '<i class="fa fa-camera"> Take Picture</i>'+
                                         '</label>'+
@@ -382,14 +416,14 @@ button:hover {
                                   
                       }
                       html += '<tr style="background-color: #93A8A9 ; font-size: 18px">'+
-                                  '<td colspan="5" style="text-align:right"><b>TOTAL</td>'+
+                                  '<td colspan="6" style="text-align:right"><b>TOTAL</td>'+
                                   '<td><b>'+mi+'</td>'+
                                   '<td><b>'+ma+'</td>'+
                                   '<td> <b><span class="cr">'+cr+'</b></td>'+
                                   '<td></td>'+
                                 '</tr>';
                      
-                      
+                                
                       $('#showReject').html(html);
                       // $(document).on('change', '#upload_gambar', function(){
                       //               var formData = new FormData(document.querySelector("#upload_reject"));
@@ -498,10 +532,17 @@ button:hover {
           })
  
          
+        
 
     $(document).on('click','#finishInspect',function(){
-        createReport();
+        let po = $('#PO_NO').text()
+        let alamat = "<?php echo site_url('C_pivot_aql/get_transform/');?>"+po
+     //   let popup = window.open(alamat, "_blank");
+         
+        createReport()
     })
+
+  
 
     function createReport(){
       $.ajax({
@@ -511,10 +552,9 @@ button:hover {
           dataType: "JSON",
           success: function(data)
           {
-              // cekdata()
-              // alert(data);
+              
               location.href = data.url;
-              // console.log(data)
+              
           },
       });
     }
@@ -576,7 +616,7 @@ button:hover {
         var CODE        = $(this).attr("data-CODE");
         var REJECT_CODE = $(this).attr("data-REJECT_CODE");
         var column      = $(this).attr("data-column");
-        var value       = '';
+        var value       = null;
 
         update_comment(column, value, CODE, REJECT_CODE, PO_NO, PARTIAL, LEVEL_USER, REMARK, LEVEL);
 
@@ -610,10 +650,35 @@ button:hover {
         })
     }
 
+    // $(document).on('change','#upload_gambar',function(){
+      
+    //     var id              = document.getElementById("upload_gambar");
+    //     var fileLimit       = 2046; // limit the file size goes here
+    //     var files           = $('#upload_gambar').files; //this is an array
+    //     var fileSize        = files[0].size; 
+    //     var fileSizeInKB    = (fileSize/1024); // this would be converted byte into kilobyte
 
+    //     if(fileSizeInKB < fileLimit){
+    //     } else {
+    //         // id.val('')
+    //         // Swal.fire({
+    //         //         icon: 'error',
+    //         //         title: 'Oops...',
+    //         //         text: 'Your Image is more than 2MB, please choose another one',
+    //         // }).then(function () {
+    //         //     reset($('#upload_gambar'))
+    //         // });
+    //         alert('kelebihan')
+    //     }
+    //     alert('jiji')
+    //     // alert($('#upload_gambar').val())
+    // })
+
+   
+    
     $(document).on('submit','#upload_reject',function(){
-    // $('#upload_img_welcome').on('submit', function(event){
-          // var img_id   = $('#img_id').val();
+       
+       
           event.preventDefault();
           $.ajax({
               url: "<?php echo site_url('C_aql_reject/save_image')?>",
@@ -624,10 +689,13 @@ button:hover {
               processData:false,
               success:function(data){
                   window.onload = view_defect();
-                  
               }
-          
-        })
+          })
+  
+    
+        // alert(id.val())
+       
+         
 
       //     var formData = new FormData(document.querySelector("#upload_reject"));
       // $.ajax({

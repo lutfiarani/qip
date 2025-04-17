@@ -71,11 +71,11 @@ class M_pivot_aql extends CI_Model {
         $client = new GuzzleHttp\Client();
        
         $response = $client->request('GET','https://adidas.pivot88.com/rest/operation/v1/inspections?details=true&po_number='.$po.'',[
-            'auth'=> ['ysha', 'hwiqip5!'],
+            'auth'=> ['ysha', 'hwiqip3@'],
             'headers' =>[
                 // 'Cookie' =>  'PHPSESSID=3irnss6mrmd9mg3j19bp6aq01p',
                 'username' => 'ysha',
-                'password' => 'hwiqip5!',
+                'password' => 'hwiqip3@',
                 ]
             ]
         );
@@ -147,7 +147,7 @@ class M_pivot_aql extends CI_Model {
             WHERE PO_NO='$po' 
             GROUP BY QCODE-- LEFT(QCODE, CHARINDEX('.', QCODE) - 1)
         ) AS A
-        JOIN (SELECT * FROM HWI_REASON WHERE REASON_CLASS = 'QCODE') AS B
+        JOIN (SELECT * FROM HWI_REASON WITH (NOLOCK) WHERE REASON_CLASS = 'QCODE') AS B
         ON A.QCODE = B.REASON_CODE
         ORDER BY A.DEFECT DESC
         
@@ -173,5 +173,53 @@ class M_pivot_aql extends CI_Model {
         return $query;
     }
 
+    public function get_po_trans($po){
+        $client = new GuzzleHttp\Client();
+        
+        try {
+            $response = $client->request('GET', 'https://adidas.pivot88.com/rest/operation/v2/projects/project_code:FTWTRANS4M/purchaseorders/po_number:'.$po, [
+                'auth'=> ['hwaseung_api', 'Pivot88#'],
+                'headers' => [
+                    'username' => 'hwaseung_api',
+                    'password' => 'Pivot88#',
+                    'api-key' => 'e5862997-7d4e-4671-97bc-26f771997abb'
+                ]
+            ]);
+            
+            $result = json_decode($response->getBody()->getContents(), true);
+            
+            // Log successful response
+            log_message('debug', 'API Response for PO ' . $po . ': ' . print_r($result, true));
+            
+            // Validasi struktur response
+            if(!isset($result['po_line'])) {
+                log_message('warning', 'Response tidak memiliki po_line untuk PO: ' . $po);
+                return ['po_line' => []];
+            }
+            
+            return $result;
+        } catch (GuzzleHttp\Exception\ClientException $e) {
+            if ($e->getResponse()->getStatusCode() == 404) {
+                log_message('info', 'PO tidak ditemukan: ' . $po);
+                return ['po_line' => []];
+            }
+            log_message('error', 'Client error in get_po_trans: ' . $e->getMessage());
+            return ['po_line' => []];
+        } catch (Exception $e) {
+            log_message('error', 'Error in get_po_trans: ' . $e->getMessage());
+            return ['po_line' => []];
+        }
+    }
+    
+    public function save_po_trans($data){
+        $db2 = $this->load->database('qip',TRUE);
+        return $db2->insert_batch('PO_TRANS4RM_TEMP', $data);
+    }
+
+    public function cek_po_trans($po){
+        $query = $this->db->query("select dbo.FN_GET_ADIDAS_SO_1('$po') as po")->row();
+        return $query;
+    }
+ 
 
 }

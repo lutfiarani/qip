@@ -53,12 +53,13 @@ class C_Pivot_aql extends CI_Controller {
         }else{
             echo json_encode(array('status'=>'ok','dataPO'=>($dataPO->row())));
         }
-	}
+	} 
 
    
 	public function get_po_pivot(){
         $po     = $_POST['PO_NO'];
-        $data   = $this->M_pivot->get_po_pivot($po);
+		$po_trans = $this->M_pivot_aql->cek_po_trans($po);
+        $data   = $this->M_pivot->get_po_pivot($po_trans->po);
         
         echo json_encode($data);
     }
@@ -98,6 +99,45 @@ class C_Pivot_aql extends CI_Controller {
 		$data = $this->M_pivot_aql->tampil_foto();
 		echo json_encode($data);
 	}
+
+	public function get_transform($po){
+		$data['po'] = $po;
+		$data['decoded_data']   = $this->M_pivot_aql->get_po_trans($po);
+		$this->load->view('display_data', $data);
+	}
+
+	public function get_po_trans(){
+		$po     		= $this->input->post('PO_NO');
+		$decoded_data   = $this->M_pivot_aql->get_po_trans($po);
+		echo json_encode($decoded_data);
+    }
+
+	public function save_po_trans(){
+		$PO 			= $_POST['PO'];
+		$SKU 			= $_POST['SKU'];
+		$SIZE 			= $_POST['SIZE'];
+		$PROJECT_CODE	= $_POST['PROJECT_CODE'];
+		$data 			= array();
+
+		$index = 0; 
+		if(is_array($PO) || is_object($PO))
+		{
+			foreach($PO as $data_PO){ 
+				array_push($data, array(
+					'PO_NO'				=> $data_PO,
+					'SKU'				=> $SKU[$index],  
+					'SIZE'				=> $SIZE[$index],  
+					'PROJECT_CODE'		=> $PROJECT_CODE[$index],
+				));
+				$index++;
+			}
+		}
+
+		$this->M_pivot_aql->save_po_trans($data);
+		return json_encode('berhasil');
+		// print_r($data);
+	}
+
 
 
 }

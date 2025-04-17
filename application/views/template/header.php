@@ -40,6 +40,106 @@
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+  <style>
+    .buttontry {
+        position: relative;
+        /* padding: 8px 16px; */
+        background: #951900;
+        border: none;
+        outline: none;
+        /* border-radius: 2px; */
+        cursor: pointer;
+    }
+
+    .buttontry:active {
+        background: #007a63;
+    }
+
+    .buttontry__text {
+        /* font: bold 20px 'Quicksand', san-serif; */
+        color: #ffffff;
+        transition: all 0.2s;
+    }
+
+    .buttontry--loading .buttontry__text{
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    .buttontry--loading::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        border: 4px solid transparent;
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: button-loading-spinner 1s ease infinite;
+    }
+
+    @keyframes buttontry-loading-spinner {
+        from {
+            transform: rotate(0turn);
+        }
+
+        to {
+            transform: rotate(1turn);
+        }
+    }
+
+    .button {
+    position: relative;
+    padding: 8px 16px;
+    background: #009579;
+    border: none;
+    outline: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.button:active {
+    background: #007a63;
+}
+
+.button__text {
+    font: bold 20px 'Quicksand', san-serif;
+    color: #ffffff;
+    transition: all 0.2s;
+}
+
+
+
+.button--loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 4px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
+    }
+}
+  </style>
   <script>
     // Add the following into your HEAD section
       var timer = 0;
@@ -80,6 +180,7 @@
   </script>
 </head> 
 <body class="hold-transition sidebar-mini sidebar-collapse">
+
 <div class="wrapper">
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">

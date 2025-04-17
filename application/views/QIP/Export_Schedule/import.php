@@ -45,7 +45,7 @@
                       
                   </div>
                   <div class="card-footer">
-                    <a href="<?= base_url('upload/format/export_schedule_template.xlsx') ?>" class="btn btn-success btn-sm">Download Format Import Data</a>
+                    <a href="<?= base_url('upload/format/export_schedule_template1.xlsx') ?>" class="btn btn-success btn-sm">Download Format Import Data</a>
                     <input type="submit" name="import" value="Import" class="btn btn-primary btn-sm" />
                   </div>
             </form>

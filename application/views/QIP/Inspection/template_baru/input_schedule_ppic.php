@@ -75,7 +75,7 @@
                         <th>Status</th>
                         <th>Status</th>
                         <th>Status Insp</th>
-                        <th>Action</th>
+                        <!-- <th>Action</th> -->
                       </tr>
                     </thead>
                     <tbody>
@@ -281,7 +281,7 @@
                    }
                  },
                  'csv'
-                
+                 
                ],
               
                   "processing": true,

@@ -1,7 +1,8 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>template/plugins/new_css/dataTables.bootstrap4.min.css">
 <link href="<?php echo base_url();?>template/plugins/new_css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
+<link href="<?php echo base_url();?>template/plugins/new_js/datatable/jquery.dataTables.min.css">
+<link href="<?php echo base_url();?>template/plugins/new_js/datatable/buttons.dataTables.min.css">
 <style>
 .loader_div{
   position: absolute;
@@ -51,34 +52,38 @@
        
             
         <div class="card-body">
-        
+          <div class="table-responsive">
+            <div class="loading" id="loading_indicator" style="display:none">
+              <img class="loading-image" src="<?php echo base_url();?>template/images/spinner.gif" alt="Loading..." />
+            </div>
             <table id="data_view" class="table table-striped table-hover dt-responsive display nowrap" cellspacing="0">
                 <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Check All <input type="checkbox" class='checkall' id='checkall'><input type="button" id='submit_check' value='Submit Checked' ></th>
-                  <th>PO</th>
-                  <th>Model Name</th>
-                  <th>Article</th>
-                  <th>Assembly In</th>
-                  <th>Total Defect</th>
-                  <th>Defect Rate</th>
-                  <th>Result</th>
-                  <th>Step In Tools</th>
-                  <th>Stop Line</th>
-                  <th>Stop Line Reason</th>
-                  <th>Comment</th>
-                  <th>Status Upload</th>
-                  <th>Action</th>
-                  <th>JSON</th>
-                </tr>
+                  <tr>
+                    <th>No</th>
+                    <th>Check All <input type="checkbox" class='checkall' id='checkall'><input type="button" id='submit_check' value='Submit Checked' ></th>
+                    <th>PO</th>
+                    <th>Model Name</th>
+                    <th>Article</th>
+                    <th>Assembly In</th>
+                    <th>Total Defect</th>
+                    <th>Defect Rate</th>
+                    <th>Result</th>
+                    <th>Step In Tools</th>
+                    <th>Stop Line</th>
+                    <th>Stop Line Reason</th>
+                    <th>Comment</th>
+                    <th>Status Upload</th>
+                    <th>Action</th>
+                    <th>JSON</th>
+                    <th>JSON 2</th>
+                  </tr>
                 </thead>
                 <tbody>
         
                 </tbody>
-                </table>
-  <?php //}?>
-            </div>
+            </table>
+        </div>
+      </div>
             <!-- /.card-body -->
           </div>
         
@@ -133,26 +138,30 @@
     </section>
     <!-- Scripts -->
     <script src="<?php  echo base_url();?>template/plugins/jquery/jquery.min.js"></script>
-    <!-- <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>  -->
-    <!-- <script type="text/javascript" src="<?php // echo base_url();?>template/plugins/jquery-tabledit-master/jquery.tabledit.js"></script> -->
-
-    <script type="text/javascript" src="<?php echo base_url();?>template/plugins/jquery/jquery.js"></script>
-
+    <script src="<?php echo base_url();?>template/plugins/jquery/jquery.js"></script>
+   
     <script src="<?php echo base_url();?>template/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="<?php echo base_url();?>template/plugins/new_js/dataTables.bootstrap.min.js"></script>
+    
     <script src="<?php echo base_url();?>template/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
-
-    <script type="text/javascript" src="<?php echo base_url();?>template/plugins/bootstrap-4.4.1-dist/js/bootstrap.js"></script>
-    <!-- jQuery -->
-      
+    
+    <script src="<?php echo base_url();?>template/plugins/bootstrap-4.4.1-dist/js/bootstrap.js"></script>
+    <script src="<?php echo base_url();?>template/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
     <script src="<?php echo base_url();?>template/plugins/datepicker/js/bootstrap-datepicker.js"></script>
     <script src="<?php echo base_url();?>template/plugins/new_js/jquery.mask.min.js"></script>
-        
-    <!--script src="https://markcell.github.io/jquery-tabledit/assets/js/tabledit.min.js"></script-->
     <script src="<?php echo base_url();?>template/plugins/bootstable/bootstable.js" ></script>
-
     <script src="<?php echo base_url();?>template/dist/js/adminlte.min.js"></script>
-        <!-- AdminLTE for demo purposes -->
     <script src="<?php echo base_url();?>template/dist/js/demo.js"></script>
+    <!-- <script src="<?php echo base_url();?>template/new_js/datatable/jquery.dataTables.min.js"></script> -->
+    <script src="<?php echo base_url();?>template/new_js/datatable/dataTables.buttons.min.js"></script>
+    <script src="<?php echo base_url();?>template/new_js/datatable/jszip.min.js"></script>
+    <script src="<?php echo base_url();?>template/new_js/datatable/pdfmake.min.js"></script>
+    <script src="<?php echo base_url();?>template/new_js/datatable/vfs_fonts.js"></script>
+    <script src="<?php echo base_url();?>template/new_js/datatable/buttons.html5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+   
     
     <script>
       
@@ -177,23 +186,34 @@
     </script>
 
     <script>
-   
-
+     
+    
     $(document).ready(function(){
         // view_data();
 
         function view_data(tanggal){
             $('#data_view').DataTable({
-                responsive: true,
-                "processing": true,
+                "responsive": true,
+                "processing": true, 
                 "serverSide": false,
                 "paging" : false,
+                "dom": 'Bfrtip',
+                "buttons": [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ],
                 "ajax"  :{
                     type      : "post",
                     data      : {tanggal:tanggal},
                     url       : "<?php echo site_url('C_Pivot/view_data');?>",
                     responsive: true
-                }
+                },
+                "order": [], // Tambahkan ini untuk mengaktifkan sorting
+                "columnDefs": [
+                    { "orderable": true, "targets": "_all" } // Ini memungkinkan sorting di semua kolom
+                ]
                 
             });
             // $('#img').hide();
@@ -205,23 +225,54 @@
 
         function view_generate(tanggal){
             $('#data_view').DataTable({
-                responsive: true,
-                "processing": true,
-                "serverSide": false,
-                "paging" : false,
-                "ajax"  :{
-                    type      : "post",
-                    data      : {tanggal:tanggal},
-                    url       : "<?php echo site_url('C_Pivot/view_generate');?>",
-                    responsive: true
-                }
-            
+              responsive: true,
+              processing: true,
+              serverSide: false,
+              paging: true,
+              pageLength: 50,
+              ajax: {
+                  type: "post",
+                  data: { tanggal: tanggal },
+                  url : "<?php echo site_url('C_Pivot/view_generate');?>",
+                  responsive: true,
+                  beforeSend: function() {
+                    // Tampilkan loading indicator
+                    $('#data_view').addClass('loading');
+                  },
+                  complete: function() {
+                    // Sembunyikan loading indicator
+                    $('#data_view').removeClass('loading');
+                  }
+              },
+              deferRender: true,
+              scrollCollapse: true,
+              scroller: true,
+              
+              // Tambahan konfigurasi untuk kinerja
+              autoWidth: false,
+              pageLength: 50,
+              lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "Semua"]],
+              processing: true,
+              language: {
+                processing: '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>'
+              },
+              ordering: true, // Aktifkan sorting
+              order: [], // Izinkan sorting pada semua kolom
+              columnDefs: [
+                  { 
+                      targets: '_all', // Berlaku untuk semua kolom
+                      orderable: true // Izinkan sorting
+                  }
+              ]
+            });  
+              
+            html2 = ' <button type="button" type="submit" id="submit_data" class="btn btn-danger buttontry"><span class="buttontry__text">Submit Data</span></button>'
+            $('#button_submit').html(html2);
+            const theButton = document.querySelector(".buttontry");
+
+            theButton.addEventListener("click", () => {
+                theButton.classList.add("buttontry--loading");
             });
-
-            html2 = ' <button type="button" type="submit" id="submit_data" class="btn btn-danger">Submit Data</button>'
-                $('#button_submit').html(html2);
-
-          
         }
 
         function DestroyDatatable(){
@@ -286,50 +337,83 @@
                 alert("Silahkan pilih tanggal terlebih dahulu");
             }else{
                 DestroyDatatable()
-                view_data(tanggal);
+                // view_data(tanggal);
+                view_generate(tanggal);
                 
             }
        });
      
-       $(document).on('click','#generate_data', function(){
-          var tanggal = $('#production_date').val();  
-          var confirmdelete = confirm("Mulai generate data?");
-          if (confirmdelete == true) {
-              $.ajax({
-                  url : "<?php echo site_url('C_Pivot/generate_data')?>",
-                  method:"POST",
-                  data : {tanggal:tanggal},
-                  dataType: "JSON",
-                  success:function(alert){
-                    //   view_generate();
-                      DestroyDatatable()
-                      view_generate(tanggal);
+      //  $(document).on('click','#generate_data', function(){
+      //     var tanggal = $('#production_date').val();  
+      //     var confirmdelete = confirm("Mulai generate data?");
+      //     if (confirmdelete == true) {
+      //         $.ajax({
+      //             url : "<?php echo site_url('C_Pivot/generate_data')?>",
+      //             method:"POST",
+      //             data : {tanggal:tanggal},
+      //             dataType: "JSON",
+      //             success:function(alert){
+      //               //   view_generate();
+      //                 DestroyDatatable()
+      //                 view_generate(tanggal);
    
 
+      //             }
+      //         });
+      //     }
+      //       // alert(tanggal)
+      //   }); 
+
+      $(document).on('click', '#submit_data', function() {
+          var tanggal = $('#production_date').val();
+          var confirmdelete = confirm("Anda yakin ingin mengirim data?");
+          
+          if (confirmdelete) {
+              // Disable submit button and show loading
+              $('#submit_data').prop('disabled', true);
+              $('#loading_indicator').show(); // Add a loading spinner/indicator in your HTML
+
+              $.ajax({
+                  url: "<?php echo site_url('C_Pivot/submit_data')?>", // Your server endpoint
+                  method: "POST",
+                  data: {tanggal: tanggal},
+                  dataType: "JSON",
+                  success: function(response) {
+                      // Hide loading, re-enable button
+                      $('#submit_data').prop('disabled', false);
+                      $('#loading_indicator').hide();
+
+                      // Check response type
+                      if (response.status === 'success') {
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Berhasil!',
+                              text: response.message || 'Data berhasil disubmit'
+                          });
+                          DestroyDatatable();
+                          location.reload();
+                      } else {
+                          Swal.fire({
+                              icon: 'error',
+                              title: 'Gagal!',
+                              text: response.message || 'Terjadi kesalahan saat submit data'
+                          });
+                      }
+                  },
+                  error: function(xhr, status, error) {
+                      // Hide loading, re-enable button
+                      $('#submit_data').prop('disabled', false);
+                      $('#loading_indicator').hide();
+
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error!',
+                          text: 'Terjadi kesalahan koneksi: ' + error
+                      });
                   }
               });
           }
-            // alert(tanggal)
-        }); 
-
-        $(document).on('click','#submit_data', function(){
-          var tanggal = $('#production_date').val();  
-          var confirmdelete = confirm("Anda yakin ingin mengirim data?");
-          if (confirmdelete == true) {
-              $.ajax({
-                  url : "<?php echo site_url('C_Pivot/submit_data')?>",
-                  method:"POST",
-                  data: {tanggal:tanggal},
-                  dataType: "JSON",
-                  success:function(data){
-                    DestroyDatatable()
-                    alert(data)
-                    view_generate(tanggal);
-
-                  }
-              });
-            }
-        });
+      });
      
        $(document).on('click','.editData', function(){
             var PO_NO_ID       = $(this).attr("id_PO");

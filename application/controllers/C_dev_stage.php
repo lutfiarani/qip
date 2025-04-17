@@ -451,7 +451,7 @@ class C_dev_stage extends CI_Controller {
     public function calibration(){
         $this->load->config('email');
         $this->load->library('email');
-        $penerima = 'cal.lab@hsinni.com,adm.lab@hsinni.com,pungkasari.qip@hsinni.com,devi.ce@hsinni.com';
+        $penerima = 'cal.lab@hsinni.com,adm.lab@hsinni.com,reny.lab@hsinni.com ';
         $this->email->set_newline("\r\n");
         $this->email->from('quality.system@hsinni.com');
         
@@ -462,7 +462,7 @@ class C_dev_stage extends CI_Controller {
 
         $message = '';
         $message .= 'Hi.., there are some machine need to calibrate soon., please see the list on link below..<br>
-        <a href="http://10.10.10.98/qip/apps/index.php?r=kalibrasi/expired">--Link--</a>
+        <a href="http://10.10.10.98:8000/admin/Lab/CalibrationExpired">--Link--</a>
         <br>';
         
        
@@ -503,13 +503,13 @@ class C_dev_stage extends CI_Controller {
         }
     }
 
-    public function cma_test($speciment, $title, $po){
+    public function cma_test($po, $title, $speciment){
         $this->load->config('email');
         $this->load->library('email');
         $title1 = str_replace('%20', ' ', $title);
         $this->email->set_newline("\r\n");
         $this->email->from('quality.system@hsinni.com');
-        $penerima = 'reny.lab@hsinni.com,ysha@hsinni.com,a01.lab@hsinni.com,lab@hsinni.com';
+        $penerima = 'reny.lab@hsinni.com,ysha@hsinni.com,a01.lab@hsinni.com,lab@hsinni.com,bonding.lab@hsinni.com,sistem.lab@hsinni.com ';
         $this->email->to($penerima);
         // $this->email->cc('quality.system@hsinni.com');
         $this->email->subject('[EMAIL-SYSTEM-ALERT] CMA TEST'.$title1.' FAILURE');
@@ -517,10 +517,44 @@ class C_dev_stage extends CI_Controller {
 
         $message = '';
         $message .= 'This Email is to inform you that CMA TEST '.$title1.' Failure PO '.$po.' please open below link for detail <br>
-        http://10.10.10.98/files/cma/'.$speciment;
+        http://10.10.10.98:8000/files/cma/'.$speciment;
         
        
 
+        $this->email->message($message);
+
+        if ($this->email->send()) {
+            echo 'Your Email has successfully been sent.';
+        } else {
+            show_error($this->email->print_debugger());
+        }
+    }
+
+    public function audit_h1($material, $supplier, $id){
+        $this->load->config('email');
+        $this->load->library('email');
+
+        $material1  = str_replace('%20', ' ', $material);
+        $supplier1  = str_replace('%20', ' ', $supplier);
+
+        $this->email->set_newline("\r\n");
+        $this->email->from('quality.system@hsinni.com');
+
+        $penerima = 'yulita.dev@hsinni.com,fatma.dev@hsinni.com,erwin.dev@hsinni.com,scbae@hsinni.com,nofi.dev@hsinni.com,nova.dev@hsinni.com,ria.dev@hsinni.com,erlin.dev@hsinni.com,diah.dev@hsinni.com,heti.dev@hsinni.com';
+
+        $this->email->to($penerima);
+        
+        $this->email->subject('[EMAIL-SYSTEM-ALERT] REPORT REJECT'.$material1.' FROM ' .$supplier1);
+        $this->email->set_mailtype('html');
+
+        $message = '';
+        $message .= 'Dear Bu Ria, <br>
+        Kindly find information for rejected material '.$material1.' from '.$supplier1.'<br>
+        For detail please open link<br>
+
+        http://10.10.10.98/admin/Lab/LabtestDev/'.$id.'';
+
+       
         $this->email->message($message);
 
         if ($this->email->send()) {

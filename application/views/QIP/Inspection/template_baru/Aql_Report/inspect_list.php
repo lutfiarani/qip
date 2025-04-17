@@ -126,7 +126,7 @@
       
       
       $(document).ready(function(){
-       //ajax display I
+       //ajax display I 
        tableInspect =  $('#inspectPOList').DataTable({
             "ajax":{
                 url : "<?php echo site_url('C_aql_inspect/inspect_list_') ?>",

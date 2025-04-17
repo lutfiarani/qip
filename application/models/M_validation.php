@@ -42,32 +42,32 @@ class M_validation extends CI_Model {
 
     public function apps_cpsia($po){
         $query  = $this->db2->query("SELECT
-                            a.po,
-                            a.gen,
-                            a.country,
-                            b.file,
-                            b.coc,
-                        CASE
-                            
-                            WHEN ( ( a.gen = 'C' ) OR ( a.gen = 'I' ) OR ( a.gen = 'K' ) ) 
-                            AND ( ( a.country = 'USA' ) OR ( a.country = 'US' ) OR ( a.country = 'Panama' ) ) 
-                            AND ( b.file IS NOT NULL ) THEN
-                                'yes' 
-                                WHEN ( ( a.gen = 'C' ) OR ( a.gen = 'I' ) OR ( a.gen = 'K' ) ) 
+                                a.po,
+                                a.gender,
+                                a.country,
+                                b.file,
+                                b.coc,
+                            CASE
+                                
+                                WHEN ( ( a.gender = 'C' ) OR ( a.gender = 'I' ) OR ( a.gender = 'K' ) ) 
                                 AND ( ( a.country = 'USA' ) OR ( a.country = 'US' ) OR ( a.country = 'Panama' ) ) 
-                                AND ( b.file IS NULL ) THEN
-                                    'no' ELSE 'na' 
-                                END AS statusnya 
-                            FROM
-                                apps.loadplan a
-                                LEFT JOIN apps.cpsia b ON a.po = b.po 
-                            WHERE
+                                                            AND b.coc IS NOT NULL
+                                THEN
+                                    'yes' 
+                                    WHEN ( ( a.gender = 'C' ) OR ( a.gender = 'I' ) OR ( a.gender = 'K' ) ) 
+                                    AND ( ( a.country = 'USA' ) OR ( a.country = 'US' ) OR ( a.country = 'Panama' ) ) 
+                                    AND ( b.coc IS NULL ) THEN
+                                        'no' ELSE 'na' 
+                                    END AS statusnya 
+                                FROM
+                                    apps.po_tracking a
+                                    LEFT JOIN apps.cpsia b ON a.po = b.po 
+                                WHERE
                             a.po = '$po' 
                         LIMIT 1");
         
-        return $query->row();
+        return $query;
     }
-
     public function fgt($po){
         $query = $this->db2->query("
             Select * from fgt.fgt 
@@ -104,7 +104,7 @@ class M_validation extends CI_Model {
         return $query->row();
     }
 
-    public function save_validation($remark){
+    public function save_validation($remark, $inspector){
         $po                 = $_POST['PO_NO'];
         $partial            = $_POST['PARTIAL'];
         $remark             = $remark;
@@ -126,7 +126,7 @@ class M_validation extends CI_Model {
         $Comment_6          = $_POST['Comment_2'];
         $Comment_7          = $_POST['Comment_2'];
         $a_8                = $_POST['Production_fgt'];
-        $a_9                = $_POST['CMA'];
+        // $a_9                = $_POST['CMA'];
         $Comment_8          = $_POST['Comment_3'];
         $Comment_9          = $_POST['Comment_3'];
         $a_10               = $_POST['UVC_treatment'];
@@ -139,8 +139,11 @@ class M_validation extends CI_Model {
         $Comment_13         = $_POST['Comment_5'];
         $a_14               = $_POST['SlipOn_inspection'];
         $Comment_14         = $_POST['Comment_6'];
-        $a_15               = $_POST['Moisture_test'];
-        $Comment_15         = $_POST['Comment_7'];
+        // $a_15               = $_POST['Moisture_test'];
+        $a_16               = $_POST['Moisture_control_box'];
+        $Comment_16         = $_POST['Comment_4'];
+        $a_17               = $_POST['Moisture_control_product'];
+        $Comment_17         = $_POST['Comment_4'];
 
         $delete = ("DELETE FROM [QIP].[dbo].[QIP_AQL_DATA_VALIDATION] WHERE PO_NO='$po' AND PARTIAL ='$partial'");
         $query = ("
@@ -164,18 +167,25 @@ class M_validation extends CI_Model {
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '6', '$a_6', '$Comment_6', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '7', '$a_7', '$Comment_7', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '8', '$a_8', '$Comment_8', getdate(), getdate()),
-                    ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '9', '$a_9', '$Comment_9', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '10', '$a_10', '$Comment_10', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '11', '$a_11', '$Comment_11', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '12', '$a_12', '$Comment_12', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '13', '$a_13', '$Comment_13', getdate(), getdate()),
                     ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '14', '$a_14', '$Comment_14', getdate(), getdate()),
-                    ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '15', '$a_15', '$Comment_15', getdate(), getdate())");
+                    ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '16', '$a_16', '$Comment_16', getdate(), getdate()),
+                    ( '$po' , '$partial', '$remark' , '$level', '$level_user' , '17', '$a_17', '$Comment_17', getdate(), getdate())
+                    ");
             
             
         // echo $query;
+        $update_inspector = ("	UPDATE QIP.dbo.QIP_AQL_DATA_FIRST
+                                SET INSPECTOR = '$inspector'
+                                WHERE PO_NO= '$po'
+                                AND PARTIAL = '$partial'");
+
         $delete = $this->db->query($delete); 
         $query  = $this->db->query($query);
+        $update = $this->db->query($update_inspector);
         return $query;
     }
 
@@ -192,10 +202,10 @@ class M_validation extends CI_Model {
 
     public function update_image($data){
 
-    }
+    } 
 
     public function cek_val($po, $partial, $level, $level_user){
-        $query = $this->db->query("SELECT * FROM [QIP].[dbo].[QIP_AQL_DATA_VALIDATION]
+        $query = $this->db->query("SELECT * FROM [QIP].[dbo].[QIP_AQL_DATA_VALIDATION] WITH (NOLOCK)
                                     WHERE PO_NO = '$po'
                                     AND PARTIAL = '$partial'
                                     AND LEVEL = '$level'
@@ -231,21 +241,21 @@ class M_validation extends CI_Model {
     }
 
     public function disp_product($po){
-        $query = ("SELECT TOP 3 *--PO_NO, ARTICLE, PHOTO_CODE, PHOTO_NAME, SEQ
-                                        FROM [QIP].[DBO].[QIP_AQL_DATA_PHOTO] 
+        $query = $this->db->query("SELECT TOP 6 *--PO_NO, ARTICLE, PHOTO_CODE, PHOTO_NAME, SEQ
+                                        FROM [QIP].[DBO].[QIP_AQL_DATA_PHOTO] WITH (NOLOCK)
                                         WHERE ARTICLE IN (SELECT ART_NO FROM THPRODHISPO WITH (NOLOCK) WHERE PO_NO = '$po')
                                         AND LEFT(PHOTO_CODE,1) = '1'
                                         ORDER BY CREATE_DATE DESC
                                         "
                 );
         
-        // return $query->result();
-        echo $query;
+        return $query->result();
+        // echo $query;
     }
 
     public function disp_measurements($po, $partial, $level, $level_user){
         $query = $this->db->query("SELECT TOP 3 *
-                                        FROM [QIP].[DBO].[QIP_AQL_DATA_PHOTO] 
+                                        FROM [QIP].[DBO].[QIP_AQL_DATA_PHOTO] WITH (NOLOCK)
                                         WHERE PO_NO = '$po'
                                         AND PARTIAL = '$partial'
                                         AND LEVEL   = '$level'
@@ -268,7 +278,7 @@ class M_validation extends CI_Model {
 
         $query = $this->db->query("
                                     SELECT ARTICLE, PHOTO_CODE, PHOTO_NAME, SEQ
-                                    FROM [QIP].[DBO].[QIP_AQL_DATA_PHOTO] WHERE
+                                    FROM [QIP].[DBO].[QIP_AQL_DATA_PHOTO] WITH (NOLOCK) WHERE
                                     ARTICLE ='$ARTICLE'
                                     AND SEQ = '$SEQ'
                                     AND PHOTO_CODE = '$CODE'
@@ -304,6 +314,26 @@ class M_validation extends CI_Model {
         return $query->result();
     }
 
+    public function view_booking_ctn($po, $partial){
+        $query = $this->db->query("SELECT TOP 1 * FROM [QIP].[dbo].[QIP_AQL_RANDOM_PO] WITH (NOLOCK) WHERE PO_NO='$po' AND PARTIAL='$partial'");
+        return $query->row();
+    }
+
+    public function updateBookingCtn(){
+        $column     = $this->input->post('column');
+        $isi_column = $this->input->post('value');
+        $po         = $this->input->post('po');
+        $partial    = $this->input->post('partial');
+
+        $query = $this->db->query("UPDATE [QIP].[dbo].[QIP_AQL_RANDOM_PO]
+                        SET ".$column." = '$isi_column'
+                        WHERE PO_NO = '$po'
+                        AND PARTIAL = '$partial'
+        ");
+        
+        return $query;
+    }
+
     public function update_random($PO_NO, $PARTIAL, $SIZE, $VALUE){
         $query = $this->db->query("
                         UPDATE [QIP].[dbo].[QIP_AQL_RANDOM_PO]
@@ -317,7 +347,7 @@ class M_validation extends CI_Model {
     }
 
     public function cek_first_data($PO_NO, $PARTIAL, $LEVEL, $LEVEL_USER){
-        $query = $this->db->query("SELECT * FROM [QIP].[DBO].[QIP_AQL_DATA_FIRST]
+        $query = $this->db->query("SELECT * FROM [QIP].[DBO].[QIP_AQL_DATA_FIRST] WITH (NOLOCK)
                                     WHERE PO_NO     = '$PO_NO'
                                     AND PARTIAL     = '$PARTIAL'
                                     AND LEVEL       = '$LEVEL'
@@ -343,6 +373,22 @@ class M_validation extends CI_Model {
         ");
         return $query;
     }
+
+    public function cek_kriteria_cpsia($po){
+        $query = $this->db->query("
+        SELECT A.VBELN AS PO_NO, 
+                    CASE WHEN ((A.J_3APGNR='C') OR (A.J_3APGNR='K') OR (A.J_3APGNR='I')) AND ((B.LANDT='USA') OR (B.LANDT='PANAMA')) THEN 'YES'
+                    ELSE 'NO'
+                    END AS KRITERIA
+                FROM (
+                    SELECT * FROM ZSD_IF_PO_SEND_MES_HEADER WITH (NOLOCK) WHERE VBELN='$po'
+                ) AS A JOIN 
+                (SELECT * FROM ZSD_IF_PO_PACKING_SEND_MES_HEADER WITH (NOLOCK) WHERE VBELN='$po') AS B
+                ON A.VBELN= B.VBELN
+        ");
+        return $query;
+    }
+    
     
 }
 

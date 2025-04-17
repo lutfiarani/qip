@@ -26,14 +26,13 @@ class C_aql_pivot extends CI_Controller {
 		$this->load->view('template/header');
 		$this->load->view('QIP/Inspection/template_baru/Aql_Report/Daily_report', $subdata);
 		$this->load->view('template/footer');
-
 	}
 
 	//------------------------page input aql---------------------------------------------------
     public function input_aql(){
 		sesscheck();
 		$level = $this->session->userdata('LEVEL');
-		$datasub['username'] = $this->session->userdata('USERNAME');
+		$datasub['username'] = $this->session->userdata('USERNAME'); 
 		$datasub['tingkat'] = $this->session->userdata('LEVEL');
 		if (($level == 2) ||($level == 1)){
 			$datasub['formtitle'] = "AQL INPUT INSPECTOR";
@@ -50,6 +49,28 @@ class C_aql_pivot extends CI_Controller {
 		$this->load->view('template/footer');
     }
 
+
+	public function stat($id)
+	{
+		sesscheck();
+		$level = $this->session->userdata('LEVEL');
+		$datasub['username'] = $this->session->userdata('USERNAME'); 
+		$datasub['tingkat'] = $this->session->userdata('LEVEL');
+		if (($level == 2) ||($level == 1)){
+			$datasub['formtitle'] = "AQL INPUT INSPECTOR";
+		}else if ($level == 3){
+			$datasub['formtitle'] = "AQL INPUT THIRD PARTY";
+		}else if ($level == 6){
+			$datasub['formtitle'] = "AQL INPUT VALIDATOR";
+		}
+		
+		$subdata['po_line'] = $this->M_aql_pivot->po_detail($id);
+		$datasub['formtitle']="";
+		$subdata['sub']= 1;
+		$this->load->view('template/header', $datasub);
+		$this->load->view('QIP/Inspection/template_baru/Aql_report/stat', $subdata);
+		$this->load->view('template/footer');
+	}
 	// ----------------------------------tampil data dari pivot--------------------------------
 	
 	
@@ -73,11 +94,12 @@ class C_aql_pivot extends CI_Controller {
         $dataPO = $this->M_aql_pivot->get_data_po($po);
         header('Content-Type: application/json');
         $jumlah_data = $dataPO->num_rows();
-        if($jumlah_data == 0){
-            echo json_encode(array('status'=>'error'));
-        }else{
-            echo json_encode(array('status'=>'ok','dataPO'=>($dataPO->row())));
-        }
+        // if($jumlah_data == 0){
+        //     echo json_encode(array('status'=>'error'));
+        // }else{
+        //     echo json_encode(array('status'=>'ok','dataPO'=>($dataPO->row())));
+        // }
+		echo json_encode($data_PO);
 	}
 	
 	function get_partial($no){
@@ -88,19 +110,8 @@ class C_aql_pivot extends CI_Controller {
 
 	function insert_partial(){
 		sesscheck();
-		$data = array(
-			'PO_NO' => $_POST['PO_NO'],
-			'PARTIAL' => $_POST['PARTIAL'],
-            'QTY' => $_POST['QTY'],
-            'INSPECTOR' => $this->session->userdata('USERNAME'),
-			'LEVEL' => $_POST['LEVEL'],
-			'INSPECT_DATE' => $_POST['INSPECT_DATE'],
-			'LEVEL_USER' => $this->session->userdata('LEVEL'),
-			// 'REMARK' => $_POST['REMARK']
-		);
-		//print_r($data);
-		$insert = $this->M_aql_pivot->insert_partial($data);
-		echo json_encode($insert);
+		$insert = $this->M_aql_pivot->insert_partial();
+		echo json_encode('berhasil');
 	}
 
 	function update_partial(){
@@ -109,7 +120,7 @@ class C_aql_pivot extends CI_Controller {
         echo json_encode($data);
     }
  
-	function list_partial(){
+	function list_partial(){ 
         sesscheck();
 
         $data = $this->M_aql_pivot->list_partial();
@@ -120,7 +131,7 @@ class C_aql_pivot extends CI_Controller {
 		sesscheck();
 		$data = $this->M_aql_pivot->view_detail_per_partial();
 		echo json_encode($data);
-	}
+	} 
 
 	function aql_carton_cek_(){
 		sesscheck();
@@ -155,6 +166,7 @@ class C_aql_pivot extends CI_Controller {
 		$ctn_no_edit 	= $_POST['ctn_no'];
 		$booking_comment= $_POST['booking_comment'];
 		$qty_edit 		= $_POST['qty'];
+		$qty_to_inspect	= $_POST['qty_to_inspect'];
 		$level_edit 	= $_POST['level'];
 		$data 			= array();
 		$level_user		= $this->session->userdata('LEVEL');
@@ -168,9 +180,10 @@ class C_aql_pivot extends CI_Controller {
 					'PO_NO'				=> $data_PO,
 					'PARTIAL'			=> $partial_edit[$index],  
 					'LEVEL'				=> $level_edit[$index],
-					'BOOKING_COMMENT'	=> $booking_comment,
 					'CTN_NO'			=> $ctn_no_edit,
+					'BOOKING_COMMENT'	=> $booking_comment,
 					'SIZE' 				=> $size_edit[$index],
+					'QTY_TO_INSPECT'	=> $qty_to_inspect[$index],
 					'QTY'				=> $qty_edit[$index]
 				));
 				
@@ -203,13 +216,13 @@ class C_aql_pivot extends CI_Controller {
 		$url 	= base_url().'index.php/C_aql_inspect/report_inspect_guest/'.$po.'/'.$partial.'/'.$remark.'/'.$level.'/'.$level_user;
         echo json_encode(array('status'=>'simpan berhasil', 'url'=>$url));
         // echo json_encode($url);
-	}
+	} 
 
 	public function report_inspect($po, $partial, $remark, $level, $level_user){
 		sesscheck();
 		$datasub['formtitle']	="AQL REPORT";
-		$datasub['username'] = $this->session->userdata('USERNAME');
-		$datasub['tingkat'] = $this->session->userdata('LEVEL');
+		$datasub['username'] 	= $this->session->userdata('USERNAME');
+		$datasub['tingkat'] 	= $this->session->userdata('LEVEL');
 		$subdata['sub']			= 1;
 		$level_user2 			= $this->session->userdata('LEVEL');
 
@@ -217,12 +230,24 @@ class C_aql_pivot extends CI_Controller {
 		$subdata['report2'] 	= $this->M_aql_pivot->report2($po, $partial, $remark, $level, $level_user, $level_user2);
 		$subdata['report3'] 	= $this->M_aql_pivot->report3($po, $partial, $remark, $level, $level_user);
 		$subdata['codenya'] 	= $this->M_aql_pivot->code_reject()->result_array();
-	
+	 
 		$subdata['id_qc'] 		= $this->M_aql_pivot->view_id_qc();
 
+
 		$this->load->view('template/header', $datasub);
-		$this->load->view('QIP/Inspection/template_baru/Aql_Report/report_inspect2', $subdata);
+		// $this->load->view('QIP/Inspection/template_baru/Aql_Report/report_inspect2', $subdata);
+		$this->load->view('QIP/Inspection/template_baru/Aql_Report/new_report_inspect', $subdata);
 		$this->load->view('template/footer');
+	}
+
+	public function list_reject(){
+		$data = $this->M_aql_pivot->list_reject();
+		echo json_encode($data);
+	}
+
+	public function insert_reject(){
+		$insert = $this->M_aql_pivot->insert_reject();
+		echo json_encode($insert);
 	}
 	
 	public function report_inspect_guest($po, $partial, $remark, $level, $level_user){
@@ -238,10 +263,19 @@ class C_aql_pivot extends CI_Controller {
 		$subdata['codenya'] 	= $this->M_aql_pivot->code_reject()->result_array();
 	
 		$subdata['id_qc'] 		= $this->M_aql_pivot->view_id_qc();
+		$subdata['list_reject'] = $this->M_aql_pivot->list_reject();
 
 		$this->load->view('template/header_awal', $datasub);
 		$this->load->view('QIP/Inspection/template_baru/Aql_Report/report_inspect_awal', $subdata);
 		$this->load->view('template/footer');
+	}
+
+	public function photo_defect(){
+		$po 		= $this->input->post('PO_NO'); 
+		$partial	= $this->input->post('PARTIAL'); 
+
+		$photo		= $this->M_aql_pivot->photo_defect($po, $partial);
+		echo json_encode($photo);
 	}
 	
     public function report3_guest(){
@@ -273,16 +307,26 @@ class C_aql_pivot extends CI_Controller {
 	}
 
     public function report1(){
-		$po 	= $this->input->post('PO_NO'); 
-		$partial= $this->input->post('PARTIAL'); 
-		$remark = $this->input->post('REMARK'); 
-		$level 	= $this->input->post('LEVEL'); 
-		// $level_user	= $this->session->userdata('LEVEL');
-		$level_user = $this->input->post('LEVEL_USER'); 
+		$po 			= $this->input->post('PO_NO'); 
+		$partial		= $this->input->post('PARTIAL'); 
+		$remark 		= $this->input->post('REMARK'); 
+		$level 			= $this->input->post('LEVEL'); 
+		
+		$level_user 	= $this->input->post('LEVEL_USER'); 
         
-        $report1 = $this->M_aql_pivot->report($po, $partial, $remark, $level, $level_user)->row_array();
-        
-        echo json_encode($report1);
+        $po_detail 		= $this->M_aql_pivot->report($po, $partial, $remark, $level, $level_user)->row_array();
+		$random_detail 	= $this->M_aql_pivot->report($po, $partial, $remark, $level, $level_user)->result();
+		
+        echo json_encode(array('po'=>$po_detail, 'random'=>$random_detail));
+    }
+
+	public function po_result(){
+		$po 			= $this->input->post('PO_ID'); 
+		// $partial		= $this->input->post('PARTIAL'); 
+		
+        $po_result 		= $this->M_aql_pivot->po_result($po)->row_array();
+		
+        echo json_encode($po_result);
     }
     
     public function report2(){
@@ -350,11 +394,12 @@ class C_aql_pivot extends CI_Controller {
 		$data 			= $this->M_aql_pivot->confirm_inspector($PO_NO, $PARTIAL, $REMARK, $LEVEL, $USERID, $LEVEL_USER, $FLAG, $COMMENT, $LEVEL_U);
 		$stage			= '5';
 		$update_stage 	= $this->M_validation->edit_stage($PO_NO, $PARTIAL, $LEVEL, $LEVEL_USER, $REMARK, $stage);
-		$pivot 			= $this->M_pivot->aql_pivot_put($PO_ID); 
-		$url 	        = base_url().'index.php/C_aql_pivot/input_aql/';
+		// $pivot 			= $this->M_pivot->aql_pivot_put($PO_ID); 
+		// $send_image		= base_url().'index.php/C_pivot/aql_put_image_mcs/'.$PO_ID;
+		// $url 	        = base_url().'index.php/C_aql_pivot/input_aql/';
 		
         
-        echo json_encode($url);
+        echo json_encode('berhasil');
     }
     
 
@@ -1094,6 +1139,28 @@ class C_aql_pivot extends CI_Controller {
 		//exit();
 	}
 
+	// public function upload_file($filename){
+	// 	$this->load->library('upload'); // Load librari upload
+		
+	// 	$config['upload_path'] = './excel/';
+	// 	$config['allowed_types'] = 'xlsx';
+	// 	$config['max_size']  = '2048';
+	// 	$config['overwrite'] = true;
+	// 	$config['file_name'] = $filename;
+	  
+	// 	$this->upload->initialize($config); // Load konfigurasi uploadnya
+	// 	if($this->upload->do_upload('file')){ // Lakukan upload dan Cek jika proses upload berhasil
+	// 	  // Jika berhasil :
+	// 	  $return = array('result' => 'success', 'file' => $this->upload->data(), 'error' => '');
+	// 	  return $return;
+	// 	}else{
+	// 	  // Jika gagal :
+	// 	  $return = array('result' => 'failed', 'file' => '', 'error' => $this->upload->display_errors());
+	// 	  return $return;
+	// 	}
+	//   }
+	
+
 
 	public function import_repacking()
 	{
@@ -1486,5 +1553,9 @@ class C_aql_pivot extends CI_Controller {
 		$data		 = $this->M_aql_pivot->deletePO($PO_NO, $PARTIAL);
 		
 		echo json_encode($data);
+	}
+
+	public function insert_inspection(){
+		
 	}
 }

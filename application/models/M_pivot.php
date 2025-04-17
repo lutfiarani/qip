@@ -3,9 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require_once "vendor/vendor/autoload.php";
 
+use GuzzleHttp\Psr7;
 use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
-use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\ClientException;
 
 class M_pivot extends CI_Model {
@@ -31,12 +33,13 @@ class M_pivot extends CI_Model {
     public function __construct()
     {
         $this->_client = new Client([
-            'base_uri' => 'https://adidasstage4.pivot88.com/rest/operation/v1/', //link api server, ganti sesuai kebutuhan
+            'base_uri' => 'https://adidas.pivot88.com/rest/operation/v1/', //link api server, ganti sesuai kebutuhan
             'auth' => ['hwaseung_api', 'Pivot88#'], //[username, password]
             'headers'=>[
-                'api-key' => '9b8ef360-dd66-41f8-a9d0-4f42c33840f4'
+                'api-key' => 'e5862997-7d4e-4671-97bc-26f771997abb'
             ]
         ]);
+
 
         $this->_client_test = new Client([
             'base_uri' => 'https://adidasstage4.pivot88.com/rest/operation/v1/', //link api server, ganti sesuai kebutuhan
@@ -82,11 +85,13 @@ class M_pivot extends CI_Model {
         $client = new GuzzleHttp\Client();
         // try{
             $response = $client->request('GET','https://adidas.pivot88.com/rest/operation/v1/inspections?details=true&po_number='.$po,[
-                'auth'=> ['ysha', 'hwiqip5!'],
+                // 'auth'=> ['ysha', 'hwiqip1@'],
+                'auth'=> ['ysha', 'hwiqip3@'],
                 'headers' =>[
                     // 'Cookie' =>  'PHPSESSID=3irnss6mrmd9mg3j19bp6aq01p',
                     'username' => 'ysha',
-                    'password' => 'hwiqip5!',
+                    // 'password' => 'hwiqip1@',
+                    'password' => 'hwiqip3@',
                     ]
                 ]
             );
@@ -122,7 +127,7 @@ class M_pivot extends CI_Model {
 				, ISNULL(A.COMMENT,'') AS COMMENT
                 , STEP_IN_TOOLS, STOP_LINE, STATUS_UPLOAD
                 , STOP_LINE_REASON
-        FROM [QIP].[dbo].PIVOT_TABLE_MES AS A WITH (NOLOCK)
+        FROM [QIP].[dbo].PIVOT_TABLE_MES  AS A WITH (NOLOCK)
         LEFT JOIN (SELECT * FROM QIP.dbo.PIVOT_DEFECT_QTY AS B WITH (NOLOCK) WHERE QCODE  NOT LIKE  '100%') AS B
         ON A.PO_ID = B.PO_ID
         AND A.PO_NO = B.PO_NO
@@ -131,9 +136,38 @@ class M_pivot extends CI_Model {
         ) AS C");
         return $query;
     }
+
+    public function view_generate_tgl($tanggal){
+        
+        $query = $this->db->query("SELECT *,  ROUND((ISNULL(cast(QTY_DEFECT as float),0)/cast(QTY_ASSY_IN as float)*100),2)AS DEFECT_RATE
+                                        , CASE WHEN (ISNULL(cast(QTY_DEFECT as float),0)/cast(QTY_ASSY_IN as float)*100) > 15 THEN 'FAIL'
+                                        ELSE 'PASS'
+                                        END AS RESULT 
+                                        FROM
+                                        (
+                                            SELECT A.PO_NO
+                                                , A.MODEL_NAME
+                                                , A.ART_NO
+                                                , A.QTY_ASSY_IN
+                                                , ISNULL(SUM(B.QTY_DEFECT), 0) AS QTY_DEFECT
+                                                , A.PO_ID
+                                                , ISNULL(A.COMMENT,'') AS COMMENT
+                                                , STEP_IN_TOOLS, STOP_LINE, STATUS_UPLOAD
+                                                , STOP_LINE_REASON
+                                        FROM [QIP].[dbo].PIVOT_TABLE_MES AS A WITH (NOLOCK)
+                                        LEFT JOIN (SELECT * FROM QIP.dbo.PIVOT_DEFECT_QTY AS B WITH (NOLOCK) WHERE QCODE  NOT LIKE  '100%') AS B
+                                        ON A.PO_ID = B.PO_ID
+                                        AND A.PO_NO = B.PO_NO
+                                        WHERE A.WORKDATE='$tanggal'
+                                        GROUP BY A.PO_NO, A.MODEL_NAME, A.ART_NO, A.QTY_ASSY_IN, A.PO_ID, STEP_IN_TOOLS, STATUS_UPLOAD, STOP_LINE, COMMENT, STOP_LINE_REASON
+                                        ) AS C
+                                        WHERE STATUS_UPLOAD<>'Y'
+                                        ");
+        return $query;
+    }
 	
-    public function generate_data(){
-        $tanggal = $this->input->post('tanggal');
+	
+    public function generate_data($tanggal){
         $query = $this->db->query("EXEC [QIP].[dbo].PIVOT_GENERATE_DATA @tanggal = '$tanggal'");
         return $query;
     }
@@ -210,29 +244,80 @@ class M_pivot extends CI_Model {
     }
 
     public function pivot_put($po_id){
-        $json = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/index/'.$po_id);
-        $json2 = json_decode($json);
-        $response = $this->_client->put('inspection_reports/unique_key:hwi_'.$po_id,[
-            'json'=>$json2
-        ]);
-        
-        $result = json_decode($response->getBody()->getContents(), true);
-        return $response;
+    
+        try {
+            $client = new Client();
+            $json = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/index/'.$po_id);
+            $body = json_decode($json);
+    
+            $response = $this->_client->put('inspection_reports/unique_key:hwi_0'.$po_id, [
+                'json' => $body
+            ]);
+            
+            $result = $response->getStatusCode();
+            return $result;
+        } catch (Exception $e) {
+            // Log error atau tangani exception
+            log_message('error', 'Pivot Put Error: ' . $e->getMessage());
+            throw $e; // Re-throw atau return error code
+        }
         
     }
 
     public function pivot_put_(){
-        $json = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/index/1179');
-        $json2 = json_decode($json);
-        $response = $this->_client->put('inspection_reports/unique_key:hwi_1',[
-            'json'=>$json2
-        ]);
+        $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/index/1179');
+        $json2      = json_decode($json);
+        $response   = $this->_client->put('inspection_reports/unique_key:hwi_1',[
+                            'json'=>$json2
+                        ]);
         
-        $result = json_decode($response->getBody()->getContents(), true);
+        $result     = json_decode($response->getBody()->getContents(), true);
+
         return $response;
-        
     }
 
+    public function tqc_defect_json($po_id){
+        $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/tqc_add/'.$po_id);
+        $json2      = json_decode($json);
+        $response   = $this->_client->put('inspection_reports/unique_key:hwi_'.$po_id,[
+                            'json'=>$json2
+                        ]);
+        
+        $result     = json_decode($response->getBody()->getContents(), true);
+
+        return $response;
+    }
+
+    public function tqc_defect_json_trial($po_id){
+        $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/tqc_add/'.$po_id);
+        $json2      = json_decode($json);
+        $response   = $this->_client_test->put('inspection_reports/unique_key:hwi_'.$po_id,[
+                            'json'=>$json2
+                        ]);
+        
+        $result     = json_decode($response->getBody()->getContents(), true);
+
+        return $response;
+    }
+
+    public function cek_defect_tqc($po_id){
+        $query = $this->db->query("SELECT * FROM [QIP].[DBO].[PIVOT_DEFECT_QTY] WITH (NOLOCK) WHERE PO_ID='$po_id'");
+        return $query;
+    }
+    
+    public function pivot_put_trial($po_id){
+        $client     = new Client();
+        $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/index/'.$po_id); //ganti ini jika nanti sudah bisa
+        $body       = json_decode($json);
+
+        $response   = $this->_client_test->put('inspection_reports/unique_key:hwi_'.$po_id,[
+                            'json'=>$body
+                        ]);
+        
+        $result     = $response->getStatusCode();
+        
+        return $result  ;
+    }
 
     public function save_comment(){
         $po_id = $this->input->post('PO_NO_ID');
@@ -248,7 +333,7 @@ class M_pivot extends CI_Model {
     public function banyak_data($tanggal){
         $query = $this->db->query("SELECT COUNT(PO_ID) AS BANYAK 
                                     FROM [QIP].[dbo].[PIVOT_TABLE_MES] WITH (NOLOCK)
-                                    WHERE STATUS_UPLOAD='N' 
+                                    WHERE STATUS_UPLOAD <> 'Y'
                                     AND WORKDATE = '$tanggal'
                                     ");
         return $query->row();
@@ -264,18 +349,29 @@ class M_pivot extends CI_Model {
     //     return $query->result_array();
     // }
 
+    public function data_all($tanggal){
+        $query = $this->db->query("   select distinct(b.AVBELN) as po_trans, b.PO_NO from THPRODHISPO as b
+                    join (
+                    SELECT distinct(PO_NO) as po_no FROM [QIP].[dbo].[PIVOT_TABLE_MES] WITH (NOLOCK) WHERE WORKDATE = '$tanggal'
+                    ) as a
+                    on a.po_no = b.PO_NO
+                    
+        ");
+        return $query->result_array();
+    }
+
     public function data_mes_all($tanggal){
         $query = $this->db->query("SELECT TOP 10 * FROM [QIP].[dbo].[PIVOT_TABLE_MES] WITH (NOLOCK) WHERE PO_NO ='0131118405'
         AND WORKDATE = '20221013'");
         return $query->result_array();
     }
 
-    public function update_status($po_id,$status){
+    public function update_status($po_id,$status, $code){
         $query = $this->db->query("UPDATE [QIP].[dbo].[PIVOT_TABLE_MES] 
                                    SET STATUS_UPLOAD='$status'
+                                   , CODE_UPLOAD = '$code'
                                    , UPDATED_AT = GETDATE()
-                                   WHERE PO_ID = '$po_id'
-                                   AND STATUS_UPLOAD='N' ");
+                                   WHERE PO_ID = '$po_id' ");
         return $query;
     }
 
@@ -336,19 +432,19 @@ class M_pivot extends CI_Model {
     }
 
     public function get_PO($po_id){
-        $query = $this->db->query("SELECT PO_NO FROM [QIP].[dbo].[PIVOT_TABLE_MES] WHERE PO_ID = '$po_id'");
+        $query = $this->db->query("SELECT PO_NO FROM [QIP].[dbo].[PIVOT_TABLE_MES] WITH (NOLOCK) WHERE PO_ID = '$po_id'");
         // $query = ("SELECT PO_NO FROM [QIP].[dbo].[PIVOT_TABLE_MES] WHERE PO_ID = '$po_id'");
         return $query->row();
         // echo $query;
     }
 
     public function aql_pivot_put($id){
-        $client = new Client();
-        $json       = file_get_contents('http://localhost/qip/index.php/C_Pivot/data_pivot_coba/');
-          // $json       = file_get_contents('http://10.10.100.23/qip_api_test/C_pivot_test_V1/send_aql/'.$po_id); --ganti ini jika nanti sudah bisa
+        $client     = new Client();
+        // $json       = file_get_contents('http://localhost/qip/index.php/C_Pivot/data_pivot_coba/');
+        $json       = file_get_contents("http://10.10.100.23/qip_api_test/C_pivot_test_V1/send_aql/$id"); //ganti ini jika nanti sudah bisa
         $body       = json_decode($json);
 
-        $response   = $this->_client_test->put('inspection_reports/unique_key:hwi_aql_'.$id,[
+        $response   = $this->_client->put('inspection_reports/unique_key:hwi_aql_'.$id,[
                             'json'=>$body
                         ]);
         
@@ -356,5 +452,166 @@ class M_pivot extends CI_Model {
         return $result  ;
     }
 
+    public function aql_pivot_put_manual($id){
+        $client     = new Client();
+        // $json       = file_get_contents('http://localhost/qip/index.php/C_Pivot/data_pivot_coba/');
+        $json       = file_get_contents("http://10.10.100.23/qip_api_test/C_pivot_test_V1/send_aql_manual/$id"); //ganti ini jika nanti sudah bisa
+        $body       = json_decode($json);
+
+        $response   = $this->_client->put('inspection_reports/unique_key:hwi_aql_'.$id,[
+                            'json'=>$body
+                        ]);
+        
+        $result     = json_decode($response->getBody()->getContents(), true);
+        return $result  ;
+    }
+
+    public function get_image_aql($id){
+        $query = $this->db->query("
+                        SELECT '$id' AS PO_ID, PHOTO_NAME, SEQ, CREATE_DATE FROM [QIP].[dbo].[QIP_AQL_DATA_PHOTO] WITH (NOLOCK)
+                            WHERE PO_ID='$id'
+                            AND LEFT(SEQ, 2)='20'
+                            AND PHOTO_NAME IS NOT NULL
+                            UNION ALL
+                            SELECT TOP 6 '$id' AS PO_ID, PHOTO_NAME, SEQ, CREATE_DATE FROM [QIP].[dbo].[QIP_AQL_DATA_PHOTO]  WITH (NOLOCK)
+                            WHERE ARTICLE IN (SELECT TOP 1 ARTICLE FROM [QIP].[dbo].[QIP_AQL_DATA_PHOTO] WITH (NOLOCK) WHERE PO_ID='$id')
+                            AND LEFT(SEQ, 2)='10'
+                            AND PHOTO_NAME IS NOT NULL
+                            ORDER BY CREATE_DATE DESC");
+        return $query->result();
+        // echo $query;
+    }
+
+    public function update_mes($id){
+        $query = $this->db->query("EXEC QIP.DBO.MES_CHANGE_INSPECTION_DATE @po_id=$id");
+        return $query;
+    }
+    public function get_reject_aql($id){
+        $query = $this->db->query("
+                        SELECT PO_ID
+                        , REJECT_IMG AS PHOTO_NAME, CODE AS SEQ, LMNT_DTTM AS CREATE_DATE 
+                        FROM [QIP].[dbo].[QIP_AQL_PO_DEFECT] WITH (NOLOCK)
+                        WHERE PO_ID='$id' 
+                        AND REJECT_IMG <>'' 
+                        ORDER BY LMNT_DTTM");
+        return $query->result();
+        // echo $query;
+    }
+
+
+    public function aql_put_image_mcs($id, $image_name){
+        $client = new Client();
+        // $headers = [
+        //         'server'            => 'https://adidasstage4.pivot88.com',
+        //         'username'          => 'hwaseung_api',
+        //         'password'          => 'Pivot88#',
+        //         'api-key'           => '9b8ef360-dd66-41f8-a9d0-4f42c33840f4',
+        //         'Cookie'            => 'PHPSESSID=tk6npibdld62odhj06ugi64msg'
+        //   ];
+      
+        $headers = [
+                'server'            => 'https://adidas.pivot88.com/',
+                'username'          => 'hwaseung_api',
+                'password'          => 'Pivot88#',
+                'api-key'           => 'e5862997-7d4e-4671-97bc-26f771997abb',
+          ];
+        $options = [
+            'multipart' => [
+                [
+                    'name'          => 'file',
+                    'contents'      => Utils::tryFopen(base_url().'template/images/aql_image/'.$image_name, 'r'),
+                    'filename'      => "'".base_url().'template/images/aql_image/'.$image_name."'",//'/C:/Users/IST-PC-0072/Desktop/sepatu_ini.jpeg',
+                    'headers'       => [
+                                        'Content-Type' => '<Content-type header>'
+                                    ]
+                ]
+        ]];
+          $request      = new Request('POST', 'https://adidas.pivot88.com/rest/operation/v1/inspection_reports/unique_key:hwi_aql_'.$id.'/images/upload', $headers);
+          $res          = $client->sendAsync($request, $options)->wait();
+       
+          $result       = json_decode($res->getBody()->getContents(), true);
+          return $result;
+    }
+
+    public function aql_put_image_reject($id, $image_name){
+        $client = new Client();
+        // $headers = [
+        //         'server'            => 'https://adidasstage4.pivot88.com',
+        //         'username'          => 'hwaseung_api',
+        //         'password'          => 'Pivot88#',
+        //         'api-key'           => '9b8ef360-dd66-41f8-a9d0-4f42c33840f4',
+        //         'Cookie'            => 'PHPSESSID=tk6npibdld62odhj06ugi64msg'
+        //   ];
+        $headers = [
+            'server'            => 'https://adidas.pivot88.com/',
+            'username'          => 'hwaseung_api',
+            'password'          => 'Pivot88#',
+            'api-key'           => 'e5862997-7d4e-4671-97bc-26f771997abb',
+        ];
+        $options = [
+            'multipart' => [
+                [
+                    'name'          => 'file',
+                    'contents'      => Utils::tryFopen(base_url().'template/images/aql_image/reject/'.$image_name, 'r'),
+                    'filename'      => "'".base_url().'template/images/aql_image/reject/'.$image_name."'",//'/C:/Users/IST-PC-0072/Desktop/sepatu_ini.jpeg',
+                    'headers'       => [
+                                        'Content-Type' => '<Content-type header>'
+                                    ]
+                ]
+        ]];
+          $request      = new Request('POST', 'https://adidas.pivot88.com/rest/operation/v1/inspection_reports/unique_key:hwi_aql_'.$id.'/images/upload', $headers);
+          $res          = $client->sendAsync($request, $options)->wait();
+       
+          $result       = json_decode($res->getBody()->getContents(), true);
+          return $result;
+
+        //   $result     = json_decode($response->getBody()->getContents(), true);
+        //   return $result  ;
+    }
+
+    public function edit_status_aql($id, $value, $code){
+        $query = $this->db->query("UPDATE [QIP].[dbo].[PIVOT_AQL_TABLE_MES]
+                                    SET SEND_YN = '$value',
+                                    CODE_STATUS = '$code'
+                                    WHERE PO_ID = '$id'
+            ");
+        return $query;
+    }
+
+
+    public function get_notif_aql($tanggal){
+        $query = ("EXEC [QIP].[DBO].[AQL_PO_NOTIFICATION] @TANGGAL = '$tanggal'
+                ");
+                
+        return $this->db->query($query)->result_array();
+    }
+
+    public function etd_notif($id){
+        $query = ("SELECT PO_NO, CASE WHEN ETD_DATE < INSPECT_DATE THEN 'KELEBIHAN'
+                            ELSE 'KEKURANGAN'
+                            END AS STATUS_PENGIRIMAN, ETD_DATE, INSPECTOR_NAME
+                    FROM
+                    (
+                        SELECT	A.PO_NO
+                                , MAX(ETD_DATE) AS ETD_DATE
+                                , B.INSPECT_DATE 
+                                , B.INSPECTOR_NAME
+                        FROM QIP.DBO.PIVOT_PO_ETD AS A WITH (NOLOCK)
+                        LEFT JOIN 
+                        (
+                            SELECT	PO_NO
+                                    , CONVERT(CHAR(10), GETDATE(), 120)  AS INSPECT_DATE
+                                    , INSPECTOR_NAME
+                            FROM	QIP.DBO.PIVOT_AQL_TABLE_MES WITH (NOLOCK)
+                            WHERE	PO_ID = '$id'
+                            GROUP	BY PO_NO, INSPECTOR_NAME
+                        ) AS B
+                        ON		A.PO_NO = B.PO_NO
+                        WHERE	A.PO_NO IN (SELECT PO_NO FROM QIP.DBO.PIVOT_AQL_TABLE_MES WITH (NOLOCK) WHERE PO_ID='$id')
+                        GROUP	BY A.PO_NO , B.INSPECT_DATE, B.PO_NO, INSPECTOR_NAME
+                    ) AS A"); 
+        return $this->db->query($query)->result_array();
+
+    }
 
 }

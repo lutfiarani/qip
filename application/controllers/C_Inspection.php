@@ -130,7 +130,7 @@ class C_Inspection extends CI_Controller {
 		echo json_encode($output);
 	}
 
-    public function inspect($fac)
+	public function inspect($fac)
 	{
         $data['pagetitle']="INSPECTION SCHEDULE";
         if ( $this->input->post('INSPECT_DATE', true) === NULL){
@@ -140,11 +140,11 @@ class C_Inspection extends CI_Controller {
 		}
 		$subdata['formtitle'] = "INSPECTION SCHEDULE TANGGAL ".$tgl." GEDUNG ".$fac;
         $subdata['action']= site_url('C_Inspection/inspect/'.$fac);
-        $this->M_Inspection->loadplan($tgl,$fac);
+         $this->M_Inspection->tampil_factory($tgl,$fac);
         $subdata['query'] = $this->M_Inspection->tampil_loadplan($tgl,$fac);
         $subdata['banyak'] = $this->M_Inspection->inspect_count($fac);
         // $data['content'] = $this->load->view('QIP/Inspection/Inspection_List_non_admin',$subdata,true);
-        // $this->M_Inspection->drop_loadplan($fac);
+        $this->M_Inspection->drop_loadplan($fac);
 		// $this->load->view('template2',$data);
 		$this->load->view('template/header_awal', $data);
 		$this->load->view('QIP/Inspection/Inspection_List_non_admin',$subdata);
@@ -166,50 +166,11 @@ class C_Inspection extends CI_Controller {
 	}
 
 	public function inspect_all_building_(){
-		// $this->M_Inspection->inspect_all();
-
-		// $draw 	= intval($this->input->get("draw"));
-		// $start 	= intval($this->input->get("start"));
-		// $length = intval($this->input->get("length"));
-		
-		// $data_tampil = $this->M_Inspection->inspect_all_view();
-		// $data	= array();
-		// $no		= $start;
-		
-		// foreach($data_tampil->result() as $a){
-		// 	$no++;
-		// 	$data[]	= array(
-		// 		$no,
-		// 		$a->FACTOR_CODE,
-		// 		$a->PO_NO,
-		// 		$a->MODEL_NAME,
-		// 		$a->DESTINATION,
-		// 		$a->COUNTRY,
-		// 		$a->CUST_NO,
-		// 		$a->ART_NO,
-		// 		$a->TOTAL_QTY,
-		// 		$a->TOTAL_CARTON,					
-		// 		$a->SDD,
-		// 		$a->LOAD_TYPE,
-		// 		$a->CONTAINER,
-		// 		$a->EXPORT_DATE,
-		// 		$a->INSPECT_DATE_INPUT,
-		// 		$a->STATUS_PO2
-			
-		// 	);
-		// }
-		// $output = array(
-		// 	"draw" => $draw,
-		// 	"recordsTotal" => $data_tampil->num_rows(),
-		// 	"recordsFiltered" => $data_tampil->num_rows(),
-		// 	"data" => $data 
-		// );
 		$this->M_Inspection->inspect_all();
 		$data_tampil = $this->M_Inspection->inspect_all_view();
 		$data_summary = $this->M_Inspection->inspect_all_count();
 		$this->M_Inspection->drop_inspect_all();
-		// $this->M_Inspection->drop_inspect_all();
-		// echo json_encode($data_tambah);
+		
 		echo json_encode(array('view_all'=>$data_tampil, 'view_summary'=>$data_summary));
 		// echo json_encode($data_tampil);
 	}
@@ -401,8 +362,8 @@ class C_Inspection extends CI_Controller {
               </div>',
 				'<div class="time-label">
                 <span class="bg-green">'.$a->INSPECT_DATE.'</span>
-              </div>',
-				'<button type="button" class="btn btn-success btn-xs inspect" po="'.$a->PO_NO.'" status="PASS">Inspect</button>'
+              </div>'//,
+				// '<button type="button" class="btn btn-success btn-xs inspect" po="'.$a->PO_NO.'" status="PASS">Inspect</button>'
 
 			
 			);
@@ -543,7 +504,7 @@ class C_Inspection extends CI_Controller {
 			// $data['content'] = $this->load->view('QIP/Export_Schedule/import',$subdata,true);
 			// $this->load->view('template_admin',$data);
 
-			$datasub['formtitle'] = "IMPORT DATA EXPORT SCHEDULE";
+			$datasub['formtitle'] = "UPLOAD DATA INSPECTION RESULT";
 			$this->load->view('template/header', $datasub);
 			$this->load->view('QIP/Inspection/template_baru/import', $subdata);
 			$this->load->view('template/footer');
@@ -632,8 +593,8 @@ class C_Inspection extends CI_Controller {
 				$data['dataInfo'] = $fetchData;
 				$this->M_Inspection->setBatchImport($fetchData);
 				$insert = $this->M_Inspection->importDataMES();
-				// $this->M_Inspection->send_to_mes();
-				// $this->M_Inspection->change_status();
+				$this->M_Inspection->send_to_mes();
+				$this->M_Inspection->change_status();
 				echo "IMPORT DATA BERHASIL";
 				// 
 				

@@ -28,14 +28,14 @@ class M_aql_inspect extends CI_Model {
     public function insert_partial($data) 
 	{
 	      
-        $PO  =$_POST['PO_NO'];
-		$PARTIAL  = $_POST['PARTIAL']; //$_POST['PARTIAL'];
-		$INSPECTOR = $this->session->userdata('USERNAME');
-		$QTY = $_POST['QTY'];
-		$LEVEL = $_POST['LEVEL'];
+        $PO         =  $_POST['PO_NO'];
+		$PARTIAL    = $_POST['PARTIAL']; //$_POST['PARTIAL'];
+		$INSPECTOR  = $this->session->userdata('USERNAME');
+		$QTY        = $_POST['QTY'];
+		$LEVEL      = $_POST['LEVEL'];
         $INSPECT_DATE = $_POST['INSPECT_DATE'];
         $LEVEL_USER = $this->session->userdata('LEVEL');
-        $query = ("INSERT INTO [QIP].[dbo].QIP_AQL_PO_PARTIAL_INFO (PO_NO, PARTIAL, QTY, INSPECTOR, LEVEL, INSPECT_DATE, LEVEL_USER) 
+        $query      = ("INSERT INTO [QIP].[dbo].QIP_AQL_PO_PARTIAL_INFO (PO_NO, PARTIAL, QTY, INSPECTOR, LEVEL, INSPECT_DATE, LEVEL_USER) 
                  VALUES ('$PO', '$PARTIAL', $QTY, '$INSPECTOR', '$LEVEL', $INSPECT_DATE, $LEVEL_USER)");
         echo $query;
        
@@ -57,9 +57,11 @@ class M_aql_inspect extends CI_Model {
         $query  = $this->db->query("
      
         SELECT A.PO_NO, A.PARTIAL, QTY, A.INSPECTOR,INSPECT_DATE, BANYAK, INSPECT_RESULT,
-                A. LEVEL, A.LEVEL_USER, '$level_user' AS LEVEL_NOW FROM [QIP].[dbo].[QIP_AQL_PO_PARTIAL_INFO] AS A WITH (NOLOCK) 
+                A. LEVEL, A.LEVEL_USER, '$level_user' AS LEVEL_NOW 
+                FROM [QIP].[dbo].[QIP_AQL_PO_PARTIAL_INFO] AS A WITH (NOLOCK) 
         LEFT JOIN (
-            SELECT PO_NO,COUNT(PO_NO) AS BANYAK, PARTIAL, LEVEL, LEVEL_USER FROM [QIP].[dbo].[QIP_AQL_DATA_LOG] WITH (NOLOCK)
+            SELECT PO_NO,COUNT(PO_NO) AS BANYAK, PARTIAL, LEVEL, LEVEL_USER 
+            FROM [QIP].[dbo].[QIP_AQL_DATA_LOG] WITH (NOLOCK)
                 WHERE PO_NO='$po' --AND LEVEL='II' AND LEVEL_USER='2'
                 GROUP BY PO_NO, PARTIAL, LEVEL, LEVEL_USER
             ) AS B
@@ -233,7 +235,6 @@ class M_aql_inspect extends CI_Model {
         $query = $this->db->query("SELECT * FROM [QIP].[dbo].[QIP_AQL_DATA_FIRST] WITH (NOLOCK)
                                     WHERE PO_NO = '$po'
                                     AND PARTIAL = '$partial'
-                                  
                                     AND LEVEL	= '$level'");
         return $query->num_rows();
     }
@@ -273,14 +274,14 @@ class M_aql_inspect extends CI_Model {
     }
 
     public function edit_random(){
-        $po=$this->input->post('PO');
-        $partial=$this->input->post('partial');
-        $size=$this->input->post('size');
-        $remark=$this->input->post('remark');
-        $ctn_qty=$this->input->post('ctn_qty');
-        $ctn_no=$this->input->post('ctn_no');
-        $qty=$this->input->post('qty');
-        $query = ("UPDATE [QIP].[dbo].[QIP_AQL_RANDOM_PO]
+        $po         = $this->input->post('PO');
+        $partial    = $this->input->post('partial');
+        $size       = $this->input->post('size');
+        $remark     = $this->input->post('remark');
+        $ctn_qty    = $this->input->post('ctn_qty');
+        $ctn_no     = $this->input->post('ctn_no');
+        $qty        = $this->input->post('qty');
+        $query      = ("UPDATE [QIP].[dbo].[QIP_AQL_RANDOM_PO]
                             SET CTN_QTY = '$ctn_qty',
                                 CTN_NO = '$ctn_no',
                                 QTY = '$qty'
@@ -466,7 +467,8 @@ class M_aql_inspect extends CI_Model {
 
     public function edit_carton(){
         $query = $this->db->query("
-            SELECT PO_NO, PARTIAL, LEVEL, REMARK, CARTON_NO, CARTON_QTY, SIZE, QTY_INSPECT  FROM [QIP].[dbo].QIP_AQL_DATA_FIRST WITH (NOLOCK)
+            SELECT PO_NO, PARTIAL, LEVEL, REMARK, CARTON_NO, CARTON_QTY, SIZE, QTY_INSPECT 
+            FROM [QIP].[dbo].QIP_AQL_DATA_FIRST WITH (NOLOCK)
             WHERE LEVEL_USER='2'
             AND CONVERT(CHAR(6), LMNT_DTTM,112) = CONVERT(CHAR(6), GETDATE(), 112)
             ORDER BY PO_NO, PARTIAL
@@ -533,9 +535,9 @@ class M_aql_inspect extends CI_Model {
 
     public function cell(){
         $query = $this->db->query("SELECT LEFT(CELL_CODE,1)+RIGHT(CELL_CODE,2) AS CELL FROM TMCELL WITH (NOLOCK)
-        WHERE USE_FLAG='Y'
-        AND FACTORY<>'L1'
-        ORDER BY FACTORY, CELL_CODE");
+                                    WHERE USE_FLAG='Y'
+                                    AND FACTORY<>'L1'
+                                    ORDER BY FACTORY, CELL_CODE");
         return $query;
     }
 
@@ -637,7 +639,7 @@ class M_aql_inspect extends CI_Model {
         $level = $this->input->post('level');
 
         $query = $this->db->query("	SELECT COUNT(PO_NO) AS TOTAL_PO, SUM(TOTAL_QTY) AS TOTAL_QTY, SUM(QTY_INSPECT) AS QTY_INSPECT FROM(
-            SELECT A.PO_NO, TOTAL_QTY, SUM(QTY_INSPECT) AS QTY_INSPECT FROM [QIP].[dbo].QIP_AQL_DATA_FIRST A 
+            SELECT A.PO_NO, TOTAL_QTY, SUM(QTY_INSPECT) AS QTY_INSPECT FROM [QIP].[dbo].QIP_AQL_DATA_FIRST A  WITH (NOLOCK)
 			JOIN [QIP].[dbo].QIP_AQL_DATA_LOG B WITH (NOLOCK)
 			ON A.PO_NO = B.PO_NO
 			AND A.PARTIAL = B.PARTIAL
@@ -659,11 +661,11 @@ class M_aql_inspect extends CI_Model {
 
         $query   = $this->db->query(" SELECT TOP 10 J.CODE, CODE_NAME, REJECT_CODE_NAME,SUM(I.QTY) AS QTY_DEFECT 
         FROM(
-        SELECT G.* FROM (
-        SELECT PO_NO, PARTIAL, REMARK,LEVEL, LEVEL_USER FROM [QIP].[dbo].QIP_AQL_DATA_LOG WITH (NOLOCK)
-        WHERE CONVERT(CHAR(6),LMNT_DTTM,112) ='$tanggal'
-        AND LEVEL = '$level'
-        AND LEVEL_USER= '$level_user'
+            SELECT G.* FROM (
+            SELECT PO_NO, PARTIAL, REMARK,LEVEL, LEVEL_USER FROM [QIP].[dbo].QIP_AQL_DATA_LOG WITH (NOLOCK)
+            WHERE CONVERT(CHAR(6),LMNT_DTTM,112) ='$tanggal'
+            AND LEVEL = '$level'
+            AND LEVEL_USER= '$level_user'
         ) AS F 
         LEFT JOIN 
         (	SELECT PO_NO, PARTIAL, LEVEL, REMARK, LEVEL_USER,CODE, REJECT_CODE, SUM(QTY) AS QTY 
@@ -888,14 +890,14 @@ class M_aql_inspect extends CI_Model {
 
     public function delete_inspection(){
         $query = $this->db->query("SELECT	A.PO_NO, A.PARTIAL, A.QTY, A.INSPECT_DATE, A.LEVEL, A.INSPECTOR, A.LEVEL_USER, B.REMARK, B.INSPECT_RESULT 
-        FROM	[QIP].DBO.QIP_AQL_PO_PARTIAL_INFO AS A WITH (NOLOCK)
-        LEFT	JOIN QIP.DBO.QIP_AQL_DATA_LOG AS B WITH (NOLOCK)
-        ON		A.PO_NO			= B.PO_NO
-        AND		A.PARTIAL		= B.PARTIAL 
-        AND		A.LEVEL			= B.LEVEL
-        AND		A.LEVEL_USER	= B.LEVEL_USER
-        WHERE   CONVERT(CHAR(6), LMNT_DTTM, 112) = CONVERT(CHAR(6), GETDATE(),112)
-        ORDER BY INSPECT_DATE DESC");
+            FROM	[QIP].DBO.QIP_AQL_PO_PARTIAL_INFO AS A WITH (NOLOCK)
+            LEFT	JOIN QIP.DBO.QIP_AQL_DATA_LOG AS B WITH (NOLOCK)
+            ON		A.PO_NO			= B.PO_NO
+            AND		A.PARTIAL		= B.PARTIAL 
+            AND		A.LEVEL			= B.LEVEL
+            AND		A.LEVEL_USER	= B.LEVEL_USER
+            WHERE   CONVERT(CHAR(6), LMNT_DTTM, 112) = CONVERT(CHAR(6), GETDATE(),112)
+            ORDER BY INSPECT_DATE DESC");
         return $query;
     }
     
@@ -911,7 +913,7 @@ class M_aql_inspect extends CI_Model {
     }
    
     public function list_import_pivot(){
-        $query = $this->db->query("SELECT * FROM [QIP].DBO.AQL_UPLOAD_PIVOT WITH (NOLOCK) ORDER BY UPLOAD_DATE DESC");
+        $query = $this->db->query("SELECT TOP 1000 * FROM [QIP].[DBO].AQL_UPLOAD_PIVOT WITH (NOLOCK) ORDER BY UPLOAD_DATE DESC");
         return $query;
     }
 

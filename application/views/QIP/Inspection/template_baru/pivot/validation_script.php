@@ -1,9 +1,15 @@
 
 <script>
-  function removeWhereCondition()
-  {
-      $(this).closest("tr").remove();
-  }
+const theButton = document.querySelector(".buttontry");
+
+theButton.addEventListener("click", () => {
+    theButton.classList.add("buttontry--loading");
+});
+
+function removeWhereCondition()
+{
+    $(this).closest("tr").remove();
+}
  
 window.reset = function(e) {
   e.wrap('<form>').closest('form').get(0).reset();
@@ -204,6 +210,7 @@ function disp_image_product(PO_NO, PARTIAL, LEVEL, LEVEL_USER, ARTICLE){
                                     '<label class="btn btn-success btn-flat">'+
                                         '<input type="file" id="upload_gambar10'+i+'" name="files[]" id_seq="'+i+'"/ accept="image/png, image/gif, image/jpeg" />'+
                                         '<input type="hidden" name="picture_code[]" id="picture_code" value="10'+i+'">'+
+                                        
                                         '<i class="fa fa-camera"></i>'+
                                     '</label>'+
                                 '</span>'+
@@ -247,7 +254,7 @@ function disp_image_measurement(PO_NO, PARTIAL, LEVEL, LEVEL_USER, ARTICLE){
                                 '<input type="text" class="form-control" name="photo_name[]" id="photo_name20'+i+'"  readOnly>'+
                                 '<span class="input-group-append">'+
                                     '<label class="btn btn-success btn-flat">'+
-                                        '<input type="file" id="upload_gambar'+i+'" name="files[]" id_seqk="'+i+'" picture_code="20'+i+'" accept="image/png, image/gif, image/jpeg"/>'+
+                                        '<input type="file"  id="upload_gambar'+i+'" name="files[]" id_seqk="'+i+'" picture_code="20'+i+'" accept="image/png, image/gif, image/jpeg"/>'+
                                         '<input type="hidden" name="picture_code[]" id="picture_code'+i+'" value="20'+i+'">'+
                                         '<i class="fa fa-camera"></i>'+
                                     '</label>'+
@@ -269,6 +276,26 @@ function disp_image_measurement(PO_NO, PARTIAL, LEVEL, LEVEL_USER, ARTICLE){
     }  
           
     $('#upload_measurement').html(html); 
+    
+}
+
+function checkSize(id, id2){
+        var fileLimit       = 2000; // limit the file size goes here
+        var files           = id.files; //this is an array
+        var fileSize        = files[0].size; 
+        var fileSizeInKB    = (fileSize/1024); // this would be converted byte into kilobyte
+
+        if(fileSizeInKB < fileLimit){
+        } else {
+            // id.val('')
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Your Image is more than 2MB, please choose another one',
+            }).then(function () {
+                reset($('#' + id2))
+            });
+        }
 }
 
 function readFile(input) {
@@ -337,6 +364,31 @@ function random_detail(PO_NO, PARTIAL){
     })
 }
 
+function booking_ctn(PO_NO, PARTIAL){
+    $.ajax({
+        type:"POST",
+        url: "<?php echo site_url('C_pivot_validation/view_booking_ctn/') ?>",
+        data : {PO_NO:PO_NO, PARTIAL:PARTIAL},
+        cache: false,
+        dataType : "JSON",
+        success: function(data){
+            var html =''
+            var jumlah = 0
+            var i
+            var k = 0
+            
+            
+            html += '<thead><tr><th>BOOKING COMMENT</th><th>CARTON NO</th></thead>'
+            html += '<tbody><tr>'+
+                    '<td bgcolor="#F7C8AB" data-column="BOOKING_COMMENT" data-po="'+data.PO_NO+'" data-partial="'+data.PARTIAL+'" id="booking1" name="booking1" class="updateBookingCtn" contenteditable>'+data.BOOKING_COMMENT+'</td>'+
+                    '<td bgcolor="#F7C8AB" data-column="CTN_NO" data-po="'+data.PO_NO+'" data-partial="'+data.PARTIAL+'" name="ctn1" class="updateBookingCtn" contenteditable>'+data.CTN_NO+'</td></tbody>'
+
+            $('#booking_ctn').html(html); 
+          
+        }
+    })
+}
+
 function update_random(PO_NO, PARTIAL, SIZE, VALUE){
     $.ajax({
         type:"POST",
@@ -346,6 +398,28 @@ function update_random(PO_NO, PARTIAL, SIZE, VALUE){
         dataType : "JSON",
         success: function(data){
             console.log(data)
+        }
+    })
+}
+
+$(document).on('blur', '.updateBookingCtn', function(){
+    var po      = $(this).data("po");
+    var partial = $(this).data("partial");
+    var column  = $(this).data("column");
+    var value   = $(this).text();
+
+    update_data(po, partial, column, value);
+});
+
+function update_data(po, partial, column, value){
+    $.ajax({
+        url:"<?php echo site_url('c_pivot_validation/updateBookingCtn')?>",
+        data : {po:po, partial:partial, column:column, value:value},
+        method:"POST",
+        dataType : 'json',
+        success:function(data)
+        {
+            booking_ctn(po, partial);
         }
     })
 }
@@ -363,19 +437,14 @@ $(document).ready(function(){
     disp_image_product(PO_NO, PARTIAL, LEVEL, LEVEL_USER, ARTICLE)
     disp_image_measurement(PO_NO, PARTIAL, LEVEL, LEVEL_USER, ARTICLE)
     random_detail(PO_NO, PARTIAL)
+    booking_ctn(PO_NO, PARTIAL)
 
     $('#input_gambar1').bind('change', function() { 
             var fileName = ''; 
             fileName = $(this).val(); $('#file-selected').html(fileName); 
     })
 
-    //modal preview image
-    // $(document).on('click','.preview_image',function(){
-    //     $('#modal_preview_image').modal('show');
-    //     tampil_foto();
-    // })
-    
-    $(document).on('blur', '.amount_qty', function(){
+   $(document).on('blur', '.amount_qty', function(){
         var SIZE    = $(this).attr("data-size")
         var VALUE   = $(this).text();
         
@@ -402,7 +471,6 @@ $(document).ready(function(){
 
                 $('#Modal_image').modal('show');
                 $('#display_image').html(html);
-
             }
         });
     })
@@ -464,6 +532,7 @@ $(document).ready(function(){
             dataType: "JSON",
             success: function(data)
             {
+                
                 location.href = data.url;
             },
         });
@@ -481,6 +550,8 @@ $(document).ready(function(){
             dataType : "JSON",
             success : function(data){
                 // alert(data)
+                save_measurement()
+            
             }
         })
     }
@@ -497,6 +568,7 @@ $(document).ready(function(){
             dataType : "JSON",
             success : function(data){
                 // alert(data)
+                save_validation();
             }
         })
         
@@ -510,11 +582,11 @@ $(document).ready(function(){
         var product101  = document.getElementById('photo_name101').value;
         var measure     = document.getElementById('measure_ready0');
 
-        if ((($("input:radio[name=Moisture_test]:checked").length == 0)||($("input:radio[name=CMA]:checked").length == 0))||($("input:radio[name=SlipOn_inspection]:checked").length == 0)||($("input:radio[name=CPSIA]:checked").length == 0)) {
+        if (($("input:radio[name=SlipOn_inspection]:checked").length == 0)||($("input:radio[name=CPSIA]:checked").length == 0)) {
             Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Something went wrong! Please check your data. Make sure the CPSIA, CMA, Moisture Test, and Slip On Inspection have been filled in',
+                    text: 'Something went wrong! Please check your data. Make sure the CPSIA and Slip On Inspection have been filled in',
             })
         }
 
@@ -533,22 +605,9 @@ $(document).ready(function(){
                 text: 'Something went wrong! Please select an image for Product and Measurement.',
             })
         }else{
-            // Swal.fire({
-            //     icon: 'success',
-            //     title: 'Berhasil',
-            //     text: 'Yeyeye berhasil',
-            // })
-             save_product();
-        save_measurement()
-        save_validation();
+            save_product();
+          
         }
-        
-        
-        
-       
-       
-      
-        
     })
 
     
@@ -565,14 +624,17 @@ $(document).ready(function(){
 
     $(document).on('change', '#upload_gambar1', function() {
         readURL(this, 'photoShowId1');
+        checkSize(this, 'photo_name201')
     });
 
     $(document).on('change', '#upload_gambar2', function() {
         readURL(this, 'photoShowId2');
+        checkSize(this, 'photo_name202')
     });
 
     $(document).on('change', '#upload_gambar3', function() {
         readURL(this, 'photoShowId3');
+        checkSize(this, 'photo_name203')
     });
 
     // -----------------------------------------------open image measurement-------------------------------------------
@@ -625,26 +687,32 @@ $(document).ready(function(){
 
     $(document).on('change', '#upload_gambar101', function() {
         readURL(this, 'photoShowId101');
+        checkSize(this, 'photo_name101')
     });
 
     $(document).on('change', '#upload_gambar102', function() {
         readURL(this, 'photoShowId102');
+        checkSize(this, 'photo_name102')
     });
 
     $(document).on('change', '#upload_gambar103', function() {
         readURL(this, 'photoShowId103');
+        checkSize(this, 'photo_name103')
     });
 
     $(document).on('change', '#upload_gambar104', function() {
         readURL(this, 'photoShowId104');
+        checkSize(this, 'photo_name104')
     });
 
     $(document).on('change', '#upload_gambar105', function() {
         readURL(this, 'photoShowId105');
+        checkSize(this, 'photo_name105')
     });
 
     $(document).on('change', '#upload_gambar106', function() {
         readURL(this, 'photoShowId106');
+        checkSize(this, 'photo_name106')
     });
 
 })

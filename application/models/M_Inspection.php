@@ -214,6 +214,34 @@ class M_Inspection extends CI_Model {
         // echo $query;
     }
 
+	public function tampil_factory($tgl, $factory){
+		$query = $this->db->query("
+			CREATE TABLE #QIP_TEMP$factory (
+				CELL CHAR(3),
+				PO_NO VARCHAR(20) NULL,
+				COUNTRY VARCHAR(20) NULL, 
+				MODEL_NAME VARCHAR(MAX) NULL, 
+				DESTINATION VARCHAR(max) NULL, 
+				SDD VARCHAR(8) NULL, 
+				ART_NO NVARCHAR(25) NULL, 
+				CUST_NO VARCHAR(20) NULL, 
+				TOTAL_QTY INT NULL, 
+				TOTAL_CARTON INT NULL, 
+				BALANCE_CRTON INT NULL, 
+				FACTORY CHAR(2) NULL, 
+				INSPECT_DATE_INPUT VARCHAR(40) NULL, 
+				LOAD_TYPE VARCHAR(max) NULL, 
+				EXPORT_DATE VARCHAR(10) NULL, 
+				CONTAINER VARCHAR(10) NULL, 
+				STATUS_PO_AQL VARCHAR(15) NULL, 
+				STATUS_PO2 VARCHAR(15) NULL, 
+				) 
+
+			INSERT INTO #QIP_TEMP$factory
+			EXEC [QIP].[dbo].INSPECT_SCHEDULE_ALL_BYFACTORY @TANGGAL='$tgl', @FACTORY='$factory'");
+		return $query;
+	}
+
     public function tampil_loadplan($tgl,$factory){
         $query = $this->db->query("SELECT * FROM #QIP_TEMP$factory WHERE CONVERT(CHAR(10),INSPECT_DATE_INPUT,126) = '$tgl' ");
         return $query->result_array();
@@ -450,7 +478,7 @@ class M_Inspection extends CI_Model {
 		$factory = $this->input->post('factory1');
 		$po_date = $this->input->post('po_date1');
 
-		return $this->db->query("EXEC [QIP].[dbo].[INSPECT_PO_BALANCE_PPIC] @SDD='$sdd',  @FACTORY = '$factory', @PO_DATE='$po_date'");
+		return $this->db->query("EXEC [QIP].[dbo].[INSPECT_PO_BALANCE_PPIC_V01] @SDD='$sdd',  @FACTORY = '$factory', @PO_DATE='$po_date'");
 		// echo ("EXEC [QIP].[dbo].[INSPECT_PO_BALANCE_PPIC]");
 	}
 

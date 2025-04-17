@@ -14,6 +14,9 @@ input[type="file"] {
 }
 
 
+</style>
+<!-- Main cont
+
 
 </style>
 <!-- <link rel="stylesheet" href="<?php echo base_url();?>template/plugins/toastr/toastr.min.css"> -->
@@ -25,13 +28,25 @@ input[type="file"] {
           <!-- left column -->
           <div class="col-md-12">
             <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">BOOKING COMMENT AND CARTON NO</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive">
+                        <table class="table table-bordered "  id="booking_ctn">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
             <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">RANDOM SIZE</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                         <table class="table table-bordered"  id="random_detail">
                         </table>
                     </div>
@@ -42,7 +57,7 @@ input[type="file"] {
             <form class='form-horizontal' method="POST" id="form_validation">
                 <input type="hidden" name="PO_NO" id="PO_NO" value="<?php echo $PO_NO;?>"/>
                 <input type="hidden" name="PARTIAL" id="PARTIAL" value="<?php echo $PARTIAL;?>"/>
-                
+                 
                 <input type="hidden" name="LEVEL" id="LEVEL" value="<?php echo $LEVEL;?>"/>
                 <input type="hidden" name="LEVEL_USER" id="LEVEL_USER" value="<?php echo $LEVEL_USER;?>"/>
                 <input type="hidden" name="ARTICLE" id="ARTICLE" value="<?php echo $ARTICLE->ART_NO;?>"/>
@@ -116,11 +131,11 @@ input[type="file"] {
                                                                 <input type="radio" name="A01" id="A01_YES" checked="" value="yes"> Yes
                                                                 </label>
                                                             <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="A01" id="A01_NO" autocomplete="off" value="no" disabled="disabled"> No
+                                                                <input type="radio" name="A01" id="A01_NO" autocomplete="off" value="no" > No
                                                             </label>';
                                                 }else{
                                                     echo '<label class="btn btn-outline-success">
-                                                            <input type="radio" name="A01" id="A01_YES" autocomplete="off" value="yes" disabled="disabled"> Yes
+                                                            <input type="radio" name="A01" id="A01_YES" autocomplete="off" value="yes" > Yes
                                                             </label>
                                                         <label class="btn btn-outline-danger active">
                                                             <input type="radio" name="A01" id="A01_NO" autocomplete="off" checked="" value="no"> No
@@ -142,35 +157,35 @@ input[type="file"] {
                                 <div class="input-group input-group col-sm-10">
                                         <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
                                             <?php 
-                                                if($cpsia->VALIDATION_RESULT=='yes'){
+                                                if($cpsia->VALIDATION_RESULT ==='yes'){
                                                     echo ' <label class="btn btn-outline-success active">
                                                                 <input type="radio" name="CPSIA" id="CPSIA_YES" autocomplete="off" checked="" value="yes"> Yes
                                                                 </label>
                                                             <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_NO" autocomplete="off" value="no"  disabled="disabled"> No
+                                                                <input type="radio" name="CPSIA" id="CPSIA_NO" autocomplete="off" value="no"  > No
                                                             </label>
                                                             <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_NA" autocomplete="off" value="n/a" disabled="disabled"> N/A
+                                                                <input type="radio" name="CPSIA" id="CPSIA_NA" autocomplete="off" value="N/A" > N/A
                                                             </label>';
-                                                }else if($cpsia->VALIDATION_RESULT='no'){
+                                                }else if($cpsia->VALIDATION_RESULT==='no'){
                                                     echo ' <label class="btn btn-outline-success">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_YES" autocomplete="off" value="yes"  disabled="disabled"> Yes
+                                                                <input type="radio" name="CPSIA" id="CPSIA_YES" autocomplete="off" value="yes"  > Yes
                                                                 </label>
                                                             <label class="btn btn-outline-danger active">
                                                                 <input type="radio" name="CPSIA" id="CPSIA_NO" autocomplete="off" value="no"  checked=""> No
                                                             </label>
                                                             <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_NA" autocomplete="off" value="n/a"  disabled="disabled"> N/A
+                                                                <input type="radio" name="CPSIA" id="CPSIA_NA" autocomplete="off" value="N/A"  > N/A
                                                             </label>';
-                                                }else{
+                                                }else if(($cpsia->VALIDATION_RESULT === 'n/a')||($cpsia->VALIDATION_RESULT === 'N/A')){
                                                     echo ' <label class="btn btn-outline-success">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_YES" autocomplete="off" value="yes"  disabled="disabled"> Yes
+                                                                <input type="radio" name="CPSIA" id="CPSIA_YES" autocomplete="off" value="yes"  > Yes
                                                                 </label>
                                                             <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_NO" autocomplete="off" value="no"  disabled="disabled"> No
+                                                                <input type="radio" name="CPSIA" id="CPSIA_NO" autocomplete="off" value="no"  > No
                                                             </label>
                                                             <label class="btn btn-outline-secondary active">
-                                                                <input type="radio" name="CPSIA" id="CPSIA_NA" autocomplete="off" value="n/a"  checked=""> N/A
+                                                                <input type="radio" name="CPSIA" id="CPSIA_NA" autocomplete="off" value="N/A"  checked=""> N/A
                                                             </label>';
                                                 }
                                             ?>
@@ -197,7 +212,7 @@ input[type="file"] {
                                                                 <input type="radio" name="CustomerCountry" id="CustomerCountry_NO" autocomplete="off" value="no"> No
                                                             </label>
                                                             <label class="btn btn-outline-secondary  active">
-                                                                <input type="radio" name="CustomerCountry" id="CustomerCountry_NA" autocomplete="off" value="n/a"> N/A
+                                                                <input type="radio" name="CustomerCountry" id="CustomerCountry_NA" autocomplete="off" value="N/A"> N/A
                                                             </label>';
                                                 }else if($customer->VALIDATION_RESULT == 'no'){
                                                     echo ' <label class="btn btn-outline-success">
@@ -207,7 +222,7 @@ input[type="file"] {
                                                                 <input type="radio" name="CustomerCountry" id="CustomerCountry_NO" autocomplete="off" value="no"  checked=""> No
                                                             </label>
                                                             <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="CustomerCountry" id="CustomerCountry_NA" autocomplete="off" value="n/a"> N/A
+                                                                <input type="radio" name="CustomerCountry" id="CustomerCountry_NA" autocomplete="off" value="N/A"> N/A
                                                             </label>';
                                                 }else{
                                                     echo ' <label class="btn btn-outline-success">
@@ -217,7 +232,7 @@ input[type="file"] {
                                                                 <input type="radio" name="CustomerCountry" id="CustomerCountry_NO" autocomplete="off" value="no"> No
                                                             </label>
                                                             <label class="btn btn-outline-secondary active">
-                                                                <input type="radio" name="CustomerCountry" id="CustomerCountry_NA" autocomplete="off" value="n/a"  checked=""> N/A
+                                                                <input type="radio" name="CustomerCountry" id="CustomerCountry_NA" autocomplete="off" value="N/A"  checked=""> N/A
                                                             </label>';
                                                 }
                                             ?>
@@ -263,7 +278,7 @@ input[type="file"] {
                                                                     <input type="radio" name="Production" id="Production_NO" autocomplete="off" value="no"> No
                                                                 </label>
                                                                 <label class="btn btn-outline-secondary">
-                                                                    <input type="radio" name="Production" id="Production_NA" autocomplete="off" value="n/a"> N/A
+                                                                    <input type="radio" name="Production" id="Production_NA" autocomplete="off" value="N/A"> N/A
                                                                 </label>';
                                                     }else if ($fg->VALIDATION_RESULT == 'no'){
                                                         echo '<label class="btn btn-outline-success">
@@ -273,7 +288,7 @@ input[type="file"] {
                                                                     <input type="radio" name="Production" id="Production_NO" autocomplete="off" value="no" checked=""> No
                                                                 </label>
                                                                 <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="Production" id="Production_NA" autocomplete="off" value="n/a"> N/A
+                                                                    <input type="radio" name="Production" id="Production_NA" autocomplete="off" value="N/A"> N/A
                                                                 </label>';
                                                     }else{
                                                         echo '<label class="btn btn-outline-success">
@@ -283,7 +298,7 @@ input[type="file"] {
                                                                     <input type="radio" name="Production" id="Production_NO" autocomplete="off" value="no"> No
                                                                 </label>
                                                                 <label class="btn btn-outline-secondary active">
-                                                                    <input type="radio" name="Production" id="Production_NA" autocomplete="off" value="n/a" checked=""> N/A
+                                                                    <input type="radio" name="Production" id="Production_NA" autocomplete="off" value="N/A" checked=""> N/A
                                                                 </label>';
                                                     }
                                                 ?>
@@ -304,7 +319,7 @@ input[type="file"] {
                                                                     <input type="radio" name="Warehouse" id="Warehouse_NO" autocomplete="off" value="no"> No
                                                                 </label>
                                                                 <label class="btn btn-outline-secondary">
-                                                                    <input type="radio" name="Warehouse" id="Warehouse_NA" autocomplete="off" value="n/a"> N/A
+                                                                    <input type="radio" name="Warehouse" id="Warehouse_NA" autocomplete="off" value="N/A"> N/A
                                                                 </label>';
                                                     }else if ($warehouse->VALIDATION_RESULT == 'no'){
                                                         echo '<label class="btn btn-outline-success">
@@ -314,7 +329,7 @@ input[type="file"] {
                                                                     <input type="radio" name="Warehouse" id="Warehouse_NO" autocomplete="off" value="no" checked="" > No
                                                                 </label>
                                                                 <label class="btn btn-outline-secondary">
-                                                                    <input type="radio" name="Warehouse" id="Warehouse_NA" autocomplete="off" value="n/a"> N/A
+                                                                    <input type="radio" name="Warehouse" id="Warehouse_NA" autocomplete="off" value="N/A"> N/A
                                                                 </label>';
                                                     }else{
                                                         echo '<label class="btn btn-outline-success">
@@ -324,7 +339,7 @@ input[type="file"] {
                                                                     <input type="radio" name="Warehouse" id="Warehouse_NO" autocomplete="off" value="no"> No
                                                                 </label>
                                                                 <label class="btn btn-outline-secondary active">
-                                                                    <input type="radio" name="Warehouse" id="Warehouse_NA" autocomplete="off" value="n/a" checked="" > N/A
+                                                                    <input type="radio" name="Warehouse" id="Warehouse_NA" autocomplete="off" value="N/A" checked="" > N/A
                                                                 </label>';
                                                     }
                                                 ?>
@@ -359,7 +374,7 @@ input[type="file"] {
                             <div class="card-body">
                             <!-- <div class="col-sm-6"> -->
                                 <div class="row">
-                                    <label class="col-sm-2 col-form-label">Production FGT Pass</label>
+                                    <label class="col-sm-2 col-form-label">Finished Goods Testing Pass</label>
                                     <div class="input-group input-group col-sm-10">
                                             <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
                                                 <?php
@@ -368,11 +383,11 @@ input[type="file"] {
                                                                     <input type="radio" name="Production_fgt" id="Production_fgt_YES" autocomplete="off" checked="" value="yes"> Yes
                                                                     </label>
                                                                 <label class="btn btn-outline-danger">
-                                                                    <input type="radio" name="Production_fgt" id="Production_fgt_NO" autocomplete="off" value="no" disabled="disabled"> No
+                                                                    <input type="radio" name="Production_fgt" id="Production_fgt_NO" autocomplete="off" value="no" > No
                                                                 </label>';
                                                     }else{
                                                         echo ' <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="Production_fgt" id="Production_fgt_YES" autocomplete="off" value="yes" disabled="disabled"> Yes
+                                                                    <input type="radio" name="Production_fgt" id="Production_fgt_YES" autocomplete="off" value="yes" > Yes
                                                                     </label>
                                                                 <label class="btn btn-outline-danger active">
                                                                     <input type="radio" name="Production_fgt" id="Production_fgt_NO" autocomplete="off" checked="" value="no"> No
@@ -383,52 +398,11 @@ input[type="file"] {
                                             </div>
                                     </div>
                                 </div><br>
-                                <div class="row">
-                                    <label class="col-sm-2 col-form-label">CMA Pass </label>
-                                    <div class="input-group input-group col-sm-10">
-                                            <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
-                                                <?php 
-                                                    if($cma->VALIDATION_RESULT == 'yes'){
-                                                        echo '<label class="btn btn-outline-success active">
-                                                                    <input type="radio" name="CMA" id="CMA_YES" autocomplete="off" checked="" value="yes" > Yes
-                                                                    </label>
-                                                                <label class="btn btn-outline-danger">
-                                                                    <input type="radio" name="CMA" id="CMA_NO" autocomplete="off" value="no" disabled="disabled"> No
-                                                                </label>
-                                                                <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="CMA" id="CMA_NA" autocomplete="off" value="n/a" disabled="disabled"> N/A
-                                                                </label>';
-                                                    }else if($cma->VALIDATION_RESULT == 'no'){
-                                                        echo '<label class="btn btn-outline-success">
-                                                                <input type="radio" name="CMA" id="CMA_YES" autocomplete="off" value="yes" disabled="disabled"> Yes
-                                                                </label>
-                                                            <label class="btn btn-outline-danger active">
-                                                                <input type="radio" name="CMA" id="CMA_NO" autocomplete="off" value="no" checked=""> No
-                                                            </label>
-                                                            <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="CMA" id="CMA_NA" autocomplete="off" value="n/a" disabled="disabled"> N/A
-                                                            </label>';
-                                                    }else{
-                                                        echo '<label class="btn btn-outline-success">
-                                                                    <input type="radio" name="CMA" id="CMA_YES" autocomplete="off" value="yes" disabled="disabled"> Yes
-                                                                    </label>
-                                                                <label class="btn btn-outline-danger">
-                                                                    <input type="radio" name="CMA" id="CMA_NO" autocomplete="off" value="no" disabled="disabled"> No
-                                                                </label>
-                                                                <label class="btn btn-outline-secondary active">
-                                                                    <input type="radio" name="CMA" id="CMA_NA" autocomplete="off" value="n/a"  checked=""> N/A
-                                                                </label>';
-                                                    }
-                                                ?>
-                                                
-                                            </div>
-                                    </div>
-                                </div><br>
-                            
+                               
                                 <div class="row">
                                     <label class="col-sm-2 col-form-label">Comment</label>
                                     <div class="col-sm-10 input-group input-group-sm">
-                                    <input type="text" class="form-control form-control-border" id="Comment_3" name="Comment_3" value="<?php echo $cma->VALIDATION_COMMENT;?>" placeholder="Add a comment...">
+                                    <input type="text" class="form-control form-control-border" id="Comment_3" name="Comment_3" value="<?php echo $fgt->VALIDATION_COMMENT;?>" placeholder="Add a comment...">
                                     </div>
                                 </div>
                             
@@ -458,65 +432,100 @@ input[type="file"] {
                                                         echo '<label class="btn btn-outline-success active">
                                                                 <input type="radio" name="UVC_treatment" id="UVC_treatment_YES" autocomplete="off" value="yes" checked="" > Yes
                                                                 </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NO" autocomplete="off" value="no"> No
-                                                            </label>
                                                             <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NA" autocomplete="off"  value="n/a"> N/A
+                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NA" autocomplete="off"  value="N/A"> N/A
                                                             </label>';
                                                     }else if($uv_c->VALIDATION_RESULT == 'no'){
                                                         echo '<label class="btn btn-outline-success ">
                                                                 <input type="radio" name="UVC_treatment" id="UVC_treatment_YES" autocomplete="off" value="yes"> Yes
                                                                 </label>
-                                                            <label class="btn btn-outline-danger active">
-                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NO" autocomplete="off" value="no" checked="" > No
-                                                            </label>
                                                             <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NA" autocomplete="off"  value="n/a"> N/A
+                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NA" autocomplete="off"  value="N/A"> N/A
                                                             </label>';
                                                     }else{
                                                         echo '<label class="btn btn-outline-success ">
                                                                 <input type="radio" name="UVC_treatment" id="UVC_treatment_YES" autocomplete="off" value="yes"> Yes
                                                                 </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NO" autocomplete="off" value="no"> No
-                                                            </label>
                                                             <label class="btn btn-outline-secondary active">
-                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NA" autocomplete="off"  value="n/a" checked="" > N/A
+                                                                <input type="radio" name="UVC_treatment" id="UVC_treatment_NA" autocomplete="off"  value="N/A" checked="" > N/A
                                                             </label>';
                                                     }
                                                 ?>
-                                                
                                             </div>
                                     </div>
                                 </div><br>
                                 <div class="row">
                                     <label class="col-sm-2 col-form-label">Anti Mold Wrapping Paper </label>
                                     <div class="input-group input-group col-sm-10">
-                                            <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
-                                                <?php 
-                                                    if($anti_mold->VALIDATION_RESULT=='yes'){
-                                                        echo ' <label class="btn btn-outline-success active">
-                                                                <input type="radio" name="Anti_mold" id="Anti_mold_YES" autocomplete="off" checked="" value="yes"> Yes
-                                                                </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="Anti_mold" id="Anti_mold_NO" autocomplete="off" value="no"> No
-                                                            </label>';
-                                                    }else{
-                                                        echo ' <label class="btn btn-outline-success">
-                                                                <input type="radio" name="Anti_mold" id="Anti_mold_YES" autocomplete="off" value="yes"> Yes
-                                                                </label>
-                                                            <label class="btn btn-outline-danger active">
-                                                                <input type="radio" name="Anti_mold" id="Anti_mold_NO" autocomplete="off" value="no" checked=""> No
-                                                            </label>'; 
-                                                    }
-                                                ?>
-                                               
-                                             
-                                            </div>
+                                        <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+                                            <?php 
+                                                if($anti_mold->VALIDATION_RESULT=='yes'){
+                                                    echo ' <label class="btn btn-outline-success active">
+                                                            <input type="radio" name="Anti_mold" id="Anti_mold_YES" autocomplete="off" checked="" value="yes"> Yes
+                                                            </label>
+                                                        <label class="btn btn-outline-secondary">
+                                                            <input type="radio" name="Anti_mold" id="Anti_mold_NA" autocomplete="off" value="N/A"> N/A
+                                                        </label>';
+                                                }else{
+                                                    echo ' <label class="btn btn-outline-success">
+                                                            <input type="radio" name="Anti_mold" id="Anti_mold_YES" autocomplete="off" value="yes"> Yes
+                                                            </label>
+                                                        <label class="btn btn-outline-secondary active ">
+                                                            <input type="radio" name="Anti_mold" id="Anti_mold_NA" autocomplete="off" value="N/A" checked=""> N/A
+                                                        </label>'; 
+                                                }
+                                            ?>
+                                        </div>
                                     </div>
                                 </div><br>
-                            
+                                <div class="row">
+                                    <label class="col-sm-2 col-form-label">Moisture Control (box) </label>
+                                    <div class="input-group input-group col-sm-10">
+                                        <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+                                            <?php 
+                                                if($moisture_box->VALIDATION_RESULT=='yes'){
+                                                    echo ' <label class="btn btn-outline-success active">
+                                                            <input type="radio" name="Moisture_control_box" id="Moisture_control_box_YES" autocomplete="off" checked="" value="yes"> Yes
+                                                            </label>
+                                                        <label class="btn btn-outline-danger">
+                                                            <input type="radio" name="Moisture_control_box" id="Moisture_control_box_NO" autocomplete="off" value="no"> No
+                                                        </label>';
+                                                }else{
+                                                    echo ' <label class="btn btn-outline-success">
+                                                            <input type="radio" name="Moisture_control_box" id="Moisture_control_box_YES" autocomplete="off" value="yes"> Yes
+                                                            </label>
+                                                        <label class="btn btn-outline-danger active">
+                                                            <input type="radio" name="Moisture_control_box" id="AMoisture_control_box_NO" autocomplete="off" value="no" checked=""> No
+                                                        </label>'; 
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div><br>
+                                <div class="row">
+                                    <label class="col-sm-2 col-form-label">Moisture Control (product) </label>
+                                    <div class="input-group input-group col-sm-10">
+                                        <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+                                            <?php 
+                                                if($moisture_product->VALIDATION_RESULT=='yes'){
+                                                    echo ' <label class="btn btn-outline-success active">
+                                                            <input type="radio" name="Moisture_control_product" id="Moisture_control_product_YES" autocomplete="off" checked="" value="yes"> Yes
+                                                            </label>
+                                                        <label class="btn btn-outline-danger">
+                                                            <input type="radio" name="Moisture_control_product" id="Moisture_control_product_NO" autocomplete="off" value="no"> No
+                                                        </label>';
+                                                }else{
+                                                    echo ' <label class="btn btn-outline-success">
+                                                            <input type="radio" name="Moisture_control_product" id="Moisture_control_product_YES" autocomplete="off" value="yes"> Yes
+                                                            </label>
+                                                        <label class="btn btn-outline-danger active">
+                                                            <input type="radio" name="Moisture_control_product" id="Moisture_control_product_NO" autocomplete="off" value="no" checked=""> No
+                                                        </label>'; 
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div><br>
                                 <div class="row">
                                     <label class="col-sm-2 col-form-label">Comment</label>
                                     <div class="col-sm-10 input-group input-group-sm">
@@ -552,31 +561,15 @@ input[type="file"] {
                                                         echo '<label class="btn btn-outline-success active ">
                                                                     <input type="radio" name="Exceptional_visual" id="Exceptional_visual_YES" autocomplete="off" checked=""  value="yes"> Yes
                                                                     </label>
-                                                                <label class="btn btn-outline-danger">
-                                                                    <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NO" autocomplete="off" value="no"> No
-                                                                </label>
                                                                 <label class="btn btn-outline-secondary">
-                                                                    <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NA" autocomplete="off"  value="n/a"> N/A
-                                                                </label>';
-                                                    }else if($visual->VALIDATION_RESULT=='no'){
-                                                        echo '<label class="btn btn-outline-success ">
-                                                                    <input type="radio" name="Exceptional_visual" id="Exceptional_visual_YES" autocomplete="off" value="yes"> Yes
-                                                                    </label>
-                                                                <label class="btn btn-outline-danger active">
-                                                                    <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NO" autocomplete="off" value="no" checked=""> No
-                                                                </label>
-                                                                <label class="btn btn-outline-secondary">
-                                                                    <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NA" autocomplete="off"  value="n/a"> N/A
+                                                                    <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NA" autocomplete="off"  value="N/A"> N/A
                                                                 </label>';
                                                     }else{
                                                         echo '<label class="btn btn-outline-success ">
                                                                 <input type="radio" name="Exceptional_visual" id="Exceptional_visual_YES" autocomplete="off" value="yes"> Yes
                                                                 </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NO" autocomplete="off" value="no"> No
-                                                            </label>
                                                             <label class="btn btn-outline-secondary active">
-                                                                <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NA" autocomplete="off" value="n/a" checked=""> N/A
+                                                                <input type="radio" name="Exceptional_visual" id="Exceptional_visual_NA" autocomplete="off" value="N/A" checked=""> N/A
                                                             </label>';
                                                     }
                                                 ?>
@@ -593,31 +586,15 @@ input[type="file"] {
                                                         echo '  <label class="btn btn-outline-success active">
                                                                 <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_YES" autocomplete="off" value="yes" checked="" > Yes
                                                                 </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NO" autocomplete="off" value="no"> No
-                                                            </label>
                                                             <label class="btn btn-outline-secondary">
-                                                                <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NA" autocomplete="off" value="n/a"> N/A
+                                                                <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NA" autocomplete="off" value="N/A"> N/A
                                                             </label>';
-                                                    }else if($factory->VALIDATION_RESULT == 'no'){
-                                                        echo '  <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_YES" autocomplete="off" value="yes"> Yes
-                                                                    </label>
-                                                                <label class="btn btn-outline-danger active">
-                                                                    <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NO" autocomplete="off" value="no" checked="" > No
-                                                                </label>
-                                                                <label class="btn btn-outline-secondary ">
-                                                                    <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NA" autocomplete="off" value="n/a"> N/A
-                                                                </label>';
-                                                    }else{
+                                                      }else{
                                                         echo '  <label class="btn btn-outline-success">
                                                                 <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_YES" autocomplete="off" value="yes"> Yes
                                                                 </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NO" autocomplete="off" value="no" > No
-                                                            </label>
-                                                            <label class="btn btn-outline-secondary active">
-                                                                <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NA" autocomplete="off" value="n/a" checked="" > N/A
+                                                             <label class="btn btn-outline-secondary active">
+                                                                <input type="radio" name="Factory_disclaimer" id="Factory_disclaimer_NA" autocomplete="off" value="N/A" checked="" > N/A
                                                             </label>';
                                                     }
                                                 
@@ -668,7 +645,7 @@ input[type="file"] {
                                                                     <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NO" autocomplete="off" value="no"> No
                                                                 </label>
                                                                 <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NA" autocomplete="off" value="n/a"> N/A
+                                                                    <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NA" autocomplete="off" value="N/A"> N/A
                                                                 </label>';
                                                     }   else if($slip_on->VALIDATION_RESULT == 'no'){
                                                         echo '<label class="btn btn-outline-success">
@@ -678,7 +655,7 @@ input[type="file"] {
                                                                     <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NO" autocomplete="off" value="no" checked=""> No
                                                                 </label>
                                                                 <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NA" autocomplete="off" value="n/a"> N/A
+                                                                    <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NA" autocomplete="off" value="N/A"> N/A
                                                                 </label>';
                                                     }else{
                                                         echo '<label class="btn btn-outline-success">
@@ -688,7 +665,7 @@ input[type="file"] {
                                                                     <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NO" autocomplete="off" value="no"> No
                                                                 </label>
                                                                 <label class="btn btn-outline-success active">
-                                                                    <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NA" autocomplete="off" value="n/a" checked=""> N/A
+                                                                    <input type="radio" name="SlipOn_inspection" id="SlipOn_inspection_NA" autocomplete="off" value="N/A" checked=""> N/A
                                                                 </label>';
                                                     }
                                                 ?>
@@ -712,71 +689,8 @@ input[type="file"] {
                 <!-- </div> -->
                 <!-- //FIT -->
 
-                <!-- mold prevention -->
-                <div class="card card-secondary">
-                    <div class="card-header">
-                        <h3 class="card-title">2. MOLD PREVENTION</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body" >
-                        <!-- <form class="form-horizontal"> -->
-                            <div class="card-body">
-                            <!-- <div class="col-sm-6"> -->
-                                <div class="row">
-                                    <label class="col-sm-2 col-form-label">Moisture test (Aquaboy) Pass</label>
-                                    <div class="input-group input-group col-sm-10">
-                                            <div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
-                                                <?php 
-                                                    if($moisture->VALIDATION_RESULT == 'yes'){
-                                                        echo ' <label class="btn btn-outline-success active">
-                                                                    <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="yes" checked=""> Yes
-                                                                    </label>
-                                                                <label class="btn btn-outline-danger">
-                                                                    <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="no"> No
-                                                                </label>
-                                                                <label class="btn btn-outline-success">
-                                                                    <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="n/a"> N/A
-                                                                </label>';
-                                                    }else if($moisture->VALIDATION_RESULT == 'no'){
-                                                        echo ' <label class="btn btn-outline-success">
-                                                                <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="yes"> Yes
-                                                                </label>
-                                                            <label class="btn btn-outline-danger active">
-                                                                <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="no" checked=""> No
-                                                            </label>
-                                                            <label class="btn btn-outline-success">
-                                                                <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="n/a"> N/A
-                                                            </label>';
-                                                    }else{
-                                                        echo ' <label class="btn btn-outline-success">
-                                                                <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="yes"> Yes
-                                                                </label>
-                                                            <label class="btn btn-outline-danger">
-                                                                <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="no"> No
-                                                            </label>
-                                                            <label class="btn btn-outline-success active">
-                                                                <input type="radio" name="Moisture_test" id="Moisture_test_YES" autocomplete="off" value="n/a" checked=""> N/A
-                                                            </label>';
-                                                    }
-                                                ?>
-                                               
-                                            </div>
-                                    </div>
-                                </div><br>
-                                
-                                <div class="row">
-                                    <label class="col-sm-2 col-form-label">Comment</label>
-                                    <div class="col-sm-10 input-group input-group-sm">
-                                    <input type="text" class="form-control form-control-border" id="Comment_7" value="<?php echo $moisture->VALIDATION_COMMENT;?>" name="Comment_7" placeholder="Add a comment...">
-                                    </div>
-                                </div>
-                            
-                            </div>
-                            </div>
-                        <!-- </form> -->
-                    
-                    </div>
-                <!-- //Mold Prevention -->
+            
+                
            
             </form>
            
@@ -818,7 +732,8 @@ input[type="file"] {
                             </div>  
                         </form>
                     </div>
-                    <right> <button type="submit" class="btn btn-success btn-block" name="save_validation" id="save_validation">Go to Next Step </button></right>
+                    <right> <button type="submit" class="btn btn-success btn-block buttontry" name="save_validation" id="save_validation"><span class="buttontry__text">Go to Next Step </span></button></right>
+                  
                 </div>
             </form>  
             </div>
@@ -831,7 +746,7 @@ input[type="file"] {
              
           <!-- right column -->
           
-            <!-- general form elements disabled="disabled" -->
+            <!-- general form elements  -->
           
             </div>
             <!-- /.card -->

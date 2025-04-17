@@ -1,6 +1,6 @@
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
 <!-- <link rel="stylesheet" href="<?php echo base_url();?>template/new_js/toastr/build/toastr.css"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+
 <link rel="stylesheet" href="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.min.css">
 <link rel="stylesheet" href="<?php echo base_url();?>template/new_js/datatable/jquery.dataTables.css">
 <style>
@@ -88,6 +88,10 @@ td textarea
                     <div class="col-sm-10 input-group input-group-sm">
                       <input type="text" class="form-control" id="tqc_inspected" name="tqc_inspected" placeholder="Enter..." readOnly>
                     </div>
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">ETD Date</label>
+                    <div class="col-sm-10 input-group input-group-sm">
+                      <input type="text" class="form-control" id="etd_date" name="etd_date" placeholder="Enter..." readOnly>
+                    </div>
                     <!-- <label for="inputPassword3" class="col-sm-2 col-form-label"> 
                         <button type='button' class='btn btn-block btn-danger btn-sm clear_textarea' id='clear_textarea'>Delete&nbsp&nbsp&nbsp</button>
                     </label>
@@ -148,11 +152,12 @@ Inspect Qty :
 
             <div class="card card-danger">
               <div class="card-header">
-                <h3 class="card-title">Pivot88 Tracking</h3>
+                <h3 class="card-title">Pivot88 Tracking <span id="po_name"></span></h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body" >
-                <table class="table table-bordered" id="pivot88table">
+             
+                <table class="table table-bordered table-responsive" id="pivot88table">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -160,11 +165,10 @@ Inspect Qty :
                       <th>Inspection Result</th>
                       <th>Approval Status</th>
                       <th>Report Type</th>
-                      <th>PO #</th>
                       <th>Submitted Inspection Date</th>
                       <th>Qty Inspected</th>
                       <th>PO Line Qty</th>
-                      <th>Group</th>
+                      <th>Booking Message</th>
                       <th>Link</th>
                     </tr>
                   </thead>
@@ -187,25 +191,19 @@ Inspect Qty :
                     <div class="card-body">
                 <!-- <form role="form"> -->
                       <div class="row">
-                          <div class='col-md-3'>
+                          <!-- <div class='col-md-3'>
                               <div class="form-group">
                                 <label>Partial No</label>
                                 <input type='text' class='form-control' id="partNo" name="partNo">
                               </div>
-                          </div>
-                          <div class='col-md-3'>
+                          </div> -->
+                          <div class='col-md-4'>
                               <div class="form-group">
                                 <label>Partial Qty</label>
-                                <input type='text' class='form-control' placeholder='' id="partQty" name="partQty">
+                                <input type='number' class='form-control' placeholder='' id="partQty" name="partQty">
                               </div>
                           </div>
-                          <div class='col-md-1'>
-                              <div class="form-group">
-                                <label>Level</label>
-                                <input type='text' class='form-control' placeholder='' id="level" name="level" value='II' readOnly>
-                              </div>
-                          </div>
-                          <div class="col-md-3">
+                          <div class="col-md-4">
                               <div class="form-group date" data-provide="datepicker" id="datepicker">
                                   <label>Inspect Date</label>
                                   <input type="text" class="form-control" id="inspectDate" name="inspectDate" autocomplete="off">
@@ -214,7 +212,14 @@ Inspect Qty :
                                   </div>
                               </div>
                           </div>
-                          <div class='col-md-2'>
+                          <div class='col-md-1'>
+                              <div class="form-group">
+                                <label>Level</label>
+                                <input type='text' class='form-control' placeholder='' id="level" name="level" value='II' readOnly>
+                              </div>
+                          </div>
+                          
+                          <div class='col-md-3'>
                               <div class="form-group">
                                   <label>	&nbsp	&nbsp	&nbsp	&nbsp </label>
                                 <button type='button' class='btn btn-info btn-block submitPartial' id='submitPartial'>Submit Partial</button>
@@ -222,7 +227,7 @@ Inspect Qty :
                           </div>
                       </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                       <table class="table table-bordered" style="width:100%">
                         <thead>                  
                           <tr>
@@ -231,7 +236,7 @@ Inspect Qty :
                             <th style="text-align:center">Qty</th>
                             <th style="text-align:center">Inspect Date</th>
                             <th style="text-align:center">Inspector</th>
-                            <th style="text-align:center">Seq Inspect</th>
+                            <th style="text-align:center">Booking Comment</th>
                             <th style="text-align:center">Last Status</th>
                             <th style="text-align:center">Action</th>
                           </tr>
@@ -321,22 +326,7 @@ Inspect Qty :
                               <input type="text" name="Inspector_edit" id="Inspector_edit" class="form-control" placeholder="Inspector" readOnly>
                             </div>
                         </div>
-                        <!--div class="form-group row">
-                          <label class="col-md-2 col-form-label">Inspector</label>
-                              <div class="col-md-6">
-                                  <select name="Inspector_edit" id="Inspector_edit" class="form-control" tabindex="1">
-                              <?php 
-                                for($i=0;$i<count($inspector);$i++){
-                                  if($inspector[$i]['USERNAME']== $row['USERNAME']){
-                                    echo "<option value='".$inspector[$i]['USERNAME']."' selected>".$inspector[$i]['USERNAME']."</option>";
-                                  }else{
-                                    echo "<option value='".$inspector[$i]['USERNAME']."' >".$inspector[$i]['USERNAME']."</option>";
-                                  }
-                                }
-                              ?>
-                                  </select>
-                              </div>
-                      </div-->
+                    
                         <div class="form-group row">
                             <label class="col-md-2 col-form-label">Inspect Date</label>
                             <div class="col-md-6">
@@ -367,7 +357,7 @@ Inspect Qty :
                       <thead>
                         <th>PO NO</th>
                         <th>PARTIAL</th>
-                        <th>SEQ INSPECT</th>
+                      
                         <th>LEVEL</th>
                         <th>INSPECTOR</th>
                         <th>INSPECT DATE</th>
@@ -406,8 +396,12 @@ Inspect Qty :
 <script type="text/javascript" src="<?php echo base_url();?>template/highcharts/highcharts.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>template/highcharts/export-data.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>template/highcharts/accessibility.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.all.min.js"></script>
+
 <script type="text/javascript" src="<?php echo base_url();?>template/new_js/datatable/jquery.dataTables.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/plugins/sweetalert2/sweetalert2.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.all.min.js"></script>
+<!-- <script src="<?php echo base_url();?>template/plugins/toastr/toastr.min.js"></script> -->
+<!-- <script type="text/javascript" src="<?php echo base_url();?>template/new_js/sweetalert2/sweetalert2.all.min.js"></script> -->
 
 
 <script>
@@ -437,7 +431,21 @@ Inspect Qty :
         }
     });
     // $('#total_amount').val(sum);
-    document.getElementById("total_amount").innerHTML = "Total Qty Inspected = " + sum;
+    document.getElementById("total_amount").innerHTML = sum;
+    console.log(sum);
+  }
+
+  var total_inspect = function(){
+    var sum = 0;
+    $('.qty_to_inspect').each(function(){
+        var num = $(this).val();
+
+        if(num != 0){
+          sum = sum + parseInt(num);
+        }
+    });
+    // $('#total_amount').val(sum);
+    document.getElementById("qty_to_inspects").innerHTML = sum;
     console.log(sum);
   }
 
@@ -449,6 +457,7 @@ Inspect Qty :
     var row = '#row'+i                        
     $(row).remove();
     total_amount();
+    total_inspect();
   }
    
   $(document).ready(function(){
@@ -519,16 +528,18 @@ Inspect Qty :
           data      : {PO_NO:PO_NO},
           success   : function(data)
           {
-                var html = '';
+                var html, po = '';
                 var tombol = '';
                 var i, j, k;
                 var jumlah = data.length
-                html +='heheheh'
-                for(i=0; i<26; i++){
+                
+                po    +=  '<b>PO : '+data[0].assignments_items[0].po_line.po.po_number+' </b>'
+                $('#po_name').html(po);
+                for(i=0; i<1000; i++){
+                    var nama = JSON.stringify(data[i].inspector)
                     html += '<tr>'+
                             '<td>'+ (i+1)+'</td>'+
-                            '<td>'+ data[i].inspector.name+'</td>' //ada
-                            // '<td>'+ data[i].date_inspection+'</td>'
+                            '<td>'+ data[i].inspector.name +'</td>'
                     if(data[i].assignments_items[0].inspection_result_text ==='Pass'){ //ada
                         html += '<td bgcolor="#00FF00">'+ data[i].assignments_items[0].inspection_result_text+'</td>'
                     }else if(data[i].assignments_items[0].inspection_result_text ==='Fail'){
@@ -544,16 +555,20 @@ Inspect Qty :
                         html += '<td bgcolor="#FFFFFF">'+ data[i].assignments_items[0].inspection_status_text+'</td>'
                     }
                             
-                    html +='<td>'+ data[i].report_type.name+'</td>'+
-                           '<td>'+ data[i].assignments_items[0].po_line.po.po_number+'</td>'+
-                           '<td>'+ data[i].assignments_items[0].inspection_completed_date+'</td>'+
-                           '<td>'+ data[i].assignments_items[0].po_line.qty+'</td>'+
-                           '<td>'+ data[i].assignments_items[0].qty_inspected+'</td>'+
-                           '<td>'+ data[i].id+'</td>'+
+                    html += '<td>'+ data[i].report_type.name+'</td>'+
+                            '<td>'+ data[i].assignments_items[0].inspection_completed_date+'</td>'+
+                            '<td>'+ data[i].assignments_items[0].sampled_inspected+'</td>'+
+                            '<td>'+ data[i].assignments_items[0].qty_inspected+'</td>';
+                    if(data[i].assignments_items[0].supplier_booking_msg == null){
+                        html += '<td></td>'
+                    }else{
+                        html += '<td>'+ data[i].assignments_items[0].supplier_booking_msg+'</td>'
+                    }
+                      
                           //  '<td>'+ data[i].assignments_items[0].po_line.sku.item_name+'</td>'+
                           //  '<td>Defect Rate</td>'+
                           //  '<td>'+ data[i].assignments_items[0].po_line.sku.sku_attribute2+'</td>'+
-                           '<td><a href="'+data[i].report_url+'" target="_blank">View</a></td>'+
+                          html +=  '<td><a href="'+data[i].report_url+'" target="_blank">View</a></td>'+
                            '</tr>'
                    
                     $('#pivot88tracking').html(html);
@@ -566,6 +581,7 @@ Inspect Qty :
                   "info": true,
                   "autoWidth": false,
                   "responsive": true,
+                  "bDestroy": true,
                 });
                 
             }
@@ -589,57 +605,61 @@ Inspect Qty :
               
               html +='<tr><td colspan="8" bgcolor="aquamarine"> Inspection Inspector</td> </tr>';
               for(i=0; i<data.length; i++){
-                // if(data[i].STAGE===5){
-                //   html += ''
-                // }
-                // else
-                // {
-                  if ((data[i].LEVEL == 'II') && (data[i].LEVEL_USER == '2')){
-                  html += '<tr>'+
-                            '<td>'+data[i].PO_NO+'</td>'+
-                            '<td name="partial_">'+data[i].PARTIAL+'</td>'+
-                            '<td name="qty_partial_">'+data[i].QTY+'</td>'+
-                            '<td name="inspect_date">'+data[i].INSPECT_DATE+'</td>'+
-                            '<td name="inspect_date">'+data[i].INSPECTOR+'</td>';
-                  
-                  if(!data[i].BANYAK){
-                    html += '<td></td>';
+                  if((data[i].STAGE == '5')&&(data[i].SEND_YN == 'Y')||(data[i].SEND_YN == 'R')){
+                    html += '<tr></tr>'
                   }else{
-                    html += '<td><a href="javascript:void(0);" class="view_detail" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">'+data[i].BANYAK+'</a></td>';
+                    if ((data[i].LEVEL == 'II') && (data[i].LEVEL_USER == '2')){
+                        html += '<tr>'+
+                                  '<td>'+data[i].PO_NO+'</td>'+
+                                  '<td name="partial_">'+data[i].PARTIAL+'</td>'+
+                                  '<td name="qty_partial_">'+data[i].QTY+'</td>'+
+                                  '<td name="inspect_date">'+data[i].INSPECT_DATE+'</td>'+
+                                  '<td name="inspect_date">'+data[i].INSPECTOR+'</td>'+
+                                  '<td name="inspect_date">'+data[i].BOOKING_COMMENT+'</td>'
+                        
+                       
+                        if(data[i].INSPECT_RESULT=='N'){
+                          html += '<td style="color:red"><b>REJECT || <div class="bg-warning color-palette"><span>not yet sent to pivot</span></div></td>';
+                        }else if(data[i].INSPECT_RESULT=='Y'){
+                          html += '<td style="color:green"><b>RELEASE || <mark><span>not yet sent to pivot</span></mark></td>';
+                        }else if(!data[i].INSPECT_RESULT){
+                          html += '<td style="color:green"><b></td>';
+                        }
+                            
+                        if(data[i].LEVEL_USER == data[i].LEVEL_NOW){
+                            
+                            html +='<td style="text-align:right;">'
+                            if(!(data[i].STAGE)){
+                                
+                                html += ' <a href="javascript:void(0);" class="btn btn-info btn-sm part_edit" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">Edit</a>'+' '+
+                                        ' <a href="javascript:void(0);" class="btn btn-warning btn-sm item_random" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'">Random</a>'+'   '        
+                             //   html += ' <button type="button" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</button>'+'  '
+                            }else if((data[i].STAGE == '5')&&(data[i].INSPECT_RESULT=='Y')&&((data[i].SEND_YN=='Y'))){
+                              html += '';
+                            }else if((data[i].STAGE == '5')&&(data[i].INSPECT_RESULT=='Y')&&((data[i].SEND_YN=='N'))){
+                              html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
+                              // html += '<button type="button" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</button>'+'  '
+                            }else if((data[i].STAGE == '5')&&(data[i].INSPECT_RESULT=='N')&&((data[i].SEND_YN=='N'))){
+                              html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
+                              html += '<button type="button" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</button>'+'  '
+                            } }else if((data[i].STAGE == '5')&&(data[i].INSPECT_RESULT=='N')&&((data[i].SEND_YN=='N'))){
+                              html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
+                              html += '<button type="button" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</button>'+'  '
+                            }else if((data[i].STAGE == '5')&&(data[i].INSPECT_RESULT=='Y')&&((data[i].SEND_YN=== null))){
+                              html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
+                              // html += '<button type="button" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</button>'+'  '
+                            }else if((data[i].STAGE <= '4')){
+                              html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
+                            //  html += '<button type="button" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</button>'+'  '
+                            }   
+                                
+                            html += '</td>';
+                        }else{
+                        html += '<td></td>'
+                    }
+                    html +='</tr>';
                   }
-                  if(data[i].INSPECT_RESULT=='N'){
-                    html += '<td style="color:red"><b>REJECT</td>';
-                  }else if(data[i].INSPECT_RESULT=='Y'){
-                    html += '<td style="color:green"><b>RELEASE</td>';
-                  }else if(!data[i].INSPECT_RESULT){
-                    html += '<td style="color:green"><b></td>';
-                  }
-                      
-                  if(data[i].LEVEL_USER == data[i].LEVEL_NOW){
-                      
-                      html +='<td style="text-align:right;">'
-                      if(!(data[i].STAGE)){
-                          
-                          html += ' <a href="javascript:void(0);" class="btn btn-info btn-sm part_edit" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'" data-INSPECTOR="'+data[i].INSPECTOR+'" data-INSPECT_DATE="'+data[i].INSPECT_DATE+'">Edit</a>'+' '+
-                                  ' <a href="javascript:void(0);" class="btn btn-warning btn-sm item_random" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-QTY="'+data[i].QTY+'" data-LEVEL="'+data[i].LEVEL+'">Random</a>'+'   '        
-                          html += ' <a href="javascript:void(0);" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</a>'+'  '
-                      }else if(data[i].STAGE == '5'){
-                         html += '';
-                      }
-                      else if((data[i].STAGE <= '4')){
-                        html += '<a href="javascript:void(0);" class="btn btn-success btn-sm goToPage"  data-LEVEL_USER="'+data[i].LEVEL_USER+'" data-REMARK="'+data[i].REMARK+'" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-LEVEL="'+data[i].LEVEL+'" data-STAGE="'+data[i].STAGE+'">Pending Submit</a>'+'  '
-                        html += '<a href="javascript:void(0);" class="btn btn-danger btn-sm deletePO" data-PO_NO="'+data[i].PO_NO+'" data-PARTIAL="'+data[i].PARTIAL+'" data-STAGE="'+data[i].STAGE+'">Delete</a>'+'  '
-                       }   
-                          
-                      html += '</td>';
-                  }else{
-                  html += '<td></td>'
                 }
-                  html +='</tr>';
-                  
-                }
-                // }
-               
               }
               $('#showData').html(html);
           }
@@ -649,14 +669,14 @@ Inspect Qty :
     function lab_result(PO_NO){
      
         var html ='';
-        html += '<iframe src="http://10.10.10.98/qip/apps/?r=site/page&view=aql&po='+PO_NO+'&art=&search=Search+PO" type="application/pdf" style="width: 100%; height: 350px; padding: 0;"></iframe>';
+        html += '<iframe src="http://10.10.10.98:8000/home/aqlPo?po='+PO_NO+'" type="application/pdf" style="width: 100%; height: 350px; padding: 0;"></iframe>';
         // var url = 'http://10.10.10.98/qip/apps/?po='+PO_NO+'&art=&search=Search+PO';
         
         // $('#lab_result').attr('src', url);
         $('#result').html(html); 
         console.log(html) 
     }
-
+ 
 
     function display_detailPO(PO_NO){
       $.ajax({
@@ -681,6 +701,7 @@ Inspect Qty :
                   $('#remark').val(data.REMARK);
                   $('#cell').val(data.CELL);
                   $('#tqc_inspected').val(data.TQC_INSPECTED);
+                  $('#etd_date').val(data.ETD_DATE);
                   show_product(PO_NO);
                   lab_result(PO_NO);
               }else{
@@ -698,6 +719,7 @@ Inspect Qty :
                   $('#remark').val(''); 
                   $('#cell').val(''); 
                   $('#tqc_inspected').val('');
+                  $('#etd_date').val('')
               }
           },
           error : function(data) {
@@ -722,13 +744,15 @@ Inspect Qty :
                 var tombol = '';
                 var i;
                 html +='<form id="formRandom" action="" method="POST" >'
-                html +='<table id="table" class="table table-bordered"  >'
+                html +='<table id="table" class="table table-bordered table-responsive"  >'
                 html +='<thead>'
                 html +='<tr>'
                
                 html +='<th scope="col" style="width: 100px">Booking Comment</th>'
                 html +='<th scope="col" style="width: 100px">Carton Number</th>'
                 html +='<th scope="col" style="width: 100px">Size</th>'
+                html +='<th scope="col" style="width: 100px">PO Qty</th>'
+                html +='<th scope="col" style="width: 100px">Qty to Inspect</th>'
                 html +='<th scope="col" style="width: 100px">Qty</th>'
                 // html +='<th scope="col" style="width: 100px">Action</th>'
                 html +='</tr>'
@@ -741,8 +765,9 @@ Inspect Qty :
                                 '<td hidden><input type="hidden" name="level[]" id="level[]" value="'+data[0].LEVEL+'" readOnly>'+data[0].LEVEL+'</td>'+
                                 '<td style="height:400px" rowspan="'+data.length+'"><textarea name="booking_comment" id="booking_comment" value="'+data[0].BOOKING_COMMENT+'">'+data[0].BOOKING_COMMENT+'</textarea></td>'+
                                 '<td style="height:400px" rowspan="'+data.length+'"><textarea name="ctn_no" id="ctn_no" value="'+data[0].CTN_NO+'">'+data[0].CTN_NO+'</textarea></td>'+
-                                
-                                '<td><input type="text"  name="size[]" id="size[]" value="'+data[0].SIZE+'"></td>'+
+                                '<td><input type="text"  name="size[]" id="size[]" value="'+data[0].SIZE+'" hidden>'+data[0].SIZE+'</td>'+
+                                '<td>'+data[0].QTY_PER_SIZE+'</td>'+
+                                '<td><input type="text" class="qty_to_inspect" name="qty_to_inspect[]" id="qty_to_inspect[]" value="'+data[0].QTY_TO_INSPECT+'"></td>'+
                                 '<td><input type="text" class="amount" name="qty[]" id="qty[]" value="'+data[0].QTY+'" ></td>';
 
                 // html +=         "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
@@ -752,7 +777,9 @@ Inspect Qty :
                                 '<td hidden><input type="hidden" name="PO[]" id="PO[]"  value="'+data[i].PO_NO+'" readOnly>'+data[i].PO_NO+'</td>'+
                                 '<td hidden><input type="hidden" name="partial[]" id="partial[]" value="'+data[i].PARTIAL+'" readOnly>'+data[i].PARTIAL+'</td>'+
                                 '<td hidden><input type="hidden" name="level[]" id="level[]" value="'+data[i].LEVEL+'" readOnly>'+data[i].LEVEL+'</td>'+
-                                '<td><input type="text"  name="size[]" id="size[]" value="'+data[i].SIZE+'"></td>'+
+                                '<td><input type="text"  name="size[]" id="size[]" value="'+data[i].SIZE+'" hidden>'+data[i].SIZE+'</td>'+
+                                '<td>'+data[i].QTY_PER_SIZE+'</td>'+
+                                '<td><input type="text" class="qty_to_inspect"  name="qty_to_inspect[]" id="qty_to_inspect[]" value="'+data[i].QTY_TO_INSPECT+'"></td>'+
                                 '<td><input type="text" class="amount" name="qty[]" id="qty[]" value="'+data[i].QTY+'" ></td>';
 
                     // html +=     "<td><button type='button' class='btn btn-default btn-sm deleteRandom' onClick='DeleteRandom("+i+")' ><i class='far fa-trash-alt'></i></a></td>";
@@ -761,28 +788,37 @@ Inspect Qty :
                 }
                 
                 html +='</div>'
+                html += '<tr><td colspan="4"></td><td><span id="qty_to_inspects" class="qty_to_inspects" style="font-size: 150%;font-weight:bold"></td>'+
+                        '<td><span id="total_amount" class="total_amount" style="font-size: 150%;font-weight:bold"><b> </b></span><span style="font-size: 150%;font-weight:bold"> <b>|| '+data[0].QTY_SAMPLE+'</b></span></td></tr>'
                 html +='</tbody>'
                 
                 html +='</table>'
                 html +='</form>';
 
-                html += '<span id="total_amount" class="total_amount" style="font-size: 150%;font-weight:bold"><b></b></span>';
+                // html += '<span id="total_amount" class="total_amount" style="font-size: 150%;font-weight:bold"><b></b></span>';
                 // html += '<label>Total Qty : </label><input type="text" class="total_amount" id="total_amount" readOnly>'
-                tombol += '<button type="button" class="btn btn-success btn-block" name="randomRandom" id="randomRandom">Mulai Inspection </button>';
+                tombol += '<button type="button" class="btn btn-success btn-block" name="randomRandom" id="randomRandom">Mulai Inspection</button>';
                 
                 $('#randomTable').html(html);
                 $('#tombolSave').html(tombol);
                 total_amount();
+                total_inspect()
 
                 $('.amount').keyup(function(){
                     total_amount();
                 })
 
-                
+                $('.qty_to_inspect').keyup(function(){
+                    total_inspect();
+                })
+
+                const theButton = document.querySelector(".buttontry");
+
+                theButton.addEventListener("click", () => {
+                    theButton.classList.add("buttontry--loading");
+                });
             }
-
         });
-
       }
 
    
@@ -800,10 +836,8 @@ Inspect Qty :
           dataType: "JSON",
           success: function(data)
           {
-              
+              window.onbeforeunload = function () { $('#loading').show(); }
               location.href = data.url;
-              // simpandata()
-              
           },
       });
     }
@@ -847,6 +881,7 @@ Inspect Qty :
         chart_rework(PO_NO_)
         chart_endline(PO_NO_)
         chart_aql(PO_NO_)
+        $('#randomTable').html('');
     });
 
     // $('.goToPage').on('click',function(){
@@ -884,21 +919,30 @@ Inspect Qty :
 
     $(document).on('click','#submitPartial',function(){
         var PO_NO       = $('#PO_NO').val();
-        var PARTIAL     = $('#partNo').val();
         var QTY         = $('#partQty').val();
         var LEVEL       = 'II';
         var INSPECT_DATE= $('#inspectDate').val();
 
-        $.ajax({
-            url       : "<?php echo site_url('C_aql_pivot/insert_partial')?>",
-            method    : "POST",
-            data      : {PO_NO:PO_NO, PARTIAL:PARTIAL, QTY:QTY, LEVEL:LEVEL, INSPECT_DATE:INSPECT_DATE,},
-            dataType  : "json",
-            success   :function(data)
-            {
-                show_product(PO_NO)
-            }
-        });
+        if((QTY > 3200) || (QTY == 0)){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! PARTIAL QTY cannot be 0 or more than 3200',
+            })
+        }else{
+            $.ajax({
+              url       : "<?php echo site_url('C_aql_pivot/insert_partial')?>",
+              method    : "POST",
+              data      : {PO_NO:PO_NO, QTY:QTY, LEVEL:LEVEL, INSPECT_DATE:INSPECT_DATE},
+              dataType  : "json",
+              success   :function(data)
+              {
+                  show_product(PO_NO)
+              }
+          });
+        }
+       
+        
     });
 
 
@@ -1092,7 +1136,18 @@ Inspect Qty :
     });
 
     $(document).on('click','#randomRandom',function(){
-        simpandata_random()
+      var ctn_no  = document.getElementById('ctn_no').value;
+      if((ctn_no == null) || (ctn_no == '')){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! Please fill CARTON NO field first',
+            })
+        }else{
+          simpandata_random()
+          // alert("hai hai haiiiiii")
+        }
+       
     })
 
    

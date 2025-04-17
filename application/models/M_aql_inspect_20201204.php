@@ -475,7 +475,7 @@ class M_aql_inspect extends CI_Model {
 
     public function edit_carton(){
         $query = $this->db->query("
-            SELECT PO_NO, PARTIAL, LEVEL, REMARK, CARTON_NO, CARTON_QTY, SIZE, QTY_INSPECT  FROM [QIP].[dbo].QIP_AQL_DATA_FIRST
+            SELECT PO_NO, PARTIAL, LEVEL, REMARK, CARTON_NO, CARTON_QTY, SIZE, QTY_INSPECT  FROM [QIP].[dbo].QIP_AQL_DATA_FIRST WITH (NOLOCK)
             WHERE LEVEL_USER='2'
             AND CONVERT(CHAR(6), LMNT_DTTM,112) = CONVERT(CHAR(6), GETDATE(), 112)
             ORDER BY PO_NO, PARTIAL

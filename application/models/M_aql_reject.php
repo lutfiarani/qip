@@ -104,8 +104,13 @@ class M_aql_reject extends CI_Model {
     }
 
     public function update_reject($PO_NO, $PARTIAL, $LEVEL, $LEVEL_USER, $REMARK, $REJECT_CODE, $CODE, $column, $filename){
-        $query = ("UPDATE [QIP].[dbo].QIP_AQL_PO_DEFECT
-                        SET ".$column." = '$filename'
+        $query = "UPDATE [QIP].[dbo].QIP_AQL_PO_DEFECT ";
+        if($filename == ''){
+            $query .= " SET ".$column." = NULL";
+        }else{
+            $query .= " SET ".$column." = '$filename'";
+        }
+        $query .="                        
                         WHERE PO_NO='$PO_NO'
                         AND PARTIAL='$PARTIAL'
                         AND LEVEL='$LEVEL'
@@ -113,19 +118,18 @@ class M_aql_reject extends CI_Model {
                         AND REMARK='$REMARK'
                         AND REJECT_CODE='$REJECT_CODE'
                         AND CODE='$CODE'
-        ");
+        ";
 
         $querys = $this->db->query($query);
 
         return $querys;
-        // echo $query;
 
     }
 
-    public function save_second_data($po_no, $partial, $level, $remark, $level_user){
+    public function save_second_data($po_no, $partial, $level, $remark, $level_user, $inspector){
         $query = $this->db->query("
-            EXEC [QIP].[dbo].[AQL_SAVE_SECOND_DATA_V1]  @PO_NO = '$po_no', @PARTIAL = '$partial',
-            @LEVEL = '$level', @REMARK = '$remark', @LEVEL_USER = '$level_user'
+            EXEC [QIP].[dbo].[AQL_SAVE_SECOND_DATA_V2]  @PO_NO = '$po_no', @PARTIAL = '$partial',
+            @LEVEL = '$level', @REMARK = '$remark', @LEVEL_USER = '$level_user', @INSPECTOR = '$inspector'
         "
         );
         return $query;
@@ -152,13 +156,14 @@ class M_aql_reject extends CI_Model {
         $CODE        = $_POST['CODE'];
         $REJECT_CODE = $_POST['REJECT_CODE'];
 
-        $query = $this->db->query("SELECT TOP 1 * FROM [QIP].[dbo].[QIP_AQL_PO_DEFECT]
+        $query = $this->db->query("SELECT TOP 1 * FROM [QIP].[dbo].[QIP_AQL_PO_DEFECT] WITH (NOLOCK)
                                     WHERE PO_NO = '$PO_NO'
                                     AND PARTIAL = '$PARTIAL'
                                     AND REMARK  = '$REMARK'
                                     AND LEVEL   = '$LEVEL'
                                     AND CODE    = '$CODE'
                                     AND REJECT_CODE = '$REJECT_CODE'
+                                    AND LEVEL_USER = '$LEVEL_USER'
             ");
 
         return $query->row();
